@@ -9,50 +9,55 @@ class Board:
 
     def __init__(self, width, height):
         self.surface = pygame.display.set_mode((width, height), 0, 32)
-        pygame.display.set_caption('Zombie CLab')
-        self.bg = pygame.image.load("images/floor.jpg")
+        pygame.display.set_caption('Zombie in CLab')
+        self.bg = pygame.image.load("images/terrain_atlas.png")
+        self.intro_screen = pygame.image.load('images/intro_screen.png')
 
     def draw(self, *args):
         """param args: list of object to draw"""
+
         background = (255, 255, 255)
         self.surface.fill(background)
-        # floor
-        floor_width = 223
-        for i in range(6):
-            x = floor_width * i
-            self.surface.blit(self.bg, (x, 0))
-            self.surface.blit(self.bg, (x, 226))
-            self.surface.blit(self.bg, (x, 452))
+        self.surface.blit(self.bg, (200, 200), (0, 0, 90, 150))
 
         for drawable in args:
             drawable.draw_on(self.surface)
 
         pygame.display.update()
 
+    def game_intro(self):
+
+        intro = True
+
+        while intro:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
 
 class TheGame:
 
     counter = 1
-    my_width = None
-    my_height = None
-
-    """connects all elements"""
+    game_width = None
+    game_height = None
+    """connecting all elements"""
     def __init__(self, width, height):
         pygame.init()
-        self.get_state = 0
+        self.set_state = 0
+        TheGame.game_width = width
+        TheGame.game_height = height
         number_of_zombies = 10
-        TheGame.my_width = width
-        TheGame.my_height = height
         self.board = Board(width, height)
         # clock to control speed of drawing
         self.fps_clock = pygame.time.Clock()
         self.room = Rooms(0, 0)
-        self.player1 = Player(width/2, height/2, 20, 20)
+        self.player = Player(width / 2, height / 2, 10, 20)
         self.zombie_list = []
         for i in range(number_of_zombies):
-            x = randint(Player.my_player_width, int(TheGame.my_width) - Player.my_player_width)
-            y = randint(Player.my_player_height, int(TheGame.my_height) - Player.my_player_height)
-            self.zombie_person = Zombie(x, y, self.player1, 20, 20)
+            x = randint(self.player.get_width, TheGame.game_width - self.player.get_width)
+            y = randint(self.player.get_height, TheGame.game_height - self.player.get_height)
+            self.zombie_person = Zombie(x, y, self.player, self.player.get_width, self.player.get_height)
             self.zombie_list.append(self.zombie_person)
 
     def run(self):
@@ -60,21 +65,21 @@ class TheGame:
         max_distance = 170
         while True:
             self.handle_events()
-            player_rect = pygame.Rect(self.player1)
+            player_rect = pygame.Rect(self.player)
             """states for moving while each button is pressed"""
-            if self.get_state == 1:
-                self.player1.move_x(self.player1.max_speed)
-            elif self.get_state == 2:
-                self.player1.move_x(-self.player1.max_speed)
-            elif self.get_state == 3:
-                self.player1.move_y(self.player1.max_speed)
-            elif self.get_state == 4:
-                self.player1.move_y(-self.player1.max_speed)
+            if self.set_state == "left":
+                self.player.move_x(self.player.max_speed)
+            elif self.set_state == "right":
+                self.player.move_x(-self.player.max_speed)
+            elif self.set_state == "up":
+                self.player.move_y(self.player.max_speed)
+            elif self.set_state == "down":
+                self.player.move_y(-self.player.max_speed)
             for i in range(len(self.zombie_list)):
                 zombie_rect = pygame.Rect(self.zombie_list[i])
                 room_rect = pygame.Rect(Rooms.wall_lines)
-                distance = (self.zombie_list[i].rect.x - self.player1.rect.x)**2 + \
-                           (self.zombie_list[i].rect.y - self.player1.rect.y)**2
+                distance = (self.zombie_list[i].rect.x - self.player.rect.x) ** 2 + \
+                           (self.zombie_list[i].rect.y - self.player.rect.y) ** 2
                 distance = math.sqrt(distance)
                 if distance > max_distance:
                     self.zombie_list[i].zombie_natural_moves()
@@ -102,7 +107,7 @@ class TheGame:
 
             self.board.draw(
                 self.room,
-                self.player1,
+                self.player,
                 self.zombie_list[0],
                 self.zombie_list[1],
                 self.zombie_list[2],
@@ -113,7 +118,6 @@ class TheGame:
                 self.zombie_list[7],
                 self.zombie_list[8],
                 self.zombie_list[9]
-
             )
             pygame.display.flip()
             self.fps_clock.tick(100)
@@ -132,27 +136,23 @@ class TheGame:
                     return True
 
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    x = self.player1.max_speed
-                    self.player1.move_x(x)
-                    self.get_state = 1
+                    self.player.move_x(self.player.get_speed)
+                    self.set_state = "left"
 
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    x = self.player1.max_speed
-                    self.player1.move_x(-x)
-                    self.get_state = 2
+                    self.player.move_x(-self.player.get_speed)
+                    self.set_state = "right"
 
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    y = self.player1.max_speed
-                    self.player1.move_y(y)
-                    self.get_state = 3
+                    self.player.move_y(self.player.get_speed)
+                    self.set_state = "up"
 
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    y = self.player1.max_speed
-                    self.player1.move_y(-y)
-                    self.get_state = 4
+                    self.player.move_y(-self.player.get_speed)
+                    self.set_state = "down"
 
             elif event.type == pygame.KEYUP:
-                self.get_state = 0
+                self.set_state = "no state"
 
             """uncomment if you want to move by mouse"""
             # if event.type == pygame.MOUSEMOTION:
@@ -195,20 +195,38 @@ class Rooms(Drawable):
         Rooms.wall_lines = pygame.draw.lines(self.surface, wall_color, False, wall_corners, wall_width)
 
 
-class Player(Drawable):
+class Player(Drawable, pygame.sprite.Sprite):
 
-    my_player_width = None
-    my_player_height = None
-    def __init__(self, x, y, width=20, height=20, color=(0, 0, 255), max_speed=5):
+    def __init__(self, x, y, width=20, height=20, color=(0, 0, 255), max_speed=4):
         super(Player, self).__init__(width, height, x, y, color)
+        pygame.sprite.Sprite.__init__(self)
         self.max_speed = max_speed
         self.surface.fill(color)
-        Player.my_player_width = self.width
-        Player.my_player_height = self.height
+        self.player_img = pygame.image.load("images/character.png")
+        # self.surface.blit(self.player_img, (0, 0), (14, 9, 33, 39))
+        # self.player_img = pygame.transform.scale(self.player_img, (0, 0))
+        # self.surface.blit(self.player_img, (0, 0), (0, 0, Player.my_player_width, Player.my_player_height))
+        # self.rect = self.player_img.get_rect()
+        # self.surface.blit(self.player_img, (0, 0), (3, 7, 7, 13))
+
+    @property
+    def get_speed(self):
+        return self.max_speed
+
+    @property
+    def get_width(self):
+        return self.width
+
+    @property
+    def get_height(self):
+        return self.height
+
+    def update(self, direction):
+        pass
 
     def move_x(self, x):
         delta_x = x - self.rect.x
-        if abs(delta_x) <= TheGame.my_width - Player.my_player_width and delta_x <= 0:
+        if abs(delta_x) <= TheGame.game_width - self.width and delta_x <= 0:
             delta_x = -self.max_speed
             if x > 0:
                 self.rect.x += delta_x
@@ -217,7 +235,7 @@ class Player(Drawable):
 
     def move_y(self, y):
         delta_y = y - self.rect.y
-        if abs(delta_y) <= TheGame.my_height - Player.my_player_height and delta_y <= 0:
+        if abs(delta_y) <= TheGame.game_height - self.height and delta_y <= 0:
             delta_y = -self.max_speed
             if y > 0:
                 self.rect.y += delta_y
@@ -227,8 +245,7 @@ class Player(Drawable):
 
 class Zombie(Player):
     max_speed = None
-    def __init__(self, x, y, victim, width=Player.my_player_width, height=Player.my_player_height,
-                 color=(255, 0, 0), max_speed=1):
+    def __init__(self, x, y, victim, width, height, color=(255, 0, 0), max_speed=1):
         super(Player, self).__init__(width, height, x, y, color)
         self.max_speed = max_speed
         self.surface.fill(color)
@@ -245,12 +262,12 @@ class Zombie(Player):
         if self.rect.x > self.victim.rect.x:
             x = self.max_speed
         else:
-            x = - self.max_speed
+            x = -self.max_speed
         self.move_x(x)
         if self.rect.y > self.victim.rect.y:
             y = self.max_speed
         else:
-            y = - self.max_speed
+            y = -self.max_speed
         self.move_y(y)
 
     def zombie_attacks(self):
