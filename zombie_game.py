@@ -4,19 +4,21 @@ import math
 
 
 class Board:
-
     """Class responsible for drawing window game"""
 
     def __init__(self, width, height):
         self.surface = pygame.display.set_mode((width, height), 0, 32)
         pygame.display.set_caption('Zombie in CLab')
         self.bg = pygame.image.load("images/floor.jpg")
-        #self.bg = pygame.image.load("images/terrain_atlas.png")
-        #self.intro_screen = pygame.image.load('images/intro_screen.png')
+        # self.bg = pygame.image.load("images/terrain_atlas.png")
+        # self.intro_screen = pygame.image.load('images/intro_screen.png')
+        menu_font_path = pygame.font.match_font('arial', bold=1)
+        self.menu_font = pygame.font.Font(menu_font_path, 45)
+        options_font_path = pygame.font.match_font('arial', bold=1)
+        self.options_font = pygame.font.Font(options_font_path, 65)
 
     def draw(self, *args):
         """param args: list of object to draw"""
-
         background = (255, 255, 255)
         self.surface.fill(background)
         self.surface.blit(self.bg, (200, 200), (0, 0, 90, 150))
@@ -26,14 +28,47 @@ class Board:
 
         pygame.display.update()
 
-    
-class TheGame:
+    def draw_menu(self, *args):
+        background = (0, 0, 0)
+        self.surface.fill(background)
+        intro_bg = pygame.image.load("images/floor.jpg")
+        self.surface.blit(intro_bg, (0, 0), (0, 0, 200, 200))
+        self.draw_text(self.surface, "Play", TheGame.game_width / 2, TheGame.game_height * 0.6, self.menu_font)
+        self.draw_text(self.surface, "Options", TheGame.game_width / 2, TheGame.game_height * 0.7, self.menu_font)
+        self.draw_text(self.surface, "Quit", TheGame.game_width / 2, TheGame.game_height * 0.8, self.menu_font)
+        for drawable in args:
+            drawable.draw_on(self.surface)
 
+        pygame.display.update()
+
+    def draw_options(self, *args):
+        background = (0, 0, 0)
+        self.surface.fill(background)
+        intro_bg = pygame.image.load("images/floor.jpg")
+        self.surface.blit(intro_bg, (0, 0), (0, 0, 200, 200))
+        self.draw_text(self.surface, "Controls", TheGame.game_width / 2, TheGame.game_height * 0.35, self.options_font)
+        self.draw_text(self.surface, "Audio", TheGame.game_width / 2, TheGame.game_height * 0.5, self.options_font)
+        self.draw_text(self.surface, "Return", TheGame.game_width / 2, TheGame.game_height * 0.65, self.options_font)
+        for drawable in args:
+            drawable.draw_on(self.surface)
+
+        pygame.display.update()
+
+    @staticmethod
+    def draw_text(surface, text, x, y, font):
+        text = font.render(text, True, (255, 0, 0))
+        rect = text.get_rect()
+        rect.center = x, y
+        surface.blit(text, rect)
+
+
+class TheGame:
     counter = 1
     game_width = None
     game_height = None
-    
+
     """connecting all elements"""
+
     def __init__(self, width, height):
         pygame.init()
         self.set_state = 0
@@ -51,55 +86,82 @@ class TheGame:
             y = randint(self.player.get_height, TheGame.game_height - self.player.get_height)
             self.zombie_person = Zombie(x, y, self.player, self.player.get_width, self.player.get_height)
             self.zombie_list.append(self.zombie_person)
-        font_path = pygame.font.match_font('arial')
-        self.font = pygame.font.Font(font_path, 45)
-    
+
     def game_intro(self):
         intro = True
-        i = 0.6
+        i = 0.58
         while intro:
-            self.intro_bg = pygame.image.load("images/floor.jpg")
-            self.board.surface.blit(self.intro_bg, (100, 100), (0, 0, 200, 200))
-            self.draw_text(self.board.surface, "Play", TheGame.game_width/2, TheGame.game_height * 0.6)
-            self.draw_text(self.board.surface, "Options", TheGame.game_width/2, TheGame.game_height * 0.7)
-            self.draw_text(self.board.surface, "Quit", TheGame.game_width/2, TheGame.game_height * 0.8)
-            dot_pos_y = TheGame.game_height * i
-            dot_pos_x = TheGame.game_width * 0.38
-            intro_object = Player(dot_pos_x, dot_pos_y, 20, 20)
-            draw = Drawable(20, 20, dot_pos_x, dot_pos_y, (0, 255, 0))
-            draw.draw_on(intro_object)
-            #pygame.draw.circle(self.board.surface, (255, 0, 0), (int(dot_pos_x), int(dot_pos_y)), 25)
-            
+            mark_play_pos = 0.58
+            mark_quit_pos = 0.77
+            mark_pos_y = TheGame.game_height * i
+            mark_pos_x = TheGame.game_width * 0.38
+            intro_object = Player(mark_pos_x, mark_pos_y, 26, 26)
+            self.board.draw_menu(intro_object)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
-                        return True
-                    
+
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
-                        if 0.8 >= i > 0.6:
+                        if i > mark_play_pos:
                             i -= 0.1
 
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        if 0.6 < i < 0.8:
+                        if mark_play_pos <= i <= mark_quit_pos:
                             i += 0.1
-                            
+
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                        return False
-                    
-            pygame.display.update()
+                        if i <= mark_play_pos:
+                            intro = False
+                        elif i >= mark_quit_pos:
+                            pygame.quit()
+                        else:
+                            game_opt = TheGame(TheGame.game_width, TheGame.game_height)
+                            game_opt.game_options()
+
+    def game_options(self):
+        option = True
+        i = 0.325
+        while option:
+            mark_up_opt_pos = 0.325
+            mark_down_opt_pos = 0.625
+            mark_pos_y = TheGame.game_height * i
+            mark_pos_x = TheGame.game_width * 0.32
+            intro_object = Player(mark_pos_x, mark_pos_y, 30, 30)
+            self.board.draw_options(intro_object)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                elif event.type == pygame.KEYDOWN:
+                    game_opt = TheGame(TheGame.game_width, TheGame.game_height)
+                    if event.key == pygame.K_ESCAPE:
+                        game_opt.game_intro()
+                        option = False
+                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                        if i > mark_up_opt_pos:
+                            i -= 0.15
+
+                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        if mark_up_opt_pos <= i <= mark_down_opt_pos:
+                            i += 0.15
+
+                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                        if i == mark_up_opt_pos:
+                            """controlls"""
+                            pass
+                        elif i >= mark_down_opt_pos:
+                            game_opt.game_intro()
+                        else:
+                            """audio"""
+                            pass
+
             pygame.display.flip()
             self.fps_clock.tick(100)
 
-    def draw_text(self, surface,  text, x, y):
-        text = self.font.render(text, True, (255, 0, 0))
-        rect = text.get_rect()
-        rect.center = x, y
-        surface.blit(text, rect)
-        
     def run(self):
         """Main loop of game"""
         max_distance = 170
@@ -223,6 +285,7 @@ class Drawable:
 
 class Rooms(Drawable):
     wall_lines = None
+
     def __init__(self, x, y, width=1000, height=600, color=(0, 0, 0)):
         super(Rooms, self).__init__(width, height, x, y, color)
         wall_width = 10
@@ -242,7 +305,7 @@ class Player(Drawable, pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.max_speed = max_speed
         self.surface.fill(color)
-        #self.player_img = pygame.image.load("images/character.png")
+        # self.player_img = pygame.image.load("images/character.png")
         # self.surface.blit(self.player_img, (0, 0), (14, 9, 33, 39))
         # self.player_img = pygame.transform.scale(self.player_img, (0, 0))
         # self.surface.blit(self.player_img, (0, 0), (0, 0, Player.my_player_width, Player.my_player_height))
@@ -265,26 +328,29 @@ class Player(Drawable, pygame.sprite.Sprite):
         pass
 
     def move_x(self, x):
-        delta_x = x - self.rect.x
-        if abs(delta_x) <= TheGame.game_width - self.width and delta_x <= 0:
-            delta_x = -self.max_speed
-            if x > 0:
-                self.rect.x += delta_x
-            else:
-                self.rect.x -= delta_x
+        if x != 0:
+            delta_x = x - self.rect.x
+            if abs(delta_x) <= TheGame.game_width - self.width and delta_x <= 0:
+                delta_x = -self.max_speed
+                if x > 0:
+                    self.rect.x += delta_x
+                else:
+                    self.rect.x -= delta_x
 
     def move_y(self, y):
-        delta_y = y - self.rect.y
-        if abs(delta_y) <= TheGame.game_height - self.height and delta_y <= 0:
-            delta_y = -self.max_speed
-            if y > 0:
-                self.rect.y += delta_y
-            else:
-                self.rect.y -= delta_y
+        if y != 0:
+            delta_y = y - self.rect.y
+            if abs(delta_y) <= TheGame.game_height - self.height and delta_y <= 0:
+                delta_y = -self.max_speed
+                if y > 0:
+                    self.rect.y += delta_y
+                else:
+                    self.rect.y -= delta_y
 
 
 class Zombie(Player):
     max_speed = None
+
     def __init__(self, x, y, victim, width, height, color=(255, 0, 0), max_speed=1):
         super(Player, self).__init__(width, height, x, y, color)
         self.max_speed = max_speed
@@ -293,10 +359,11 @@ class Zombie(Player):
         Zombie.max_speed = max_speed
 
     def zombie_natural_moves(self):
-        a = randint(0, 1)
-        self.move_x(a)
-        a = randint(0, 1)
-        self.move_y(a)
+        moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
+        a = randint(0, len(moves_list)-1)
+        self.move_x(moves_list[a])
+        a = randint(0, len(moves_list)-1)
+        self.move_y(moves_list[a])
 
     def zombie_follows(self):
         if self.rect.x > self.victim.rect.x:
