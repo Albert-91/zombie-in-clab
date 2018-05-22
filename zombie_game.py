@@ -10,8 +10,9 @@ class Board:
     def __init__(self, width, height):
         self.surface = pygame.display.set_mode((width, height), 0, 32)
         pygame.display.set_caption('Zombie in CLab')
-        self.bg = pygame.image.load("images/terrain_atlas.png")
-        self.intro_screen = pygame.image.load('images/intro_screen.png')
+        self.bg = pygame.image.load("images/floor.jpg")
+        #self.bg = pygame.image.load("images/terrain_atlas.png")
+        #self.intro_screen = pygame.image.load('images/intro_screen.png')
 
     def draw(self, *args):
         """param args: list of object to draw"""
@@ -25,22 +26,13 @@ class Board:
 
         pygame.display.update()
 
-    def game_intro(self):
-
-        intro = True
-
-        while intro:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    quit()
-
-
+    
 class TheGame:
 
     counter = 1
     game_width = None
     game_height = None
+    
     """connecting all elements"""
     def __init__(self, width, height):
         pygame.init()
@@ -59,7 +51,55 @@ class TheGame:
             y = randint(self.player.get_height, TheGame.game_height - self.player.get_height)
             self.zombie_person = Zombie(x, y, self.player, self.player.get_width, self.player.get_height)
             self.zombie_list.append(self.zombie_person)
+        font_path = pygame.font.match_font('arial')
+        self.font = pygame.font.Font(font_path, 45)
+    
+    def game_intro(self):
+        intro = True
+        i = 0.6
+        while intro:
+            self.intro_bg = pygame.image.load("images/floor.jpg")
+            self.board.surface.blit(self.intro_bg, (100, 100), (0, 0, 200, 200))
+            self.draw_text(self.board.surface, "Play", TheGame.game_width/2, TheGame.game_height * 0.6)
+            self.draw_text(self.board.surface, "Options", TheGame.game_width/2, TheGame.game_height * 0.7)
+            self.draw_text(self.board.surface, "Quit", TheGame.game_width/2, TheGame.game_height * 0.8)
+            dot_pos_y = TheGame.game_height * i
+            dot_pos_x = TheGame.game_width * 0.38
+            intro_object = Player(dot_pos_x, dot_pos_y, 20, 20)
+            draw = Drawable(20, 20, dot_pos_x, dot_pos_y, (0, 255, 0))
+            draw.draw_on(intro_object)
+            #pygame.draw.circle(self.board.surface, (255, 0, 0), (int(dot_pos_x), int(dot_pos_y)), 25)
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        return True
+                    
+                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                        if 0.8 >= i > 0.6:
+                            i -= 0.1
 
+                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        if 0.6 < i < 0.8:
+                            i += 0.1
+                            
+                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                        return False
+                    
+            pygame.display.update()
+            pygame.display.flip()
+            self.fps_clock.tick(100)
+
+    def draw_text(self, surface,  text, x, y):
+        text = self.font.render(text, True, (255, 0, 0))
+        rect = text.get_rect()
+        rect.center = x, y
+        surface.blit(text, rect)
+        
     def run(self):
         """Main loop of game"""
         max_distance = 170
@@ -202,7 +242,7 @@ class Player(Drawable, pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.max_speed = max_speed
         self.surface.fill(color)
-        self.player_img = pygame.image.load("images/character.png")
+        #self.player_img = pygame.image.load("images/character.png")
         # self.surface.blit(self.player_img, (0, 0), (14, 9, 33, 39))
         # self.player_img = pygame.transform.scale(self.player_img, (0, 0))
         # self.surface.blit(self.player_img, (0, 0), (0, 0, Player.my_player_width, Player.my_player_height))
@@ -276,4 +316,5 @@ class Zombie(Player):
 
 if __name__ == "__main__":
     game = TheGame(1000, 600)
+    game.game_intro()
     game.run()
