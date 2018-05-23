@@ -35,7 +35,8 @@ class Board:
         self.surface.fill(background)
         intro_bg = pygame.image.load("images/floor.jpg")
         self.surface.blit(intro_bg, (0, 0), (0, 0, 200, 200))
-        self.draw_text(self.surface, "Zombie in CLab", TheGame.game_width / 2, TheGame.game_height * 0.3, self.title_font)
+        self.draw_text(self.surface, "Zombie in CLab", TheGame.game_width / 2, TheGame.game_height * 0.3,
+                       self.title_font)
         self.draw_text(self.surface, "Play", TheGame.game_width / 2, TheGame.game_height * 0.6, self.menu_font)
         self.draw_text(self.surface, "Options", TheGame.game_width / 2, TheGame.game_height * 0.7, self.menu_font)
         self.draw_text(self.surface, "Quit", TheGame.game_width / 2, TheGame.game_height * 0.8, self.menu_font)
@@ -119,6 +120,7 @@ class TheGame:
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                         if i <= mark_play_pos:
                             intro = False
+                            game.run()
                         elif i >= mark_quit_pos:
                             pygame.quit()
                         else:
@@ -128,6 +130,7 @@ class TheGame:
         option = True
         i = 0.325
         while option:
+            print(i)
             mark_up_opt_pos = 0.325
             mark_down_opt_pos = 0.625
             mark_pos_y = TheGame.game_height * i
@@ -143,10 +146,13 @@ class TheGame:
                         game.game_intro()
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
                         if i > mark_up_opt_pos:
-                            i -= 0.15
+                            """without multiplying and dividing by 1000, i in up position has 0.324(9)"""
+                            i *= 1000
+                            i -= 0.15 * 1000
+                            i /= 1000
 
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        if mark_up_opt_pos <= i <= mark_down_opt_pos:
+                        if mark_up_opt_pos <= i < mark_down_opt_pos:
                             i += 0.15
 
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
@@ -290,13 +296,13 @@ class Rooms(Drawable):
         super(Rooms, self).__init__(width, height, x, y, color)
         wall_width = 10
         wall_color = (0, 0, 0)
-        #wall_corners = [(150, 200), (0, 200), (0, 0), (200, 0), (200, 200), (190, 200), (300, 200), (200, 200),
-         #               (200, 0), (400, 0), (400, 200), (340, 200), (520, 200), (400, 200), (400, 0), (600, 0),
-          #              (600, 200), (560, 200), (700, 200), (600, 200), (600, 0), (800, 0), (800, 200), (740, 200),
-           #             (820, 200), (800, 200), (800, 0), (995, 0), (995, 200), (860, 200), (995, 200), (995, 280)]
-        #pygame.draw.lines(self.surface, wall_color, False, wall_corners, wall_width)
-        #Rooms.wall_lines = pygame.draw.lines(self.surface, wall_color, False, wall_corners, wall_width)
-           
+        wall_corners = [(150, 200), (0, 200), (0, 0), (200, 0), (200, 200), (190, 200), (300, 200), (200, 200),
+                      (200, 0), (400, 0), (400, 200), (340, 200), (520, 200), (400, 200), (400, 0), (600, 0),
+                     (600, 200), (560, 200), (700, 200), (600, 200), (600, 0), (800, 0), (800, 200), (740, 200),
+                    (820, 200), (800, 200), (800, 0), (995, 0), (995, 200), (860, 200), (995, 200), (995, 280)]
+        pygame.draw.lines(self.surface, wall_color, False, wall_corners, wall_width)
+        Rooms.wall_lines = pygame.draw.lines(self.surface, wall_color, False, wall_corners, wall_width)
+
 
 class Player(Drawable, pygame.sprite.Sprite):
 
@@ -360,9 +366,9 @@ class Zombie(Player):
 
     def zombie_natural_moves(self):
         moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
-        a = randint(0, len(moves_list)-1)
+        a = randint(0, len(moves_list) - 1)
         self.move_x(moves_list[a])
-        a = randint(0, len(moves_list)-1)
+        a = randint(0, len(moves_list) - 1)
         self.move_y(moves_list[a])
 
     def zombie_follows(self):
@@ -384,4 +390,3 @@ class Zombie(Player):
 if __name__ == "__main__":
     game = TheGame(1000, 600)
     game.game_intro()
-    game.run()
