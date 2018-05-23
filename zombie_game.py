@@ -16,6 +16,8 @@ class Board:
         self.menu_font = pygame.font.Font(menu_font_path, 45)
         options_font_path = pygame.font.match_font('arial', bold=1)
         self.options_font = pygame.font.Font(options_font_path, 65)
+        title_font_path = pygame.font.match_font('arial', bold=1)
+        self.title_font = pygame.font.Font(title_font_path, 90)
 
     def draw(self, *args):
         """param args: list of object to draw"""
@@ -33,6 +35,7 @@ class Board:
         self.surface.fill(background)
         intro_bg = pygame.image.load("images/floor.jpg")
         self.surface.blit(intro_bg, (0, 0), (0, 0, 200, 200))
+        self.draw_text(self.surface, "Zombie in CLab", TheGame.game_width / 2, TheGame.game_height * 0.3, self.title_font)
         self.draw_text(self.surface, "Play", TheGame.game_width / 2, TheGame.game_height * 0.6, self.menu_font)
         self.draw_text(self.surface, "Options", TheGame.game_width / 2, TheGame.game_height * 0.7, self.menu_font)
         self.draw_text(self.surface, "Quit", TheGame.game_width / 2, TheGame.game_height * 0.8, self.menu_font)
@@ -95,7 +98,7 @@ class TheGame:
             mark_quit_pos = 0.77
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.38
-            intro_object = Player(mark_pos_x, mark_pos_y, 26, 26)
+            intro_object = Player(mark_pos_x, mark_pos_y, 26, 26, (255, 0, 0))
             self.board.draw_menu(intro_object)
 
             for event in pygame.event.get():
@@ -119,8 +122,7 @@ class TheGame:
                         elif i >= mark_quit_pos:
                             pygame.quit()
                         else:
-                            game_opt = TheGame(TheGame.game_width, TheGame.game_height)
-                            game_opt.game_options()
+                            game.game_options()
 
     def game_options(self):
         option = True
@@ -130,17 +132,15 @@ class TheGame:
             mark_down_opt_pos = 0.625
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.32
-            intro_object = Player(mark_pos_x, mark_pos_y, 30, 30)
+            intro_object = Player(mark_pos_x, mark_pos_y, 30, 30, (255, 0, 0))
             self.board.draw_options(intro_object)
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                 elif event.type == pygame.KEYDOWN:
-                    game_opt = TheGame(TheGame.game_width, TheGame.game_height)
                     if event.key == pygame.K_ESCAPE:
-                        game_opt.game_intro()
                         option = False
+                        game.game_intro()
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
                         if i > mark_up_opt_pos:
                             i -= 0.15
@@ -154,7 +154,7 @@ class TheGame:
                             """controlls"""
                             pass
                         elif i >= mark_down_opt_pos:
-                            game_opt.game_intro()
+                            game.game_intro()
                         else:
                             """audio"""
                             pass
@@ -265,7 +265,7 @@ class TheGame:
     def move_cond(self, player, other):
         player_rect = pygame.Rect(player)
         other_rect = pygame.Rect(other)
-        if player_rect.colliderect(other_rect):
+        if player_rect.top:
             pass
 
 
@@ -290,13 +290,13 @@ class Rooms(Drawable):
         super(Rooms, self).__init__(width, height, x, y, color)
         wall_width = 10
         wall_color = (0, 0, 0)
-        wall_corners = [(150, 200), (0, 200), (0, 0), (200, 0), (200, 200), (190, 200), (300, 200), (200, 200),
-                        (200, 0), (400, 0), (400, 200), (340, 200), (520, 200), (400, 200), (400, 0), (600, 0),
-                        (600, 200), (560, 200), (700, 200), (600, 200), (600, 0), (800, 0), (800, 200), (740, 200),
-                        (820, 200), (800, 200), (800, 0), (995, 0), (995, 200), (860, 200), (995, 200), (995, 280)]
-        pygame.draw.lines(self.surface, wall_color, False, wall_corners, wall_width)
-        Rooms.wall_lines = pygame.draw.lines(self.surface, wall_color, False, wall_corners, wall_width)
-
+        #wall_corners = [(150, 200), (0, 200), (0, 0), (200, 0), (200, 200), (190, 200), (300, 200), (200, 200),
+         #               (200, 0), (400, 0), (400, 200), (340, 200), (520, 200), (400, 200), (400, 0), (600, 0),
+          #              (600, 200), (560, 200), (700, 200), (600, 200), (600, 0), (800, 0), (800, 200), (740, 200),
+           #             (820, 200), (800, 200), (800, 0), (995, 0), (995, 200), (860, 200), (995, 200), (995, 280)]
+        #pygame.draw.lines(self.surface, wall_color, False, wall_corners, wall_width)
+        #Rooms.wall_lines = pygame.draw.lines(self.surface, wall_color, False, wall_corners, wall_width)
+           
 
 class Player(Drawable, pygame.sprite.Sprite):
 
