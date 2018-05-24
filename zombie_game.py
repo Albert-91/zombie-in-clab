@@ -78,18 +78,22 @@ class TheGame:
         self.set_state = 0
         TheGame.game_width = width
         TheGame.game_height = height
-        number_of_zombies = 10
+        self.number_of_zombies = 20
         self.board = Board(width, height)
-        # clock to control speed of drawing
         self.fps_clock = pygame.time.Clock()
         self.room = Rooms(0, 0)
         self.player = Player(width / 2, height / 2, 10, 20)
-        self.zombie_list = []
-        for i in range(number_of_zombies):
+        self.zombie_group = pygame.sprite.Group()
+        self.all_sprites_group = pygame.sprite.Group()
+        self.other_group = pygame.sprite.Group()
+        self.bullets = pygame.sprite.Group()
+        self.all_sprites_group.add(self.player)
+        for i in range(self.number_of_zombies):
             x = randint(self.player.get_width, TheGame.game_width - self.player.get_width)
             y = randint(self.player.get_height, TheGame.game_height - self.player.get_height)
             self.zombie_person = Zombie(x, y, self.player, self.player.get_width, self.player.get_height)
-            self.zombie_list.append(self.zombie_person)
+            self.zombie_group.add(self.zombie_person)
+            self.other_group.add(self.zombie_person)
 
     def game_intro(self):
         intro = True
@@ -125,6 +129,9 @@ class TheGame:
                             pygame.quit()
                         else:
                             game.game_options()
+
+            pygame.display.flip()
+            self.fps_clock.tick(100)
 
     def game_options(self):
         option = True
@@ -173,7 +180,7 @@ class TheGame:
         max_distance = 170
         while True:
             self.handle_events()
-            player_rect = pygame.Rect(self.player)
+            # player_rect = pygame.Rect(self.player)
             """states for moving while each button is pressed"""
             if self.set_state == "left":
                 self.player.move_x(self.player.max_speed)
@@ -183,50 +190,39 @@ class TheGame:
                 self.player.move_y(self.player.max_speed)
             elif self.set_state == "down":
                 self.player.move_y(-self.player.max_speed)
-            for i in range(len(self.zombie_list)):
-                zombie_rect = pygame.Rect(self.zombie_list[i])
-                room_rect = pygame.Rect(Rooms.wall_lines)
-                distance = (self.zombie_list[i].rect.x - self.player.rect.x) ** 2 + \
-                           (self.zombie_list[i].rect.y - self.player.rect.y) ** 2
+
+            for self.zombie_person in self.zombie_group:
+                distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
+                           (self.zombie_person.rect.y - self.player.rect.y) ** 2
                 distance = math.sqrt(distance)
                 if distance > max_distance:
-                    self.zombie_list[i].zombie_natural_moves()
-                elif distance <= max_distance and not player_rect.colliderect(zombie_rect):
-                    self.zombie_list[i].zombie_follows()
-                elif player_rect.colliderect(zombie_rect):
-                    self.zombie_list[i].zombie_attacks()
+                    self.zombie_person.zombie_natural_moves()
+                elif distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player):
+                    self.zombie_person.zombie_follows()
+                else:
+                    self.zombie_person.zombie_attacks()
 
-                """detection of collisions between zombies"""
-                for j in range(len(self.zombie_list)):
-                    other_zombie = pygame.Rect(self.zombie_list[j])
-                    if i != j and zombie_rect.colliderect(other_zombie):
-                        if self.zombie_list[i].rect.x > self.zombie_list[j].rect.x:
-                            self.zombie_list[i].move_x(-Zombie.max_speed)
-                            self.zombie_list[j].move_x(Zombie.max_speed)
+                for other_zombie in self.other_group:
+                    if other_zombie != self.zombie_person and\
+                            pygame.sprite.collide_rect(self.zombie_person, other_zombie):
+                        if other_zombie.rect.x > self.zombie_person.rect.x:
+                            other_zombie.move_x(-self.zombie_person.max_speed)
+                            self.zombie_person.move_x(self.zombie_person.max_speed)
                         else:
-                            self.zombie_list[i].move_x(Zombie.max_speed)
-                            self.zombie_list[j].move_x(-Zombie.max_speed)
-                        if self.zombie_list[i].rect.y > self.zombie_list[j].rect.y:
-                            self.zombie_list[i].move_y(-Zombie.max_speed)
-                            self.zombie_list[j].move_y(Zombie.max_speed)
+                            other_zombie.move_x(self.zombie_person.max_speed)
+                            self.zombie_person.move_x(-self.zombie_person.max_speed)
+                        if other_zombie.rect.y > self.zombie_person.rect.y:
+                            other_zombie.move_y(-self.zombie_person.max_speed)
+                            self.zombie_person.move_y(self.zombie_person.max_speed)
                         else:
-                            self.zombie_list[i].move_y(Zombie.max_speed)
-                            self.zombie_list[j].move_y(-Zombie.max_speed)
+                            other_zombie.move_y(self.zombie_person.max_speed)
+                            self.zombie_person.move_y(-self.zombie_person.max_speed)
 
-            self.board.draw(
-                self.room,
-                self.player,
-                self.zombie_list[0],
-                self.zombie_list[1],
-                self.zombie_list[2],
-                self.zombie_list[3],
-                self.zombie_list[4],
-                self.zombie_list[5],
-                self.zombie_list[6],
-                self.zombie_list[7],
-                self.zombie_list[8],
-                self.zombie_list[9]
-            )
+            self.board.draw(self.room)
+            self.all_sprites_group.update()
+            self.all_sprites_group.draw(self.board.surface)
+            self.zombie_group.update()
+            self.zombie_group.draw(self.board.surface)
             pygame.display.flip()
             self.fps_clock.tick(100)
 
@@ -259,6 +255,10 @@ class TheGame:
                     self.player.move_y(-self.player.get_speed)
                     self.set_state = "down"
 
+                if event.key == pygame.K_SPACE:
+                    self.other_group.add(self.player.shoot())
+                    self.bullets.add(self.player.shoot())
+
             elif event.type == pygame.KEYUP:
                 self.set_state = "no state"
 
@@ -289,11 +289,12 @@ class Drawable:
         surface.blit(self.surface, self.rect)
 
 
-class Rooms(Drawable):
+class Rooms(Drawable, pygame.sprite.Sprite):
     wall_lines = None
 
     def __init__(self, x, y, width=1000, height=600, color=(0, 0, 0)):
         super(Rooms, self).__init__(width, height, x, y, color)
+        pygame.sprite.Sprite.__init__(self)
         wall_width = 10
         wall_color = (0, 0, 0)
         wall_corners = [(150, 200), (0, 200), (0, 0), (200, 0), (200, 200), (190, 200), (300, 200), (200, 200),
@@ -310,13 +311,11 @@ class Player(Drawable, pygame.sprite.Sprite):
         super(Player, self).__init__(width, height, x, y, color)
         pygame.sprite.Sprite.__init__(self)
         self.max_speed = max_speed
-        self.surface.fill(color)
-        # self.player_img = pygame.image.load("images/character.png")
-        # self.surface.blit(self.player_img, (0, 0), (14, 9, 33, 39))
-        # self.player_img = pygame.transform.scale(self.player_img, (0, 0))
-        # self.surface.blit(self.player_img, (0, 0), (0, 0, Player.my_player_width, Player.my_player_height))
-        # self.rect = self.player_img.get_rect()
-        # self.surface.blit(self.player_img, (0, 0), (3, 7, 7, 13))
+        self.image = self.surface
+        self.image.fill(color)
+        self.rect = self.image.get_rect(x=x, y=y)
+        # self.image = pygame.image.load('images/character.png').convert_alpha()
+        # self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
     @property
     def get_speed(self):
@@ -329,9 +328,6 @@ class Player(Drawable, pygame.sprite.Sprite):
     @property
     def get_height(self):
         return self.height
-
-    def update(self, direction):
-        pass
 
     def move_x(self, x):
         if x != 0:
@@ -353,16 +349,40 @@ class Player(Drawable, pygame.sprite.Sprite):
                 else:
                     self.rect.y -= delta_y
 
+    def shoot(self):
+        bullet = Bullet(self.rect.centerx, self.rect.top)
+        return bullet
 
-class Zombie(Player):
-    max_speed = None
+
+class Bullet(Player, pygame.sprite.Sprite):
+
+    def __init__(self, x, y):
+        bullet_img = pygame.image.load("images/bullet.png").convert()
+        pygame.sprite.Sprite.__init__(self)
+        self.image = bullet_img
+        self.image.set_colorkey((255, 255, 0))
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.speedy = -10
+
+    def update(self):
+        self.rect.y += self.speedy
+        # kill if it moves off the top of the screen
+        if self.rect.bottom < 0:
+            self.kill()
+
+
+class Zombie(Player, pygame.sprite.Sprite):
 
     def __init__(self, x, y, victim, width, height, color=(255, 0, 0), max_speed=1):
         super(Player, self).__init__(width, height, x, y, color)
+        pygame.sprite.Sprite.__init__(self)
         self.max_speed = max_speed
-        self.surface.fill(color)
+        self.image = self.surface
+        self.image.fill(color)
+        self.rect = self.image.get_rect(x=x, y=y)
         self.victim = victim
-        Zombie.max_speed = max_speed
 
     def zombie_natural_moves(self):
         moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
@@ -390,3 +410,5 @@ class Zombie(Player):
 if __name__ == "__main__":
     game = TheGame(1000, 600)
     game.game_intro()
+    game.run()
+
