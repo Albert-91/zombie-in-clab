@@ -9,8 +9,8 @@ class Board:
     def __init__(self, width, height):
         self.surface = pygame.display.set_mode((width, height), 0, 32)
         pygame.display.set_caption('Zombie in CLab')
-        self.bg = pygame.image.load("images/floor.jpg")
-        # self.bg = pygame.image.load("images/terrain_atlas.png")
+        self.bg = pygame.image.load("images/terrain_atlas.png")
+        self.intro_bg = pygame.image.load("images/floor.jpg")
         # self.intro_screen = pygame.image.load('images/intro_screen.png')
         menu_font_path = pygame.font.match_font('arial', bold=1)
         self.menu_font = pygame.font.Font(menu_font_path, 45)
@@ -33,8 +33,8 @@ class Board:
     def draw_menu(self, *args):
         background = (0, 0, 0)
         self.surface.fill(background)
-        intro_bg = pygame.image.load("images/floor.jpg")
-        self.surface.blit(intro_bg, (0, 0), (0, 0, 200, 200))
+        
+        self.surface.blit(self.intro_bg, (0, 0), (0, 0, 200, 200))
         self.draw_text(self.surface, "Zombie in CLab", TheGame.game_width / 2, TheGame.game_height * 0.3,
                        self.title_font)
         self.draw_text(self.surface, "Play", TheGame.game_width / 2, TheGame.game_height * 0.6, self.menu_font)
@@ -48,8 +48,7 @@ class Board:
     def draw_options(self, *args):
         background = (0, 0, 0)
         self.surface.fill(background)
-        intro_bg = pygame.image.load("images/floor.jpg")
-        self.surface.blit(intro_bg, (0, 0), (0, 0, 200, 200))
+        self.surface.blit(self.intro_bg, (0, 0), (0, 0, 200, 200))
         self.draw_text(self.surface, "Controls", TheGame.game_width / 2, TheGame.game_height * 0.35, self.options_font)
         self.draw_text(self.surface, "Audio", TheGame.game_width / 2, TheGame.game_height * 0.5, self.options_font)
         self.draw_text(self.surface, "Return", TheGame.game_width / 2, TheGame.game_height * 0.65, self.options_font)
@@ -75,7 +74,8 @@ class TheGame:
 
     def __init__(self, width, height):
         pygame.init()
-        self.set_state = 0
+        self.set_state = "no state"
+        self.turn_to_shoot = "down"
         TheGame.game_width = width
         TheGame.game_height = height
         self.number_of_zombies = 20
@@ -137,7 +137,6 @@ class TheGame:
         option = True
         i = 0.325
         while option:
-            print(i)
             mark_up_opt_pos = 0.325
             mark_down_opt_pos = 0.625
             mark_pos_y = TheGame.game_height * i
@@ -153,7 +152,7 @@ class TheGame:
                         game.game_intro()
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
                         if i > mark_up_opt_pos:
-                            """without multiplying and dividing by 1000, i in up position has 0.324(9)"""
+                            """without multiplying and dividing by 1000, i in top position has 0.324(9)"""
                             i *= 1000
                             i -= 0.15 * 1000
                             i /= 1000
@@ -183,12 +182,16 @@ class TheGame:
             # player_rect = pygame.Rect(self.player)
             """states for moving while each button is pressed"""
             if self.set_state == "left":
+                self.turn_to_shoot = "left"
                 self.player.move_x(self.player.max_speed)
             elif self.set_state == "right":
+                self.turn_to_shoot = "right"
                 self.player.move_x(-self.player.max_speed)
             elif self.set_state == "up":
+                self.turn_to_shoot = "up"
                 self.player.move_y(self.player.max_speed)
             elif self.set_state == "down":
+                self.turn_to_shoot = "down"
                 self.player.move_y(-self.player.max_speed)
 
             for self.zombie_person in self.zombie_group:
@@ -223,8 +226,9 @@ class TheGame:
             self.all_sprites_group.draw(self.board.surface)
             self.zombie_group.update()
             self.zombie_group.draw(self.board.surface)
+            self.bullets.update()
             pygame.display.flip()
-            self.fps_clock.tick(100)
+            self.fps_clock.tick(79)
 
     def handle_events(self):
         """handling the system events, like keyboard buttons or quit the game"""
@@ -256,17 +260,12 @@ class TheGame:
                     self.set_state = "down"
 
                 if event.key == pygame.K_SPACE:
-                    self.other_group.add(self.player.shoot())
-                    self.bullets.add(self.player.shoot())
-
+                    turn_angle = {"up": 0, "right": 270, "down": 180, "left": 90}
+                    self.all_sprites_group.add(self.player.shoot(turn_angle[self.turn_to_shoot]))
+                    self.bullets.add(self.player.shoot(turn_angle[self.turn_to_shoot]))   
+                
             elif event.type == pygame.KEYUP:
                 self.set_state = "no state"
-
-            """uncomment if you want to move by mouse"""
-            # if event.type == pygame.MOUSEMOTION:
-            #     x, y = event.pos
-            #     self.player1.move_x(x)
-            #     self.player1.move_y(y)
 
     def move_cond(self, player, other):
         player_rect = pygame.Rect(player)
@@ -349,27 +348,36 @@ class Player(Drawable, pygame.sprite.Sprite):
                 else:
                     self.rect.y -= delta_y
 
-    def shoot(self):
-        bullet = Bullet(self.rect.centerx, self.rect.top)
+    def shoot(self, angle):
+        bullet = Bullet(self.rect.centerx, self.rect.top, angle)
         return bullet
 
 
 class Bullet(Player, pygame.sprite.Sprite):
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, angle):
         bullet_img = pygame.image.load("images/bullet.png").convert()
+        
         pygame.sprite.Sprite.__init__(self)
         self.image = bullet_img
+        self.width = 50
+        self.height = 100
+        self.angle = angle
+        self.image = pygame.Surface((self.width, self.height))
+        self.image.fill((0, 0, 0))
+        #self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image.set_colorkey((255, 255, 0))
         self.rect = self.image.get_rect()
+        #self.image = pygame.transform.rotate(bullet_img, self.angle)
         self.rect.bottom = y
         self.rect.centerx = x
-        self.speedy = -10
+        self.max_speed = -10
 
     def update(self):
-        self.rect.y += self.speedy
+        self.rect.y += self.max_speed
         # kill if it moves off the top of the screen
-        if self.rect.bottom < 0:
+        if self.rect.top <= 0 or self.rect.bottom >= TheGame.game_height \
+            or self.rect.right >= TheGame.game_width or self.rect.left <= 0:
             self.kill()
 
 
@@ -409,6 +417,6 @@ class Zombie(Player, pygame.sprite.Sprite):
 
 if __name__ == "__main__":
     game = TheGame(1000, 600)
-    game.game_intro()
+    #game.game_intro()
     game.run()
 
