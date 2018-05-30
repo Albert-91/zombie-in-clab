@@ -95,6 +95,9 @@ class TheGame:
             self.zombie_group.add(self.zombie_person)
             self.other_group.add(self.zombie_person)
 
+        pygame.key.set_repeat(5, 50)
+        
+        
     def game_intro(self):
         intro = True
         i = 0.58
@@ -181,18 +184,7 @@ class TheGame:
             self.handle_events()
             # player_rect = pygame.Rect(self.player)
             """states for moving while each button is pressed"""
-            if self.set_state == "left":
-                self.turn_to_shoot = "left"
-                self.player.move_x(self.player.max_speed)
-            elif self.set_state == "right":
-                self.turn_to_shoot = "right"
-                self.player.move_x(-self.player.max_speed)
-            elif self.set_state == "up":
-                self.turn_to_shoot = "up"
-                self.player.move_y(self.player.max_speed)
-            elif self.set_state == "down":
-                self.turn_to_shoot = "down"
-                self.player.move_y(-self.player.max_speed)
+            
 
             for self.zombie_person in self.zombie_group:
                 distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
@@ -222,11 +214,11 @@ class TheGame:
                             self.zombie_person.move_y(-self.zombie_person.max_speed)
 
             self.board.draw(self.room)
-            self.all_sprites_group.update(self.turn_to_shoot)
+            self.all_sprites_group.update()
             self.all_sprites_group.draw(self.board.surface)
             self.zombie_group.update()
             self.zombie_group.draw(self.board.surface)
-            self.bullets.update(self.turn_to_shoot)
+            self.bullets.update()
             hits = pygame.sprite.groupcollide(self.zombie_group, self.bullets, True, True)
             for hit in hits:
                 self.all_sprites_group.add(self.zombie_person)
@@ -371,17 +363,17 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.centery = y
         self.max_speed = 5
 
-    def update(self, direction):
-        if direction == 'down':
+    def update(self):
+        if self.angle == 180:
             self.rect.y += self.max_speed
-        elif direction == 'up':
+        elif self.angle == 0:
             self.rect.y -= self.max_speed
-        elif direction == 'right':
+        elif self.angle == 270:
             self.rect.x += self.max_speed
-        elif direction == 'left':
+        elif self.angle == 90:
             self.rect.x -= self.max_speed
 
-        # kill if it moves off the top of the screen
+        # kill if it will touch 
         if self.rect.top < 0 or self.rect.bottom > TheGame.game_height or\
                 self.rect.right > TheGame.game_width or self.rect.left < 0:
             self.kill()
