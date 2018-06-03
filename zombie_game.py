@@ -93,6 +93,9 @@ class TheGame:
             self.zombie_group.add(self.zombie_person)
             self.other_group.add(self.zombie_person)
 
+        pygame.key.set_repeat(5, 50)
+        
+        
     def game_intro(self):
         intro = True
         i = 0.58
@@ -177,6 +180,13 @@ class TheGame:
         max_distance = 170
         while True:
             self.handle_events()
+<<<<<<< HEAD
+=======
+            # player_rect = pygame.Rect(self.player)
+            """states for moving while each button is pressed"""
+            
+
+>>>>>>> efeb1e349cbd8db55d171f20ee28a5d2ff9414c0
             for self.zombie_person in self.zombie_group:
                 distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
                            (self.zombie_person.rect.y - self.player.rect.y) ** 2
@@ -205,12 +215,20 @@ class TheGame:
                             self.zombie_person.move_y(-self.zombie_person.max_speed)
 
             self.board.draw(self.room)
-            self.all_sprites_group.update(self.turn_to_shoot)
+            self.all_sprites_group.update()
             self.all_sprites_group.draw(self.board.surface)
             self.zombie_group.update()
             self.zombie_group.draw(self.board.surface)
+<<<<<<< HEAD
             self.bullets.update(self.turn_to_shoot)
             pygame.sprite.groupcollide(self.zombie_group, self.bullets, True, True)
+=======
+            self.bullets.update()
+            hits = pygame.sprite.groupcollide(self.zombie_group, self.bullets, True, True)
+            for hit in hits:
+                self.all_sprites_group.add(self.zombie_person)
+                self.zombie_group.add(self.zombie_person)
+>>>>>>> efeb1e349cbd8db55d171f20ee28a5d2ff9414c0
             pygame.display.flip()
             self.fps_clock.tick(50)
 
@@ -356,7 +374,11 @@ class Bullet(Player, pygame.sprite.Sprite):
         self.rect.centery = y
         self.max_speed = 5
 
+<<<<<<< HEAD
     def update(self, direction):
+=======
+    def update(self):
+>>>>>>> efeb1e349cbd8db55d171f20ee28a5d2ff9414c0
         if self.angle == 180:
             self.rect.y += self.max_speed
         elif self.angle == 0:
@@ -365,11 +387,18 @@ class Bullet(Player, pygame.sprite.Sprite):
             self.rect.x += self.max_speed
         elif self.angle == 90:
             self.rect.x -= self.max_speed
+<<<<<<< HEAD
         # kill if it moves off the top of the screen
         if self.rect.top < 0 or\
            self.rect.bottom > TheGame.game_height or \
            self.rect.right > TheGame.game_width or\
            self.rect.left < 0:
+=======
+
+        # kill if it will touch 
+        if self.rect.top < 0 or self.rect.bottom > TheGame.game_height or\
+                self.rect.right > TheGame.game_width or self.rect.left < 0:
+>>>>>>> efeb1e349cbd8db55d171f20ee28a5d2ff9414c0
             self.kill()
 
 
