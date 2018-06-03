@@ -11,13 +11,10 @@ class Board:
         pygame.display.set_caption('Zombie in CLab')
         self.bg = pygame.image.load("images/terrain_atlas.png")
         self.intro_bg = pygame.image.load("images/floor.jpg")
-        # self.intro_screen = pygame.image.load('images/intro_screen.png')
         menu_font_path = pygame.font.match_font('arial', bold=1)
         self.menu_font = pygame.font.Font(menu_font_path, 45)
-        options_font_path = pygame.font.match_font('arial', bold=1)
-        self.options_font = pygame.font.Font(options_font_path, 65)
-        title_font_path = pygame.font.match_font('arial', bold=1)
-        self.title_font = pygame.font.Font(title_font_path, 90)
+        self.options_font = pygame.font.Font(menu_font_path, 65)
+        self.title_font = pygame.font.Font(menu_font_path, 90)
 
     def draw(self, *args):
         """param args: list of object to draw"""
@@ -33,7 +30,7 @@ class Board:
     def draw_menu(self, *args):
         background = (0, 0, 0)
         self.surface.fill(background)
-        
+
         self.surface.blit(self.intro_bg, (0, 0), (0, 0, 200, 200))
         self.draw_text(self.surface, "Zombie in CLab", TheGame.game_width / 2, TheGame.game_height * 0.3,
                        self.title_font)
@@ -66,7 +63,7 @@ class Board:
 
 
 class TheGame:
-    counter = 1
+
     game_width = None
     game_height = None
 
@@ -74,7 +71,8 @@ class TheGame:
 
     def __init__(self, width, height):
         pygame.init()
-        self.set_state = "no state"
+        pygame.key.set_repeat(50, 25)
+        self.set_bullet_angle = 180
         self.turn_to_shoot = "down"
         TheGame.game_width = width
         TheGame.game_height = height
@@ -179,21 +177,6 @@ class TheGame:
         max_distance = 170
         while True:
             self.handle_events()
-            # player_rect = pygame.Rect(self.player)
-            """states for moving while each button is pressed"""
-            if self.set_state == "left":
-                self.turn_to_shoot = "left"
-                self.player.move_x(self.player.max_speed)
-            elif self.set_state == "right":
-                self.turn_to_shoot = "right"
-                self.player.move_x(-self.player.max_speed)
-            elif self.set_state == "up":
-                self.turn_to_shoot = "up"
-                self.player.move_y(self.player.max_speed)
-            elif self.set_state == "down":
-                self.turn_to_shoot = "down"
-                self.player.move_y(-self.player.max_speed)
-
             for self.zombie_person in self.zombie_group:
                 distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
                            (self.zombie_person.rect.y - self.player.rect.y) ** 2
@@ -206,7 +189,7 @@ class TheGame:
                     self.zombie_person.zombie_attacks()
 
                 for other_zombie in self.other_group:
-                    if other_zombie != self.zombie_person and\
+                    if other_zombie != self.zombie_person and \
                             pygame.sprite.collide_rect(self.zombie_person, other_zombie):
                         if other_zombie.rect.x > self.zombie_person.rect.x:
                             other_zombie.move_x(-self.zombie_person.max_speed)
@@ -227,12 +210,13 @@ class TheGame:
             self.zombie_group.update()
             self.zombie_group.draw(self.board.surface)
             self.bullets.update(self.turn_to_shoot)
-            hits = pygame.sprite.groupcollide(self.zombie_group, self.bullets, True, True)
-            for hit in hits:
-                self.all_sprites_group.add(self.zombie_person)
-                self.zombie_group.add(self.zombie_person)
+            pygame.sprite.groupcollide(self.zombie_group, self.bullets, True, True)
             pygame.display.flip()
-            self.fps_clock.tick(79)
+            self.fps_clock.tick(50)
+
+    @property
+    def get_zombie(self):
+        return self.zombie_group
 
     def handle_events(self):
         """handling the system events, like keyboard buttons or quit the game"""
@@ -241,35 +225,31 @@ class TheGame:
                 pygame.display.quit()
                 pygame.quit()
                 return True
-
             elif event.type == pygame.KEYDOWN:
+
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     return True
 
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.player.move_x(self.player.get_speed)
-                    self.set_state = "left"
+                    self.set_bullet_angle = 90
 
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.player.move_x(-self.player.get_speed)
-                    self.set_state = "right"
+                    self.set_bullet_angle = 270
 
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
                     self.player.move_y(self.player.get_speed)
-                    self.set_state = "up"
+                    self.set_bullet_angle = 0
 
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     self.player.move_y(-self.player.get_speed)
-                    self.set_state = "down"
+                    self.set_bullet_angle = 180
 
                 if event.key == pygame.K_SPACE:
-                    turn_angle = {"up": 0, "right": 270, "down": 180, "left": 90}
-                    self.all_sprites_group.add(self.player.shoot(turn_angle[self.turn_to_shoot]))
-                    self.bullets.add(self.player.shoot(turn_angle[self.turn_to_shoot]))   
-                
-            elif event.type == pygame.KEYUP:
-                self.set_state = "no state"
+                    self.all_sprites_group.add(self.player.shoot(self.set_bullet_angle))
+                    self.bullets.add(self.player.shoot(self.set_bullet_angle))
 
 
 class Drawable:
@@ -304,17 +284,17 @@ class Rooms(Drawable, pygame.sprite.Sprite):
 
 class Player(Drawable, pygame.sprite.Sprite):
 
-    def __init__(self, x, y, width=20, height=20, color=(0, 0, 255), max_speed=4):
+    def __init__(self, x, y, width=20, height=20, color=(0, 0, 255), max_speed=4, angle=180):
         super(Player, self).__init__(width, height, x, y, color)
         pygame.sprite.Sprite.__init__(self)
         self.max_speed = max_speed
+        self.angle = angle
         self.image = self.surface
         self.width = width
         self.height = height
-        # self.image.fill(color)
-        self.image_im = pygame.image.load('images/character.png').convert_alpha()
+        self.image_im = pygame.image.load('images/character.png').convert_alpha(self.image)
         self.image.blit(self.image_im, (0, 0), (14, 9, 33, 39))
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.image_im = pygame.transform.scale(self.image_im, (self.width, self.height))
         self.rect = self.image.get_rect(x=x, y=y)
 
     @property
@@ -328,6 +308,10 @@ class Player(Drawable, pygame.sprite.Sprite):
     @property
     def get_height(self):
         return self.height
+
+    @property
+    def get_angle(self):
+        return self.angle
 
     def move_x(self, x):
         if x != 0:
@@ -354,16 +338,17 @@ class Player(Drawable, pygame.sprite.Sprite):
         return bullet
 
 
-class Bullet(pygame.sprite.Sprite):
+class Bullet(Player, pygame.sprite.Sprite):
+
+    bullet_img = pygame.image.load("images/bullet.png")
 
     def __init__(self, x, y, angle):
-        bullet_img = pygame.image.load("images/bullet.png")
         pygame.sprite.Sprite.__init__(self)
         self.width = 5
         self.height = 10
         self.angle = angle
         self.image = pygame.Surface((self.width, self.height))
-        self.image = bullet_img
+        self.image = Bullet.bullet_img
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.rotate(self.image, self.angle)
         self.rect = self.image.get_rect()
@@ -372,18 +357,19 @@ class Bullet(pygame.sprite.Sprite):
         self.max_speed = 5
 
     def update(self, direction):
-        if direction == 'down':
+        if self.angle == 180:
             self.rect.y += self.max_speed
-        elif direction == 'up':
+        elif self.angle == 0:
             self.rect.y -= self.max_speed
-        elif direction == 'right':
+        elif self.angle == 270:
             self.rect.x += self.max_speed
-        elif direction == 'left':
+        elif self.angle == 90:
             self.rect.x -= self.max_speed
-
         # kill if it moves off the top of the screen
-        if self.rect.top < 0 or self.rect.bottom > TheGame.game_height or\
-                self.rect.right > TheGame.game_width or self.rect.left < 0:
+        if self.rect.top < 0 or\
+           self.rect.bottom > TheGame.game_height or \
+           self.rect.right > TheGame.game_width or\
+           self.rect.left < 0:
             self.kill()
 
 
