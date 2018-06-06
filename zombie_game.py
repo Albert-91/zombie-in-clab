@@ -101,7 +101,9 @@ class TheGame:
             mark_quit_pos = 0.77
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.38
-            intro_object = Player(mark_pos_x, mark_pos_y, 26, 26, (255, 0, 0))
+            color = (255, 0, 0)
+            intro_object = Player(mark_pos_x, mark_pos_y, 26, 26, color)
+            intro_object.filling(color)
             self.board.draw_menu(intro_object)
 
             for event in pygame.event.get():
@@ -139,7 +141,9 @@ class TheGame:
             mark_down_opt_pos = 0.625
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.32
-            intro_object = Player(mark_pos_x, mark_pos_y, 30, 30, (255, 0, 0))
+            color = (255, 0, 0)
+            intro_object = Player(mark_pos_x, mark_pos_y, 30, 30, color)
+            intro_object.filling(color)
             self.board.draw_options(intro_object)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -205,6 +209,7 @@ class TheGame:
                             self.zombie_person.move_y(-self.zombie_person.max_speed)
 
             self.board.draw(self.room)
+            self.player.animation()
             self.all_sprites_group.update(self.turn_to_shoot)
             self.all_sprites_group.draw(self.board.surface)
             self.zombie_group.update()
@@ -292,11 +297,16 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.image = self.surface
         self.width = width
         self.height = height
+        self.rect = self.image.get_rect(x=x, y=y)
+    
+    def filling(self, color):
+        self.image.fill(color)
+
+    def animation(self, angle=0):
         self.image_im = pygame.image.load('images/character.png').convert_alpha(self.image)
         self.image.blit(self.image_im, (0, 0), (14, 9, 33, 39))
         self.image_im = pygame.transform.scale(self.image_im, (self.width, self.height))
-        self.rect = self.image.get_rect(x=x, y=y)
-
+    
     @property
     def get_speed(self):
         return self.max_speed
