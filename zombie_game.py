@@ -92,6 +92,8 @@ class TheGame:
             self.zombie_person = Zombie(x, y, self.player, self.player.get_width - 6, self.player.get_height - 6)
             self.zombie_group.add(self.zombie_person)
             self.other_group.add(self.zombie_person)
+            self.all_sprites_group.add(self.zombie_person)
+
 
     def game_intro(self):
         intro = True
@@ -179,6 +181,7 @@ class TheGame:
     def run(self):
         """Main loop of game"""
         max_distance = 170
+        a = 0
         while True:
             self.handle_events()
             for self.zombie_person in self.zombie_group:
@@ -212,8 +215,6 @@ class TheGame:
             self.player.animation()
             self.all_sprites_group.update(self.turn_to_shoot)
             self.all_sprites_group.draw(self.board.surface)
-            self.zombie_group.update()
-            self.zombie_group.draw(self.board.surface)
             self.bullets.update(self.turn_to_shoot)
             pygame.sprite.groupcollide(self.zombie_group, self.bullets, True, True)
             pygame.display.flip()
