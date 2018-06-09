@@ -25,7 +25,6 @@ class Board:
         for drawable in args:
             drawable.draw_on(self.surface)
 
-        pygame.display.update()
 
     def draw_menu(self, *args):
         background = (0, 0, 0)
