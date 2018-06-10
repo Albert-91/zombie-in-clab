@@ -25,7 +25,6 @@ class Board:
         for drawable in args:
             drawable.draw_on(self.surface)
 
-
     def draw_menu(self, *args):
         background = (0, 0, 0)
         self.surface.fill(background)
@@ -62,7 +61,6 @@ class Board:
 
 
 class TheGame:
-
     game_width = None
     game_height = None
 
@@ -75,6 +73,8 @@ class TheGame:
         self.turn_to_shoot = "down"
         TheGame.game_width = width
         TheGame.game_height = height
+        self.width = width
+        self.height = height
         self.number_of_zombies = 20
         self.board = Board(width, height)
         self.fps_clock = pygame.time.Clock()
@@ -93,6 +93,9 @@ class TheGame:
             self.other_group.add(self.zombie_person)
             self.all_sprites_group.add(self.zombie_person)
 
+    @property
+    def get_width(self):
+        return self.width
 
     def game_intro(self):
         intro = True
@@ -175,12 +178,11 @@ class TheGame:
                             pass
 
             pygame.display.flip()
-            self.fps_clock.tick(100)
+            self.fps_clock.tick(30)
 
     def run(self):
         """Main loop of game"""
         max_distance = 170
-        a = 0
         while True:
             self.handle_events()
             for self.zombie_person in self.zombie_group:
@@ -212,16 +214,17 @@ class TheGame:
 
             self.board.draw(self.room)
             self.player.animation()
-            self.all_sprites_group.update(self.turn_to_shoot)
+            dead = False
             self.all_sprites_group.draw(self.board.surface)
-            self.bullets.update(self.turn_to_shoot)
-            pygame.sprite.groupcollide(self.zombie_group, self.bullets, True, True)
+            for bullet in self.bullets:
+                for zombie in self.zombie_group:
+                    if pygame.sprite.collide_circle(zombie, bullet):
+                        zombie.kill()
+                        dead = True
+            self.all_sprites_group.update(self.turn_to_shoot, dead)
+            self.bullets.update(self.turn_to_shoot, dead)
             pygame.display.flip()
             self.fps_clock.tick(50)
-
-    @property
-    def get_zombie(self):
-        return self.zombie_group
 
     def handle_events(self):
         """handling the system events, like keyboard buttons or quit the game"""
@@ -298,7 +301,8 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.width = width
         self.height = height
         self.rect = self.image.get_rect(x=x, y=y)
-    
+        self.image_im = self.image
+
     def filling(self, color):
         self.image.fill(color)
 
@@ -306,7 +310,7 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.image_im = pygame.image.load('images/character.png').convert_alpha(self.image)
         self.image.blit(self.image_im, (0, 0), (14, 9, 33, 39))
         self.image_im = pygame.transform.scale(self.image_im, (self.width, self.height))
-    
+
     @property
     def get_speed(self):
         return self.max_speed
@@ -349,7 +353,6 @@ class Player(Drawable, pygame.sprite.Sprite):
 
 
 class Bullet(Player, pygame.sprite.Sprite):
-
     bullet_img = pygame.image.load("images/bullet.png")
 
     def __init__(self, x, y, angle):
@@ -358,15 +361,15 @@ class Bullet(Player, pygame.sprite.Sprite):
         self.height = 10
         self.angle = angle
         self.image = pygame.Surface((self.width, self.height))
+        self.rect = self.image.get_rect()
         self.image = Bullet.bullet_img
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.rotate(self.image, self.angle)
-        self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.centery = y
         self.max_speed = 5
 
-    def update(self, direction):
+    def update(self, direction, dead):
         if self.angle == 180:
             self.rect.y += self.max_speed
         elif self.angle == 0:
@@ -376,10 +379,12 @@ class Bullet(Player, pygame.sprite.Sprite):
         elif self.angle == 90:
             self.rect.x -= self.max_speed
         # kill if it moves off the top of the screen
-        if self.rect.top < 0 or\
-           self.rect.bottom > TheGame.game_height or \
-           self.rect.right > TheGame.game_width or\
-           self.rect.left < 0:
+        if self.rect.top < 0 or \
+                self.rect.bottom > TheGame.game_height or \
+                self.rect.right > TheGame.game_width or \
+                self.rect.left < 0:
+            self.kill()
+        if dead:
             self.kill()
 
 
@@ -420,5 +425,4 @@ class Zombie(Player, pygame.sprite.Sprite):
 if __name__ == "__main__":
     game = TheGame(1000, 600)
     game.game_intro()
-    #game.run()
-
+    # game.run()
