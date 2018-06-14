@@ -184,6 +184,7 @@ class TheGame:
         """Main loop of game"""
         max_distance = 170
         while True:
+            dead = False
             self.handle_events()
             for self.zombie_person in self.zombie_group:
                 distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
@@ -195,7 +196,10 @@ class TheGame:
                     self.zombie_person.zombie_follows()
                 else:
                     self.zombie_person.zombie_attacks()
-
+                for bullet in self.bullets:
+                    if pygame.sprite.collide_rect(self.zombie_person, bullet):
+                        self.zombie_person.kill()
+                        dead = True
                 for other_zombie in self.other_group:
                     if other_zombie != self.zombie_person and \
                             pygame.sprite.collide_rect(self.zombie_person, other_zombie):
@@ -214,13 +218,7 @@ class TheGame:
 
             self.board.draw(self.room)
             self.player.animation()
-            dead = False
             self.all_sprites_group.draw(self.board.surface)
-            for bullet in self.bullets:
-                for zombie in self.zombie_group:
-                    if pygame.sprite.collide_circle(zombie, bullet):
-                        zombie.kill()
-                        dead = True
             self.all_sprites_group.update(self.turn_to_shoot, dead)
             self.bullets.update(self.turn_to_shoot, dead)
             pygame.display.flip()
@@ -386,7 +384,7 @@ class Bullet(Player, pygame.sprite.Sprite):
             self.kill()
         if dead:
             self.kill()
-
+       
 
 class Zombie(Player, pygame.sprite.Sprite):
 
