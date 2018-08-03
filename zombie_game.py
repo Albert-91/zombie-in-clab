@@ -2,6 +2,8 @@ import pygame
 from random import randint
 import math
 
+from bullet import Bullet
+
 
 class Board:
     """Class responsible for drawing window game"""
@@ -219,8 +221,8 @@ class TheGame:
             self.board.draw(self.room)
             self.player.animation()
             self.all_sprites_group.draw(self.board.surface)
-            self.all_sprites_group.update(self.turn_to_shoot, dead)
-            self.bullets.update(self.turn_to_shoot, dead)
+            self.all_sprites_group.update(self.turn_to_shoot, dead, self.width, self.height)
+            self.bullets.update(self.turn_to_shoot, dead, self.width, self.height)
             pygame.display.flip()
             self.fps_clock.tick(50)
 
@@ -350,42 +352,6 @@ class Player(Drawable, pygame.sprite.Sprite):
         return bullet
 
 
-class Bullet(Player, pygame.sprite.Sprite):
-    bullet_img = pygame.image.load("images/bullet.png")
-
-    def __init__(self, x, y, angle):
-        pygame.sprite.Sprite.__init__(self)
-        self.width = 5
-        self.height = 10
-        self.angle = angle
-        self.image = pygame.Surface((self.width, self.height))
-        self.rect = self.image.get_rect()
-        self.image = Bullet.bullet_img
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
-        self.image = pygame.transform.rotate(self.image, self.angle)
-        self.rect.centerx = x
-        self.rect.centery = y
-        self.max_speed = 5
-
-    def update(self, direction, dead):
-        if self.angle == 180:
-            self.rect.y += self.max_speed
-        elif self.angle == 0:
-            self.rect.y -= self.max_speed
-        elif self.angle == 270:
-            self.rect.x += self.max_speed
-        elif self.angle == 90:
-            self.rect.x -= self.max_speed
-        # kill if it moves off the top of the screen
-        if self.rect.top < 0 or \
-                self.rect.bottom > TheGame.game_height or \
-                self.rect.right > TheGame.game_width or \
-                self.rect.left < 0:
-            self.kill()
-        if dead:
-            self.kill()
-       
-
 class Zombie(Player, pygame.sprite.Sprite):
 
     def __init__(self, x, y, victim, width, height, color=(255, 0, 0), max_speed=1):
@@ -422,5 +388,5 @@ class Zombie(Player, pygame.sprite.Sprite):
 
 if __name__ == "__main__":
     game = TheGame(1000, 600)
-    game.game_intro()
-    # game.run()
+    # game.game_intro()
+    game.run()
