@@ -70,7 +70,7 @@ class TheGame:
 
     def __init__(self, width, height):
         pygame.init()
-        pygame.key.set_repeat(50, 25)
+        # pygame.key.set_repeat(50, 25)
         self.set_bullet_angle = 180
         self.turn_to_shoot = "down"
         TheGame.game_width = width
@@ -185,6 +185,7 @@ class TheGame:
             dead = False
             self.handle_events()
             for self.zombie_person in self.zombie_group:
+                self.zombie_person.animation()
                 distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
                            (self.zombie_person.rect.y - self.player.rect.y) ** 2
                 distance = math.sqrt(distance)
@@ -216,6 +217,7 @@ class TheGame:
 
             self.board.draw(self.room)
             self.player.animation()
+
             self.all_sprites_group.draw(self.board.surface)
             self.all_sprites_group.update(self.turn_to_shoot, dead, self.width, self.height)
             self.bullets.update(self.turn_to_shoot, dead, self.width, self.height)
@@ -229,8 +231,19 @@ class TheGame:
                 pygame.display.quit()
                 pygame.quit()
                 return True
-            elif event.type == pygame.KEYDOWN:
 
+            elif event.type == pygame.KEYUP:
+                """turning on continuous moves by pressing buttons"""
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    pygame.key.set_repeat(50, 25)
+                elif event.key == pygame.K_UP or event.key == pygame.K_w:
+                    pygame.key.set_repeat(50, 25)
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    pygame.key.set_repeat(50, 25)
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    pygame.key.set_repeat(50, 25)
+
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     return True
@@ -252,6 +265,7 @@ class TheGame:
                     self.set_bullet_angle = 180
 
                 if event.key == pygame.K_SPACE:
+                    pygame.key.set_repeat(50, 25)
                     self.all_sprites_group.add(self.player.shoot(self.set_bullet_angle))
                     self.bullets.add(self.player.shoot(self.set_bullet_angle))
 
