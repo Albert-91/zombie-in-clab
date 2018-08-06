@@ -70,7 +70,6 @@ class TheGame:
 
     def __init__(self, width, height):
         pygame.init()
-        # pygame.key.set_repeat(50, 25)
         self.set_bullet_angle = 180
         self.turn_to_shoot = "down"
         TheGame.game_width = width
@@ -103,9 +102,8 @@ class TheGame:
             mark_quit_pos = 0.77
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.38
-            color = (255, 0, 0)
-            intro_object = Player(mark_pos_x, mark_pos_y, 26, 26, color)
-            intro_object.filling(color)
+            intro_object = Player(mark_pos_x, mark_pos_y, 26, 26)
+            intro_object.animation(0, "images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y))
             self.board.draw_menu(intro_object)
 
             for event in pygame.event.get():
@@ -143,9 +141,8 @@ class TheGame:
             mark_down_opt_pos = 0.625
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.32
-            color = (255, 0, 0)
-            intro_object = Player(mark_pos_x, mark_pos_y, 30, 30, color)
-            intro_object.filling(color)
+            intro_object = Player(mark_pos_x, mark_pos_y, 30, 30)
+            intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y))
             self.board.draw_options(intro_object)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -185,7 +182,7 @@ class TheGame:
             dead = False
             self.handle_events()
             for self.zombie_person in self.zombie_group:
-                self.zombie_person.animation()
+                self.zombie_person.animation(0, "images/zombies.png", (0, 0), (6, 2, 22, 30))
                 distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
                            (self.zombie_person.rect.y - self.player.rect.y) ** 2
                 distance = math.sqrt(distance)
@@ -216,8 +213,7 @@ class TheGame:
                             self.zombie_person.move_y(-self.zombie_person.max_speed, TheGame.game_height)
 
             self.board.draw(self.room)
-            self.player.animation()
-
+            self.player.animation(0, "images/character.png", (0, 0), (14, 9, 33, 39))
             self.all_sprites_group.draw(self.board.surface)
             self.all_sprites_group.update(self.turn_to_shoot, dead, self.width, self.height)
             self.bullets.update(self.turn_to_shoot, dead, self.width, self.height)

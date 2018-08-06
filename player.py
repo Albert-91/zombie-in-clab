@@ -14,15 +14,12 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.width = width
         self.height = height
         self.rect = self.image.get_rect(x=x, y=y)
-        self.image_im = self.image
+        self.picture = None
 
-    def filling(self, color):
-        self.image.fill(color)
-
-    def animation(self, angle=0):
-        self.image_im = pygame.image.load('images/character.png').convert_alpha(self.image)
-        self.image.blit(self.image_im, (0, 0), (14, 9, 33, 39))
-        self.image_im = pygame.transform.scale(self.image_im, (self.width, self.height))
+    def animation(self, angle=0, image_file=0, blit_destination=0, blit_area=0):
+        self.picture = pygame.image.load(image_file)
+        self.image.blit(self.picture, blit_destination, blit_area)
+        self.picture = pygame.transform.scale(self.picture, (self.width, self.height))
 
     def move_x(self, x, x_limit):
         if x != 0:
@@ -47,4 +44,3 @@ class Player(Drawable, pygame.sprite.Sprite):
     def shoot(self, angle):
         bullet = Bullet(self.rect.centerx, self.rect.centery, angle)
         return bullet
-

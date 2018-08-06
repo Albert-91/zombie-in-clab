@@ -12,11 +12,7 @@ class Zombie(Player, pygame.sprite.Sprite):
         self.image = self.surface
         self.rect = self.image.get_rect(x=x, y=y)
         self.victim = victim
-
-    def animation(self, angle=0):
-        self.image_im = pygame.image.load('images/zombies.png')
-        self.image.blit(self.image_im, (0, 0), (6, 2, 22, 30))
-        # self.image_im = pygame.transform.scale(self.image_im, (self.width, self.height))
+        self.picture = None
 
     def zombie_natural_moves(self):
         moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
