@@ -7,7 +7,6 @@ from zombie import Zombie
 
 
 class Board:
-    """Class responsible for drawing window game"""
 
     def __init__(self, width, height):
         self.surface = pygame.display.set_mode((width, height), 0, 32)
@@ -102,8 +101,8 @@ class TheGame:
             mark_quit_pos = 0.77
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.38
-            intro_object = Player(mark_pos_x, mark_pos_y, 26, 26)
-            intro_object.animation(0, "images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y))
+            intro_object = Player(mark_pos_x, mark_pos_y, 40, 40)
+            intro_object.animation(0, "images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_menu(intro_object)
 
             for event in pygame.event.get():
@@ -141,8 +140,8 @@ class TheGame:
             mark_down_opt_pos = 0.625
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.32
-            intro_object = Player(mark_pos_x, mark_pos_y, 30, 30)
-            intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y))
+            intro_object = Player(mark_pos_x, mark_pos_y, 45, 45)
+            intro_object.animation(0, "images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_options(intro_object)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -176,7 +175,6 @@ class TheGame:
             self.fps_clock.tick(30)
 
     def run(self):
-        """Main loop of game"""
         max_distance = 170
         while True:
             dead = False
@@ -221,7 +219,6 @@ class TheGame:
             self.fps_clock.tick(50)
 
     def handle_events(self):
-        """handling the system events, like keyboard buttons or quit the game"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.display.quit()
@@ -229,7 +226,7 @@ class TheGame:
                 return True
 
             elif event.type == pygame.KEYUP:
-                """turning on continuous moves by pressing buttons"""
+                """activate continuous moves by pressing buttons"""
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     pygame.key.set_repeat(50, 25)
                 elif event.key == pygame.K_UP or event.key == pygame.K_w:

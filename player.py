@@ -16,10 +16,15 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.rect = self.image.get_rect(x=x, y=y)
         self.picture = None
 
-    def animation(self, angle=0, image_file=0, blit_destination=0, blit_area=0):
+    def animation(self, angle, image_file, blit_destination, blit_area, serial=True):
         self.picture = pygame.image.load(image_file)
-        self.image.blit(self.picture, blit_destination, blit_area)
-        self.picture = pygame.transform.scale(self.picture, (self.width, self.height))
+        if serial:
+            self.surface.blit(self.picture, blit_destination, blit_area)
+            self.picture = pygame.transform.scale(self.picture, (self.width, self.height))
+        else:
+            self.picture = pygame.transform.scale(self.picture, (self.width, self.height))
+            self.surface.blit(self.picture, blit_destination, (0, 0, self.width, self.height))
+
 
     def move_x(self, x, x_limit):
         if x != 0:
