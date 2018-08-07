@@ -17,9 +17,9 @@ class Board:
         self.menu_font = pygame.font.Font(my_font, 45)
         self.options_font = pygame.font.Font(my_font, 65)
         self.title_font = pygame.font.Font(my_font, 90)
+        self.game_over_font = pygame.font.Font(my_font, 150)
 
     def draw(self, *args):
-        """param args: list of object to draw"""
         background = (255, 255, 255)
         self.surface.fill(background)
         self.surface.blit(self.bg, (200, 200), (0, 0, 90, 150))
@@ -50,6 +50,16 @@ class Board:
         self.draw_text(self.surface, "Controls", TheGame.game_width / 2, TheGame.game_height * 0.35, self.options_font)
         self.draw_text(self.surface, "Audio", TheGame.game_width / 2, TheGame.game_height * 0.5, self.options_font)
         self.draw_text(self.surface, "Return", TheGame.game_width / 2, TheGame.game_height * 0.65, self.options_font)
+        for drawable in args:
+            drawable.draw_on(self.surface)
+
+        pygame.display.update()
+
+    def draw_game_over(self, *args):
+        background = (0, 0, 0)
+        self.surface.fill(background)
+        self.draw_text(self.surface, "Game over", TheGame.game_width / 2, TheGame.game_height * 0.4,
+                       self.game_over_font)
         for drawable in args:
             drawable.draw_on(self.surface)
 
@@ -88,7 +98,9 @@ class TheGame:
         for i in range(self.number_of_zombies):
             x = randint(self.player.width, TheGame.game_width - self.player.width)
             y = randint(self.player.height, TheGame.game_height - self.player.height)
-            self.zombie_person = Zombie(x, y, self.player, self.player.width - 6, self.player.height - 6)
+            self.zombie_person = Zombie(x, y, self.player,
+                                        self.player.width - 6, self.player.height - 6,
+                                        self.width, self.height)
             self.zombie_group.add(self.zombie_person)
             self.other_group.add(self.zombie_person)
             self.all_sprites_group.add(self.zombie_person)
@@ -261,6 +273,19 @@ class TheGame:
                     pygame.key.set_repeat(50, 25)
                     self.all_sprites_group.add(self.player.shoot(self.set_bullet_angle))
                     self.bullets.add(self.player.shoot(self.set_bullet_angle))
+
+    def game_over(self):
+        while True:
+            self.board.draw_game_over()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                        return False
+
+            pygame.display.flip()
+            self.fps_clock.tick(30)
 
 
 if __name__ == "__main__":
