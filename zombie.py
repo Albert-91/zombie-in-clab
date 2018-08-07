@@ -37,4 +37,3 @@ class Zombie(Player, pygame.sprite.Sprite):
 
     def zombie_attacks(self):
         pass
-

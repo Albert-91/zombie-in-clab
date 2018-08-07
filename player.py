@@ -15,8 +15,10 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.height = height
         self.rect = self.image.get_rect(x=x, y=y)
         self.picture = None
+        self.lives = 3
+        self.shield = 100
 
-    def animation(self, angle, image_file, blit_destination, blit_area, serial=True):
+    def animation(self, image_file, blit_destination, blit_area, serial=True):
         self.picture = pygame.image.load(image_file)
         if serial:
             self.surface.blit(self.picture, blit_destination, blit_area)

@@ -23,7 +23,6 @@ class Board:
         background = (255, 255, 255)
         self.surface.fill(background)
         self.surface.blit(self.bg, (200, 200), (0, 0, 90, 150))
-
         for drawable in args:
             drawable.draw_on(self.surface)
 
@@ -79,7 +78,7 @@ class TheGame:
 
     def __init__(self, width, height):
         pygame.init()
-        self.set_bullet_angle = 180
+        self.set_angle = 180
         self.turn_to_shoot = "down"
         TheGame.game_width = width
         TheGame.game_height = height
@@ -112,9 +111,9 @@ class TheGame:
             mark_play_pos = 0.58
             mark_quit_pos = 0.77
             mark_pos_y = TheGame.game_height * i
-            mark_pos_x = TheGame.game_width * 0.38
+            mark_pos_x = TheGame.game_width * 0.37
             intro_object = Player(mark_pos_x, mark_pos_y, 40, 40)
-            intro_object.animation(0, "images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
+            intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_menu(intro_object)
 
             for event in pygame.event.get():
@@ -151,9 +150,9 @@ class TheGame:
             mark_up_opt_pos = 0.325
             mark_down_opt_pos = 0.625
             mark_pos_y = TheGame.game_height * i
-            mark_pos_x = TheGame.game_width * 0.32
+            mark_pos_x = TheGame.game_width * 0.3
             intro_object = Player(mark_pos_x, mark_pos_y, 45, 45)
-            intro_object.animation(0, "images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
+            intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_options(intro_object)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -192,7 +191,7 @@ class TheGame:
             dead = False
             self.handle_events()
             for self.zombie_person in self.zombie_group:
-                self.zombie_person.animation(0, "images/zombies.png", (0, 0), (6, 2, 22, 30))
+                self.zombie_person.animation("images/zombies.png", (0, 0), (6, 2, 22, 30))
                 distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
                            (self.zombie_person.rect.y - self.player.rect.y) ** 2
                 distance = math.sqrt(distance)
@@ -223,12 +222,12 @@ class TheGame:
                             self.zombie_person.move_y(-self.zombie_person.max_speed, TheGame.game_height)
 
             self.board.draw(self.room)
-            self.player.animation(0, "images/character.png", (0, 0), (14, 9, 33, 39))
+            self.player.animation("images/character.png", (0, 0), (14, 9, 33, 39))
             self.all_sprites_group.draw(self.board.surface)
             self.all_sprites_group.update(self.turn_to_shoot, dead, self.width, self.height)
             self.bullets.update(self.turn_to_shoot, dead, self.width, self.height)
             pygame.display.flip()
-            self.fps_clock.tick(50)
+            self.fps_clock.tick(80)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -255,24 +254,28 @@ class TheGame:
 
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.player.move_x(self.player.max_speed, TheGame.game_width)
-                    self.set_bullet_angle = 90
+                    self.set_angle = 90
+                    self.turn_to_shoot = "left"
 
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.player.move_x(-self.player.max_speed, TheGame.game_width)
-                    self.set_bullet_angle = 270
+                    self.set_angle = 270
+                    self.turn_to_shoot = "right"
 
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
                     self.player.move_y(self.player.max_speed, TheGame.game_height)
-                    self.set_bullet_angle = 0
+                    self.set_angle = 0
+                    self.turn_to_shoot = "up"
 
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     self.player.move_y(-self.player.max_speed, TheGame.game_height)
-                    self.set_bullet_angle = 180
+                    self.set_angle = 180
+                    self.turn_to_shoot = "down"
 
                 if event.key == pygame.K_SPACE:
                     pygame.key.set_repeat(50, 25)
-                    self.all_sprites_group.add(self.player.shoot(self.set_bullet_angle))
-                    self.bullets.add(self.player.shoot(self.set_bullet_angle))
+                    self.all_sprites_group.add(self.player.shoot(self.set_angle))
+                    self.bullets.add(self.player.shoot(self.set_angle))
 
     def game_over(self):
         while True:
