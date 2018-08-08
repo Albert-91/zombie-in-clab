@@ -17,6 +17,7 @@ class Board:
         self.menu_font = pygame.font.Font(my_font, 45)
         self.options_font = pygame.font.Font(my_font, 65)
         self.title_font = pygame.font.Font(my_font, 90)
+        self.difficulty_font = pygame.font.Font(my_font, 70)
         self.game_over_font = pygame.font.Font(my_font, 150)
 
     def draw(self, *args):
@@ -27,8 +28,6 @@ class Board:
             drawable.draw_on(self.surface)
 
     def draw_menu(self, *args):
-        background = (0, 0, 0)
-        self.surface.fill(background)
         self.intro_bg = pygame.transform.scale(self.intro_bg, (TheGame.game_width, TheGame.game_height))
         self.surface.blit(self.intro_bg, (0, 0), (0, 0, TheGame.game_width, TheGame.game_height))
         self.draw_text(self.surface, "Zombie in CLab", TheGame.game_width / 2, TheGame.game_height * 0.3,
@@ -42,8 +41,6 @@ class Board:
         pygame.display.update()
 
     def draw_options(self, *args):
-        background = (0, 0, 0)
-        self.surface.fill(background)
         self.intro_bg = pygame.transform.scale(self.intro_bg, (TheGame.game_width, TheGame.game_height))
         self.surface.blit(self.intro_bg, (0, 0), (0, 0, TheGame.game_width, TheGame.game_height))
         self.draw_text(self.surface, "Controls", TheGame.game_width / 2, TheGame.game_height * 0.35, self.options_font)
@@ -59,6 +56,18 @@ class Board:
         self.surface.fill(background)
         self.draw_text(self.surface, "Game over", TheGame.game_width / 2, TheGame.game_height * 0.4,
                        self.game_over_font)
+        for drawable in args:
+            drawable.draw_on(self.surface)
+
+        pygame.display.update()
+
+    def draw_choosing_difficulty(self, *args):
+        self.intro_bg = pygame.transform.scale(self.intro_bg, (TheGame.game_width, TheGame.game_height))
+        self.surface.blit(self.intro_bg, (0, 0), (0, 0, TheGame.game_width, TheGame.game_height))
+        self.draw_text(self.surface, "Easy", TheGame.game_width / 2, TheGame.game_height * 0.2, self.difficulty_font)
+        self.draw_text(self.surface, "Normal", TheGame.game_width / 2, TheGame.game_height * 0.4, self.difficulty_font)
+        self.draw_text(self.surface, "Hard", TheGame.game_width / 2, TheGame.game_height * 0.6, self.difficulty_font)
+        self.draw_text(self.surface, "Zombie hell!", TheGame.game_width / 2, TheGame.game_height * 0.8, self.difficulty_font)
         for drawable in args:
             drawable.draw_on(self.surface)
 
@@ -134,14 +143,11 @@ class TheGame:
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                         if i <= mark_play_pos:
                             intro = False
-                            game.run()
+                            game.game_choosing_difficulty()
                         elif i >= mark_quit_pos:
                             pygame.quit()
                         else:
                             game.game_options()
-
-            pygame.display.flip()
-            self.fps_clock.tick(100)
 
     def game_options(self):
         option = True
@@ -182,8 +188,45 @@ class TheGame:
                             """audio"""
                             pass
 
-            pygame.display.flip()
-            self.fps_clock.tick(30)
+    def game_choosing_difficulty(self):
+        intro = True
+        i = 0.16
+        while intro:
+            mark_play_pos = 0.58
+            mark_quit_pos = 0.77
+            mark_pos_y = TheGame.game_height * i
+            mark_pos_x = TheGame.game_width * 0.25
+            intro_object = Player(mark_pos_x, mark_pos_y, 40, 40)
+            intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
+            self.board.draw_choosing_difficulty(intro_object)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE:
+                        game.game_intro()
+
+                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                        if i > mark_play_pos:
+                            i -= 0.2
+
+                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        if mark_play_pos <= i <= mark_quit_pos:
+                            i += 0.2
+
+                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                        game.run()
+
+    def game_over(self):
+        while True:
+            self.board.draw_game_over()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                        return False
 
     def run(self):
         max_distance = 170
@@ -276,19 +319,6 @@ class TheGame:
                     pygame.key.set_repeat(50, 25)
                     self.all_sprites_group.add(self.player.shoot(self.set_angle))
                     self.bullets.add(self.player.shoot(self.set_angle))
-
-    def game_over(self):
-        while True:
-            self.board.draw_game_over()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                        return False
-
-            pygame.display.flip()
-            self.fps_clock.tick(30)
 
 
 if __name__ == "__main__":
