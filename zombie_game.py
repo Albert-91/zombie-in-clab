@@ -192,8 +192,8 @@ class TheGame:
         intro = True
         i = 0.16
         while intro:
-            mark_play_pos = 0.58
-            mark_quit_pos = 0.77
+            up_limit = i
+            down_limit = i + 3 * 20
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.25
             intro_object = Player(mark_pos_x, mark_pos_y, 40, 40)
@@ -204,19 +204,20 @@ class TheGame:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                 elif event.type == pygame.KEYDOWN:
+                    print(i)
                     if event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE:
                         game.game_intro()
 
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
-                        if i > mark_play_pos:
+                        if i > up_limit:
                             i -= 0.2
 
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        if mark_play_pos <= i <= mark_quit_pos:
+                        if i < down_limit:
                             i += 0.2
 
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                        game.run()
+                        return i
 
     def game_over(self):
         while True:
