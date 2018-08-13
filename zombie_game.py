@@ -107,9 +107,7 @@ class TheGame:
         for i in range(self.number_of_zombies):
             x = randint(self.player.width, TheGame.game_width - self.player.width)
             y = randint(self.player.height, TheGame.game_height - self.player.height)
-            self.zombie_person = Zombie(x, y, self.player,
-                                        self.player.width - 6, self.player.height - 6,
-                                        self.width, self.height)
+            self.zombie_person = Zombie(x, y, self.player, 23, 28, self.width, self.height)
             self.zombie_group.add(self.zombie_person)
             self.other_group.add(self.zombie_person)
             self.all_sprites_group.add(self.zombie_person)
@@ -230,7 +228,7 @@ class TheGame:
             dead = False
             self.handle_events()
             for self.zombie_person in self.zombie_group:
-                self.zombie_person.animation("images/zombies.png", (0, 0), (6, 2, 22, 30))
+                self.zombie_person.animation("images/zombies.png", (0, 0), (5, 1, 23, 29))
                 distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
                            (self.zombie_person.rect.y - self.player.rect.y) ** 2
                 distance = math.sqrt(distance)
@@ -261,7 +259,7 @@ class TheGame:
                             self.zombie_person.move_y(- zombie_speed, TheGame.game_height)
 
             self.board.draw(self.room)
-            self.player.animation("images/character.png", (0, 0), (14, 9, 33, 39))
+            self.player.animation("images/character.png", (0, 0), (14, 11, 20, 39))
             self.all_sprites_group.draw(self.board.surface)
             self.all_sprites_group.update(self.turn_to_shoot, dead, self.width, self.height)
             self.bullets.update(self.turn_to_shoot, dead, self.width, self.height)
@@ -319,5 +317,5 @@ class TheGame:
 
 if __name__ == "__main__":
     game = TheGame(1000, 600)
-    game.game_intro()
-    # game.run()
+    # game.game_intro()
+    game.run("easy")
