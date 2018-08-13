@@ -67,7 +67,8 @@ class Board:
         self.draw_text(self.surface, "Easy", TheGame.game_width / 2, TheGame.game_height * 0.2, self.difficulty_font)
         self.draw_text(self.surface, "Normal", TheGame.game_width / 2, TheGame.game_height * 0.4, self.difficulty_font)
         self.draw_text(self.surface, "Hard", TheGame.game_width / 2, TheGame.game_height * 0.6, self.difficulty_font)
-        self.draw_text(self.surface, "Zombie hell!", TheGame.game_width / 2, TheGame.game_height * 0.8, self.difficulty_font)
+        self.draw_text(self.surface, "Zombie hell!", TheGame.game_width / 2, TheGame.game_height * 0.8,
+                       self.difficulty_font)
         for drawable in args:
             drawable.draw_on(self.surface)
 
@@ -114,47 +115,36 @@ class TheGame:
             self.all_sprites_group.add(self.zombie_person)
 
     def game_intro(self):
-        intro = True
-        i = 0.58
-        while intro:
-            mark_play_pos = 0.58
-            mark_quit_pos = 0.77
+        i = 0.56
+        while True:
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.37
             intro_object = Player(mark_pos_x, mark_pos_y, 40, 40)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_menu(intro_object)
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
-
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
-                        if i > mark_play_pos:
+                        if mark_pos_y > 337:
                             i -= 0.1
-
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        if mark_play_pos <= i <= mark_quit_pos:
+                        if mark_pos_y < 455:
                             i += 0.1
-
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                        if i <= mark_play_pos:
-                            intro = False
+                        if 335 < mark_pos_y < 337:
                             game.game_choosing_difficulty()
-                        elif i >= mark_quit_pos:
-                            pygame.quit()
-                        else:
+                        elif 385 < mark_pos_y < 397:
                             game.game_options()
+                        else:
+                            pygame.quit()
 
     def game_options(self):
-        option = True
-        i = 0.325
-        while option:
-            mark_up_opt_pos = 0.325
-            mark_down_opt_pos = 0.625
+        i = 0.31
+        while True:
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.3
             intro_object = Player(mark_pos_x, mark_pos_y, 45, 45)
@@ -164,29 +154,21 @@ class TheGame:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        option = False
+                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE:
                         game.game_intro()
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
-                        if i > mark_up_opt_pos:
-                            """without multiplying and dividing by 1000, i in top position has 0.324(9)"""
-                            i *= 1000
-                            i -= 0.15 * 1000
-                            i /= 1000
-
+                        if mark_pos_y > 196:
+                            i -= 0.15
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        if mark_up_opt_pos <= i < mark_down_opt_pos:
+                        if mark_pos_y < 366:
                             i += 0.15
-
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                        if i == mark_up_opt_pos:
-                            """controlls"""
-                            pass
-                        elif i >= mark_down_opt_pos:
-                            game.game_intro()
-                        else:
+                        if 185 < mark_pos_y < 187:
+                            """controls"""
+                        elif 275 < mark_pos_y < 277:
                             """audio"""
-                            pass
+                        else:
+                            game.game_intro()
 
     def game_choosing_difficulty(self):
         i = 0.16
@@ -196,22 +178,18 @@ class TheGame:
             intro_object = Player(mark_pos_x, mark_pos_y, 40, 40)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_choosing_difficulty(intro_object)
-            print(mark_pos_y)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE:
                         game.game_intro()
-
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
                         if mark_pos_y > 97:
                             i -= 0.2
-
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         if mark_pos_y < 455:
                             i += 0.2
-
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                         if 95 < mark_pos_y < 97:
                             difficulty = "easy"
