@@ -19,21 +19,21 @@ class Zombie(Player, pygame.sprite.Sprite):
     def zombie_natural_moves(self):
         moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
         a = randint(0, len(moves_list) - 1)
-        self.move_x(moves_list[a], self.x_limit, 1)
+        self.move_x(moves_list[a], self.x_limit)
         a = randint(0, len(moves_list) - 1)
-        self.move_y(moves_list[a], self.y_limit, 1)
+        self.move_y(moves_list[a], self.y_limit)
 
-    def zombie_follows(self, distance, speed):
+    def zombie_follows(self, speed):
         if self.rect.x > self.victim.rect.x:
-            x = distance
+            x = speed
         else:
-            x = - distance
-        self.move_x(x, self.x_limit, speed)
+            x = - speed
+        self.move_x(x, self.x_limit)
         if self.rect.y > self.victim.rect.y:
-            y = distance
+            y = speed
         else:
-            y = - distance
-        self.move_y(y, self.y_limit, speed)
+            y = - speed
+        self.move_y(y, self.y_limit)
 
     def zombie_attacks(self, attack):
         pass

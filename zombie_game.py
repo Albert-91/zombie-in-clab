@@ -259,7 +259,7 @@ class TheGame:
                 if distance > max_distance:
                     self.zombie_person.zombie_natural_moves()
                 elif distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player):
-                    self.zombie_person.zombie_follows(zombie_speed, zombie_speed)
+                    self.zombie_person.zombie_follows(zombie_speed)
                 else:
                     self.zombie_person.zombie_attacks(zombie_attack)
                 for bullet in self.bullets:
@@ -270,17 +270,17 @@ class TheGame:
                     if other_zombie != self.zombie_person and \
                             pygame.sprite.collide_rect(self.zombie_person, other_zombie):
                         if other_zombie.rect.x > self.zombie_person.rect.x:
-                            other_zombie.move_x(- zombie_speed, TheGame.game_width, zombie_speed)
-                            self.zombie_person.move_x(zombie_speed, TheGame.game_width, zombie_speed)
+                            other_zombie.move_x(- zombie_speed, TheGame.game_width)
+                            self.zombie_person.move_x(zombie_speed, TheGame.game_width)
                         else:
-                            other_zombie.move_x(zombie_speed, TheGame.game_width, zombie_speed)
-                            self.zombie_person.move_x(- zombie_speed, TheGame.game_width, zombie_speed)
+                            other_zombie.move_x(zombie_speed, TheGame.game_width)
+                            self.zombie_person.move_x(- zombie_speed, TheGame.game_width)
                         if other_zombie.rect.y > self.zombie_person.rect.y:
-                            other_zombie.move_y(- zombie_speed, TheGame.game_height, zombie_speed)
-                            self.zombie_person.move_y(zombie_speed, TheGame.game_height, zombie_speed)
+                            other_zombie.move_y(- zombie_speed, TheGame.game_height)
+                            self.zombie_person.move_y(zombie_speed, TheGame.game_height)
                         else:
-                            other_zombie.move_y(zombie_speed, TheGame.game_height, zombie_speed)
-                            self.zombie_person.move_y(- zombie_speed, TheGame.game_height, zombie_speed)
+                            other_zombie.move_y(zombie_speed, TheGame.game_height)
+                            self.zombie_person.move_y(- zombie_speed, TheGame.game_height)
 
             self.board.draw(self.room)
             self.player.animation("images/character.png", (0, 0), (14, 9, 33, 39))
@@ -314,22 +314,22 @@ class TheGame:
                     return True
 
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    self.player.move_x(self.player.max_speed, TheGame.game_width, self.player.max_speed)
+                    self.player.move_x(self.player.max_speed, TheGame.game_width)
                     self.set_angle = 90
                     self.turn_to_shoot = "left"
 
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    self.player.move_x(-self.player.max_speed, TheGame.game_width, self.player.max_speed)
+                    self.player.move_x(-self.player.max_speed, TheGame.game_width)
                     self.set_angle = 270
                     self.turn_to_shoot = "right"
 
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    self.player.move_y(self.player.max_speed, TheGame.game_height, self.player.max_speed)
+                    self.player.move_y(self.player.max_speed, TheGame.game_height)
                     self.set_angle = 0
                     self.turn_to_shoot = "up"
 
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    self.player.move_y(-self.player.max_speed, TheGame.game_height, self.player.max_speed)
+                    self.player.move_y(-self.player.max_speed, TheGame.game_height)
                     self.set_angle = 180
                     self.turn_to_shoot = "down"
 
