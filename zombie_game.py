@@ -189,35 +189,40 @@ class TheGame:
                             pass
 
     def game_choosing_difficulty(self):
-        intro = True
         i = 0.16
-        while intro:
-            up_limit = i
-            down_limit = i + 3 * 20
+        while True:
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.25
             intro_object = Player(mark_pos_x, mark_pos_y, 40, 40)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_choosing_difficulty(intro_object)
-
+            print(mark_pos_y)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                 elif event.type == pygame.KEYDOWN:
-                    print(i)
                     if event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE:
                         game.game_intro()
 
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
-                        if i > up_limit:
+                        if mark_pos_y > 97:
                             i -= 0.2
 
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        if i < down_limit:
+                        if mark_pos_y < 455:
                             i += 0.2
 
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                        return i
+                        if 95 < mark_pos_y < 97:
+                            difficulty = "easy"
+                        elif 215 < mark_pos_y < 217:
+                            difficulty = "normal"
+                        elif 335 < mark_pos_y < 337:
+                            difficulty = "hard"
+                        else:
+                            difficulty = "hell"
+
+                        game.run(difficulty)
 
     def game_over(self):
         while True:
@@ -229,8 +234,20 @@ class TheGame:
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                         return False
 
-    def run(self):
+    def run(self, difficulty):
         max_distance = 170
+        if difficulty == "easy":
+            zombie_speed = 1
+            zombie_attack = 1
+        elif difficulty == "normal":
+            zombie_speed = 1.2
+            zombie_attack = 2
+        elif difficulty == "hard":
+            zombie_speed = 1.5
+            zombie_attack = 3
+        else:
+            zombie_speed = 1.7
+            zombie_attack = 4
         while True:
             dead = False
             self.handle_events()
@@ -242,9 +259,9 @@ class TheGame:
                 if distance > max_distance:
                     self.zombie_person.zombie_natural_moves()
                 elif distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player):
-                    self.zombie_person.zombie_follows()
+                    self.zombie_person.zombie_follows(zombie_speed, zombie_speed)
                 else:
-                    self.zombie_person.zombie_attacks()
+                    self.zombie_person.zombie_attacks(zombie_attack)
                 for bullet in self.bullets:
                     if pygame.sprite.collide_rect(self.zombie_person, bullet):
                         self.zombie_person.kill()
@@ -253,17 +270,17 @@ class TheGame:
                     if other_zombie != self.zombie_person and \
                             pygame.sprite.collide_rect(self.zombie_person, other_zombie):
                         if other_zombie.rect.x > self.zombie_person.rect.x:
-                            other_zombie.move_x(-self.zombie_person.max_speed, TheGame.game_width)
-                            self.zombie_person.move_x(self.zombie_person.max_speed, TheGame.game_width)
+                            other_zombie.move_x(- zombie_speed, TheGame.game_width, zombie_speed)
+                            self.zombie_person.move_x(zombie_speed, TheGame.game_width, zombie_speed)
                         else:
-                            other_zombie.move_x(self.zombie_person.max_speed, TheGame.game_width)
-                            self.zombie_person.move_x(-self.zombie_person.max_speed, TheGame.game_width)
+                            other_zombie.move_x(zombie_speed, TheGame.game_width, zombie_speed)
+                            self.zombie_person.move_x(- zombie_speed, TheGame.game_width, zombie_speed)
                         if other_zombie.rect.y > self.zombie_person.rect.y:
-                            other_zombie.move_y(-self.zombie_person.max_speed, TheGame.game_height)
-                            self.zombie_person.move_y(self.zombie_person.max_speed, TheGame.game_height)
+                            other_zombie.move_y(- zombie_speed, TheGame.game_height, zombie_speed)
+                            self.zombie_person.move_y(zombie_speed, TheGame.game_height, zombie_speed)
                         else:
-                            other_zombie.move_y(self.zombie_person.max_speed, TheGame.game_height)
-                            self.zombie_person.move_y(-self.zombie_person.max_speed, TheGame.game_height)
+                            other_zombie.move_y(zombie_speed, TheGame.game_height, zombie_speed)
+                            self.zombie_person.move_y(- zombie_speed, TheGame.game_height, zombie_speed)
 
             self.board.draw(self.room)
             self.player.animation("images/character.png", (0, 0), (14, 9, 33, 39))
@@ -297,22 +314,22 @@ class TheGame:
                     return True
 
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    self.player.move_x(self.player.max_speed, TheGame.game_width)
+                    self.player.move_x(self.player.max_speed, TheGame.game_width, self.player.max_speed)
                     self.set_angle = 90
                     self.turn_to_shoot = "left"
 
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    self.player.move_x(-self.player.max_speed, TheGame.game_width)
+                    self.player.move_x(-self.player.max_speed, TheGame.game_width, self.player.max_speed)
                     self.set_angle = 270
                     self.turn_to_shoot = "right"
 
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    self.player.move_y(self.player.max_speed, TheGame.game_height)
+                    self.player.move_y(self.player.max_speed, TheGame.game_height, self.player.max_speed)
                     self.set_angle = 0
                     self.turn_to_shoot = "up"
 
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    self.player.move_y(-self.player.max_speed, TheGame.game_height)
+                    self.player.move_y(-self.player.max_speed, TheGame.game_height, self.player.max_speed)
                     self.set_angle = 180
                     self.turn_to_shoot = "down"
 
