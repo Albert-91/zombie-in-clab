@@ -1,3 +1,4 @@
+from os import path
 import pygame
 from random import randint
 import math
@@ -104,6 +105,7 @@ class TheGame:
         self.other_group = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.all_sprites_group.add(self.player)
+        self.map_data = []
         for i in range(self.number_of_zombies):
             x = randint(self.player.width, TheGame.game_width - self.player.width)
             y = randint(self.player.height, TheGame.game_height - self.player.height)
@@ -313,6 +315,12 @@ class TheGame:
                     pygame.key.set_repeat(50, 25)
                     self.all_sprites_group.add(self.player.shoot(self.set_angle))
                     self.bullets.add(self.player.shoot(self.set_angle))
+
+    def load_data(self):
+        game_folder = path.dirname(__file__)
+        with open(path.join(game_folder, 'map.txt'), 'rt') as lines:
+            for line in lines:
+                self.map_data.append(line)
 
 
 if __name__ == "__main__":

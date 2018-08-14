@@ -50,3 +50,9 @@ class Player(Drawable, pygame.sprite.Sprite):
     def shoot(self, angle):
         bullet = Bullet(self.rect.centerx, self.rect.centery, angle)
         return bullet
+
+    def collide_with_walls(self, dx=0, dy=0):
+        for wall in self.game.walls:
+            if wall.x == self.x + dx and wall.y == self.y + dy:
+                return True
+        return False
