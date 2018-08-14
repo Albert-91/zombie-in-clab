@@ -3,7 +3,6 @@ import pygame
 from random import randint
 import math
 from player import Player
-from rooms import Rooms
 from walls import Wall
 from zombie import Zombie
 
@@ -100,7 +99,6 @@ class TheGame:
         self.number_of_zombies = 20
         self.board = Board(width, height)
         self.fps_clock = pygame.time.Clock()
-        # self.room = Rooms(0, 0)
         self.player = Player(width / 2, height / 2, 26, 26)
         self.zombie_group = pygame.sprite.Group()
         self.all_sprites_group = pygame.sprite.Group()
@@ -265,7 +263,7 @@ class TheGame:
                             other_zombie.move_y(zombie_speed, TheGame.game_height)
                             self.zombie_person.move_y(- zombie_speed, TheGame.game_height)
 
-            # self.board.draw(self.room)
+            self.board.draw()
             self.player.animation("images/character.png", (0, 0), (14, 11, 20, 39))
             self.all_sprites_group.draw(self.board.surface)
             self.all_sprites_group.update(self.turn_to_shoot, dead, self.width, self.height)
