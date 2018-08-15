@@ -1,6 +1,6 @@
 import pygame
 
-wall_width = 10
+wall_width = 5
 
 
 class Wall(pygame.sprite.Sprite):

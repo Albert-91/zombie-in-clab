@@ -232,37 +232,7 @@ class TheGame:
         while True:
             dead = False
             self.handle_events()
-            for self.zombie_person in self.zombie_group:
-                self.zombie_person.animation("images/zombies.png", (0, 0), (5, 1, 23, 29))
-                distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
-                           (self.zombie_person.rect.y - self.player.rect.y) ** 2
-                distance = math.sqrt(distance)
-                if distance > max_distance:
-                    self.zombie_person.zombie_natural_moves()
-                elif distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player):
-                    self.zombie_person.zombie_follows(zombie_speed)
-                else:
-                    self.zombie_person.zombie_attacks(zombie_attack)
-                for bullet in self.bullets:
-                    if pygame.sprite.collide_rect(self.zombie_person, bullet):
-                        self.zombie_person.kill()
-                        dead = True
-                for other_zombie in self.other_group:
-                    if other_zombie != self.zombie_person and \
-                            pygame.sprite.collide_rect(self.zombie_person, other_zombie):
-                        if other_zombie.rect.x > self.zombie_person.rect.x:
-                            other_zombie.move_x(- zombie_speed, TheGame.game_width)
-                            self.zombie_person.move_x(zombie_speed, TheGame.game_width)
-                        else:
-                            other_zombie.move_x(zombie_speed, TheGame.game_width)
-                            self.zombie_person.move_x(- zombie_speed, TheGame.game_width)
-                        if other_zombie.rect.y > self.zombie_person.rect.y:
-                            other_zombie.move_y(- zombie_speed, TheGame.game_height)
-                            self.zombie_person.move_y(zombie_speed, TheGame.game_height)
-                        else:
-                            other_zombie.move_y(zombie_speed, TheGame.game_height)
-                            self.zombie_person.move_y(- zombie_speed, TheGame.game_height)
-
+            self.zombie_behavior(max_distance, zombie_speed, zombie_attack)
             self.board.draw()
             self.player.animation("images/character.png", (0, 0), (14, 11, 20, 39))
             self.all_sprites_group.draw(self.board.surface)
@@ -270,6 +240,38 @@ class TheGame:
             self.bullets.update(self.turn_to_shoot, dead, self.width, self.height)
             pygame.display.flip()
             self.fps_clock.tick(80)
+
+    def zombie_behavior(self, max_distance, zombie_speed, zombie_attack):
+        for self.zombie_person in self.zombie_group:
+            self.zombie_person.animation("images/zombies.png", (0, 0), (5, 1, 23, 29))
+            distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
+                       (self.zombie_person.rect.y - self.player.rect.y) ** 2
+            distance = math.sqrt(distance)
+            if distance > max_distance:
+                self.zombie_person.zombie_natural_moves()
+            elif distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player):
+                self.zombie_person.zombie_follows(zombie_speed)
+            else:
+                self.zombie_person.zombie_attacks(zombie_attack)
+            for bullet in self.bullets:
+                if pygame.sprite.collide_rect(self.zombie_person, bullet):
+                    self.zombie_person.kill()
+                    dead = True
+            for other_zombie in self.other_group:
+                if other_zombie != self.zombie_person and \
+                        pygame.sprite.collide_rect(self.zombie_person, other_zombie):
+                    if other_zombie.rect.x > self.zombie_person.rect.x:
+                        other_zombie.move_x(- zombie_speed, TheGame.game_width)
+                        self.zombie_person.move_x(zombie_speed, TheGame.game_width)
+                    else:
+                        other_zombie.move_x(zombie_speed, TheGame.game_width)
+                        self.zombie_person.move_x(- zombie_speed, TheGame.game_width)
+                    if other_zombie.rect.y > self.zombie_person.rect.y:
+                        other_zombie.move_y(- zombie_speed, TheGame.game_height)
+                        self.zombie_person.move_y(zombie_speed, TheGame.game_height)
+                    else:
+                        other_zombie.move_y(zombie_speed, TheGame.game_height)
+                        self.zombie_person.move_y(- zombie_speed, TheGame.game_height)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -295,22 +297,23 @@ class TheGame:
                     return True
 
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    self.player.move_x(self.player.max_speed, TheGame.game_width)
+                    # self.player.move_x(self.player.max_speed, TheGame.game_width)
+                    self.player.move(dx=-self.player.max_speed)
                     self.set_angle = 90
                     self.turn_to_shoot = "left"
 
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    self.player.move_x(-self.player.max_speed, TheGame.game_width)
+                    self.player.move(dx=self.player.max_speed)
                     self.set_angle = 270
                     self.turn_to_shoot = "right"
 
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    self.player.move_y(self.player.max_speed, TheGame.game_height)
+                    self.player.move(dy=-self.player.max_speed)
                     self.set_angle = 0
                     self.turn_to_shoot = "up"
 
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    self.player.move_y(-self.player.max_speed, TheGame.game_height)
+                    self.player.move(dy=self.player.max_speed)
                     self.set_angle = 180
                     self.turn_to_shoot = "down"
 

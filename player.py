@@ -27,6 +27,10 @@ class Player(Drawable, pygame.sprite.Sprite):
             self.picture = pygame.transform.scale(self.picture, (self.width, self.height))
             self.surface.blit(self.picture, blit_destination, (0, 0, self.width, self.height))
 
+    def move(self, dx=0, dy=0):
+        self.rect.x += dx
+        self.rect.y += dy
+
     def move_x(self, dx, x_limit):
         if dx != 0:
             delta_x = dx - self.rect.x
