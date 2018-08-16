@@ -129,6 +129,30 @@ class TheGame:
 
                         game.run(difficulty)
 
+    def game_input(self):
+        word = ""
+        self.board.draw_input("Please enter your name: ", 300, 400)
+        pygame.display.flip()
+        done = True
+        while done:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_a:
+                        word += str(chr(event.key))
+                    if event.key == pygame.K_b:
+                        word += chr(event.key)
+                    if event.key == pygame.K_c:
+                        word += chr(event.key)
+                    if event.key == pygame.K_d:
+                        word += chr(event.key)
+                    if event.key == pygame.K_RETURN:
+                        done = False
+                    # events...
+        return text1(word, 700, 30)
+
     def game_over(self):
         while True:
             self.board.draw_game_over()

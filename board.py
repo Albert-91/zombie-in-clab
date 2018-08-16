@@ -70,6 +70,12 @@ class Board:
 
         pygame.display.update()
 
+    def draw_input(self, word, x, y):
+        text = self.menu_font.render("{}".format(word), True, (255, 0, 0))
+        rect = text.get_rect()
+        rect.center = x, y
+        return self.surface.blit(text, rect)
+
     @staticmethod
     def draw_text(surface, text, x, y, font):
         text = font.render(text, True, (255, 0, 0))
