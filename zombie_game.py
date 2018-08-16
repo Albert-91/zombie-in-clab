@@ -2,86 +2,10 @@ from os import path
 import pygame
 from random import randint
 import math
+from board import Board
 from player import Player
 from walls import Wall
 from zombie import Zombie
-
-
-class Board:
-
-    def __init__(self, width, height):
-        self.surface = pygame.display.set_mode((width, height), 0, 32)
-        pygame.display.set_caption('Zombie in CLab')
-        self.bg = pygame.image.load("images/terrain_atlas.png")
-        self.intro_bg = pygame.image.load("images/intro.jpg")
-        my_font = "font/Exquisite Corpse.ttf"
-        self.menu_font = pygame.font.Font(my_font, 45)
-        self.options_font = pygame.font.Font(my_font, 65)
-        self.title_font = pygame.font.Font(my_font, 90)
-        self.difficulty_font = pygame.font.Font(my_font, 70)
-        self.game_over_font = pygame.font.Font(my_font, 150)
-
-    def draw(self, *args):
-        background = (255, 255, 255)
-        self.surface.fill(background)
-        game.new()
-        self.surface.blit(self.bg, (200, 200), (0, 0, 90, 150))
-        for drawable in args:
-            drawable.draw_on(self.surface)
-
-    def draw_menu(self, *args):
-        self.intro_bg = pygame.transform.scale(self.intro_bg, (TheGame.game_width, TheGame.game_height))
-        self.surface.blit(self.intro_bg, (0, 0), (0, 0, TheGame.game_width, TheGame.game_height))
-        self.draw_text(self.surface, "Zombie in CLab", TheGame.game_width / 2, TheGame.game_height * 0.3,
-                       self.title_font)
-        self.draw_text(self.surface, "Play", TheGame.game_width / 2, TheGame.game_height * 0.6, self.menu_font)
-        self.draw_text(self.surface, "Options", TheGame.game_width / 2, TheGame.game_height * 0.7, self.menu_font)
-        self.draw_text(self.surface, "Quit", TheGame.game_width / 2, TheGame.game_height * 0.8, self.menu_font)
-        for drawable in args:
-            drawable.draw_on(self.surface)
-
-        pygame.display.update()
-
-    def draw_options(self, *args):
-        self.intro_bg = pygame.transform.scale(self.intro_bg, (TheGame.game_width, TheGame.game_height))
-        self.surface.blit(self.intro_bg, (0, 0), (0, 0, TheGame.game_width, TheGame.game_height))
-        self.draw_text(self.surface, "Controls", TheGame.game_width / 2, TheGame.game_height * 0.35, self.options_font)
-        self.draw_text(self.surface, "Audio", TheGame.game_width / 2, TheGame.game_height * 0.5, self.options_font)
-        self.draw_text(self.surface, "Return", TheGame.game_width / 2, TheGame.game_height * 0.65, self.options_font)
-        for drawable in args:
-            drawable.draw_on(self.surface)
-
-        pygame.display.update()
-
-    def draw_game_over(self, *args):
-        background = (0, 0, 0)
-        self.surface.fill(background)
-        self.draw_text(self.surface, "Game over", TheGame.game_width / 2, TheGame.game_height * 0.4,
-                       self.game_over_font)
-        for drawable in args:
-            drawable.draw_on(self.surface)
-
-        pygame.display.update()
-
-    def draw_choosing_difficulty(self, *args):
-        self.intro_bg = pygame.transform.scale(self.intro_bg, (TheGame.game_width, TheGame.game_height))
-        self.surface.blit(self.intro_bg, (0, 0), (0, 0, TheGame.game_width, TheGame.game_height))
-        self.draw_text(self.surface, "Easy", TheGame.game_width / 2, TheGame.game_height * 0.2, self.difficulty_font)
-        self.draw_text(self.surface, "Normal", TheGame.game_width / 2, TheGame.game_height * 0.4, self.difficulty_font)
-        self.draw_text(self.surface, "Hard", TheGame.game_width / 2, TheGame.game_height * 0.6, self.difficulty_font)
-        self.draw_text(self.surface, "Zombie hell!", TheGame.game_width / 2, TheGame.game_height * 0.8,
-                       self.difficulty_font)
-        for drawable in args:
-            drawable.draw_on(self.surface)
-
-        pygame.display.update()
-
-    @staticmethod
-    def draw_text(surface, text, x, y, font):
-        text = font.render(text, True, (255, 0, 0))
-        rect = text.get_rect()
-        rect.center = x, y
-        surface.blit(text, rect)
 
 
 class TheGame:
@@ -99,7 +23,7 @@ class TheGame:
         self.number_of_zombies = 20
         self.board = Board(width, height)
         self.fps_clock = pygame.time.Clock()
-        self.player = Player(width / 2, height / 2, 26, 26)
+        self.player = Player(self, width / 2, height / 2, 26, 26)
         self.zombie_group = pygame.sprite.Group()
         self.all_sprites_group = pygame.sprite.Group()
         self.other_group = pygame.sprite.Group()
@@ -122,7 +46,7 @@ class TheGame:
         while True:
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.37
-            intro_object = Player(mark_pos_x, mark_pos_y, 40, 40)
+            intro_object = Player(self, mark_pos_x, mark_pos_y, 40, 40)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_menu(intro_object)
             for event in pygame.event.get():
@@ -150,7 +74,7 @@ class TheGame:
         while True:
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.3
-            intro_object = Player(mark_pos_x, mark_pos_y, 45, 45)
+            intro_object = Player(self, mark_pos_x, mark_pos_y, 45, 45)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_options(intro_object)
             for event in pygame.event.get():
@@ -178,7 +102,7 @@ class TheGame:
         while True:
             mark_pos_y = TheGame.game_height * i
             mark_pos_x = TheGame.game_width * 0.25
-            intro_object = Player(mark_pos_x, mark_pos_y, 40, 40)
+            intro_object = Player(self, mark_pos_x, mark_pos_y, 40, 40)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_choosing_difficulty(intro_object)
             for event in pygame.event.get():
@@ -236,8 +160,8 @@ class TheGame:
             self.board.draw()
             self.player.animation("images/character.png", (0, 0), (14, 11, 20, 39))
             self.all_sprites_group.draw(self.board.surface)
-            self.all_sprites_group.update(self.turn_to_shoot, dead, self.width, self.height)
-            self.bullets.update(self.turn_to_shoot, dead, self.width, self.height)
+            self.all_sprites_group.update(self.turn_to_shoot, self.width, self.height)
+            self.bullets.update(self.turn_to_shoot, self.width, self.height)
             pygame.display.flip()
             self.fps_clock.tick(80)
 
@@ -297,7 +221,6 @@ class TheGame:
                     return True
 
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    # self.player.move_x(self.player.max_speed, TheGame.game_width)
                     self.player.move(dx=-self.player.max_speed)
                     self.set_angle = 90
                     self.turn_to_shoot = "left"
@@ -339,5 +262,5 @@ class TheGame:
 
 if __name__ == "__main__":
     game = TheGame(1000, 600)
-    # game.game_intro()
-    game.run("easy")
+    game.game_intro()
+    # game.run("easy")
