@@ -9,15 +9,15 @@ from zombie import Zombie
 
 
 class TheGame:
-    game_width = None
-    game_height = None
+    # game_width = None
+    # game_height = None
 
     def __init__(self, width, height):
         pygame.init()
         self.set_angle = 180
         self.turn_to_shoot = "down"
-        TheGame.game_width = width
-        TheGame.game_height = height
+        # TheGame.game_width = width
+        # TheGame.game_height = height
         self.width = width
         self.height = height
         self.number_of_zombies = 20
@@ -34,8 +34,8 @@ class TheGame:
         self.load_data()
         self.new()
         for i in range(self.number_of_zombies):
-            x = randint(self.player.width, TheGame.game_width - self.player.width)
-            y = randint(self.player.height, TheGame.game_height - self.player.height)
+            x = randint(self.player.width, self.width - self.player.width)
+            y = randint(self.player.height, self.height - self.player.height)
             self.zombie_person = Zombie(x, y, self.player, 23, 28, self.width, self.height)
             self.zombie_group.add(self.zombie_person)
             self.other_group.add(self.zombie_person)
@@ -44,8 +44,8 @@ class TheGame:
     def game_intro(self):
         i = 0.56
         while True:
-            mark_pos_y = TheGame.game_height * i
-            mark_pos_x = TheGame.game_width * 0.37
+            mark_pos_y = self.height * i
+            mark_pos_x = self.width * 0.37
             intro_object = Player(self, mark_pos_x, mark_pos_y, 40, 40)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_menu(intro_object)
@@ -72,8 +72,8 @@ class TheGame:
     def game_options(self):
         i = 0.31
         while True:
-            mark_pos_y = TheGame.game_height * i
-            mark_pos_x = TheGame.game_width * 0.3
+            mark_pos_y = self.height * i
+            mark_pos_x = self.width * 0.3
             intro_object = Player(self, mark_pos_x, mark_pos_y, 45, 45)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_options(intro_object)
@@ -100,8 +100,8 @@ class TheGame:
     def game_choosing_difficulty(self):
         i = 0.16
         while True:
-            mark_pos_y = TheGame.game_height * i
-            mark_pos_x = TheGame.game_width * 0.25
+            mark_pos_y = self.height * i
+            mark_pos_x = self.width * 0.25
             intro_object = Player(self, mark_pos_x, mark_pos_y, 40, 40)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_choosing_difficulty(intro_object)
@@ -185,17 +185,17 @@ class TheGame:
                 if other_zombie != self.zombie_person and \
                         pygame.sprite.collide_rect(self.zombie_person, other_zombie):
                     if other_zombie.rect.x > self.zombie_person.rect.x:
-                        other_zombie.move_x(- zombie_speed, TheGame.game_width)
-                        self.zombie_person.move_x(zombie_speed, TheGame.game_width)
+                        other_zombie.move(dx=-zombie_speed)
+                        self.zombie_person.move(dx=zombie_speed)
                     else:
-                        other_zombie.move_x(zombie_speed, TheGame.game_width)
-                        self.zombie_person.move_x(- zombie_speed, TheGame.game_width)
+                        other_zombie.move(dx=zombie_speed)
+                        self.zombie_person.move(dx=-zombie_speed)
                     if other_zombie.rect.y > self.zombie_person.rect.y:
-                        other_zombie.move_y(- zombie_speed, TheGame.game_height)
-                        self.zombie_person.move_y(zombie_speed, TheGame.game_height)
+                        other_zombie.move(dy=-zombie_speed)
+                        self.zombie_person.move(dy=zombie_speed)
                     else:
-                        other_zombie.move_y(zombie_speed, TheGame.game_height)
-                        self.zombie_person.move_y(- zombie_speed, TheGame.game_height)
+                        other_zombie.move(dy=zombie_speed)
+                        self.zombie_person.move(dy=-zombie_speed)
 
     def handle_events(self):
         for event in pygame.event.get():
