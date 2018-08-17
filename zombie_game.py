@@ -149,10 +149,10 @@ class TheGame:
                         word_to_print = event.unicode
                         word += event.unicode
                     if event.key == pygame.K_BACKSPACE:
-                        word_to_print = word_to_print[:-1]
-                        word -= word[:-1]
+                        x -= distance
+                        self.board.draw_input(" ", x, self.height / 2)
+                        word = word[:-1]
                     if event.key == pygame.K_RETURN:
-                        print(word)
                         return word
                     x += distance
                     # self.board.draw_input("", x, self.height / 2)
