@@ -11,14 +11,15 @@ class Bullet(pygame.sprite.Sprite):
         self.angle = angle
         self.image = pygame.Surface((self.width, self.height))
         self.rect = self.image.get_rect()
-        self.image = Bullet.bullet_img
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
-        self.image = pygame.transform.rotate(self.image, self.angle)
+
         self.rect.centerx = x
         self.rect.centery = y
         self.max_speed = 5
 
     def update(self, direction, max_width, max_height):
+        self.image = Bullet.bullet_img
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.image = pygame.transform.rotate(self.image, self.angle)
         if self.angle == 180:
             self.rect.y += self.max_speed
         elif self.angle == 0:

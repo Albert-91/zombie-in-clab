@@ -9,15 +9,11 @@ from zombie import Zombie
 
 
 class TheGame:
-    # game_width = None
-    # game_height = None
 
     def __init__(self, width, height):
         pygame.init()
         self.set_angle = 180
         self.turn_to_shoot = "down"
-        # TheGame.game_width = width
-        # TheGame.game_height = height
         self.width = width
         self.height = height
         self.number_of_zombies = 20
@@ -145,7 +141,8 @@ class TheGame:
                     if event.key == pygame.K_BACKSPACE:
                         word = word[:-1]
                     if event.key == pygame.K_RETURN:
-                        return self.run(word, difficult)
+                        if len(word) > 0:
+                            return self.run(word, difficult)
 
                 self.board.draw_input(word, self.width / 2, self.height / 2)
 
@@ -200,22 +197,22 @@ class TheGame:
             for bullet in self.bullets:
                 if pygame.sprite.collide_rect(self.zombie_person, bullet):
                     self.zombie_person.kill()
-                    dead = True
+                    # bullet.kill()
             for other_zombie in self.other_group:
                 if other_zombie != self.zombie_person and \
                         pygame.sprite.collide_rect(self.zombie_person, other_zombie):
                     if other_zombie.rect.x > self.zombie_person.rect.x:
-                        other_zombie.move(dx=-zombie_speed)
-                        self.zombie_person.move(dx=zombie_speed)
-                    else:
                         other_zombie.move(dx=zombie_speed)
                         self.zombie_person.move(dx=-zombie_speed)
-                    if other_zombie.rect.y > self.zombie_person.rect.y:
-                        other_zombie.move(dy=-zombie_speed)
-                        self.zombie_person.move(dy=zombie_speed)
                     else:
+                        other_zombie.move(dx=-zombie_speed)
+                        self.zombie_person.move(dx=zombie_speed)
+                    if other_zombie.rect.y > self.zombie_person.rect.y:
                         other_zombie.move(dy=zombie_speed)
                         self.zombie_person.move(dy=-zombie_speed)
+                    else:
+                        other_zombie.move(dy=-zombie_speed)
+                        self.zombie_person.move(dy=zombie_speed)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -282,6 +279,6 @@ class TheGame:
 
 if __name__ == "__main__":
     game = TheGame(1000, 600)
-    game.game_intro()
-    # game.run("easy")
+    # game.game_intro()
+    game.run('Albert', "easy")
 
