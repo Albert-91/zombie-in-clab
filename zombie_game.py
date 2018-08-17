@@ -127,16 +127,11 @@ class TheGame:
                         else:
                             difficulty = "hell"
 
-                        game.run(difficulty)
+                        game.game_input(difficulty)
 
-    def game_input(self):
-        word_to_print = ""
+    def game_input(self, difficult):
         word = ""
-        done = True
-        x = self.width / 2
-        distance = 25
-        while done:
-            self.board.draw_input("Please enter your name: ", self.width / 2, self.height / 3)
+        while True:
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -146,17 +141,13 @@ class TheGame:
                     if event.key == pygame.K_ESCAPE:
                         game.game_choosing_difficulty()
                     if event.unicode.isalpha():
-                        word_to_print = event.unicode
                         word += event.unicode
                     if event.key == pygame.K_BACKSPACE:
-                        x -= distance
-                        self.board.draw_input(" ", x, self.height / 2)
                         word = word[:-1]
                     if event.key == pygame.K_RETURN:
-                        return word
-                    x += distance
-                    # self.board.draw_input("", x, self.height / 2)
-                    self.board.draw_input(word_to_print, x, self.height / 2)
+                        return self.run(word, difficult)
+
+                self.board.draw_input(word, self.width / 2, self.height / 2)
 
     def game_over(self):
         while True:
@@ -168,7 +159,7 @@ class TheGame:
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                         return False
 
-    def run(self, difficulty):
+    def run(self, name, difficulty):
         max_distance = 170
         if difficulty == "easy":
             zombie_speed = 1
@@ -291,7 +282,6 @@ class TheGame:
 
 if __name__ == "__main__":
     game = TheGame(1000, 600)
-    # game.game_intro()
-    game.game_input()
+    game.game_intro()
     # game.run("easy")
 

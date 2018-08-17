@@ -71,6 +71,8 @@ class Board:
         pygame.display.update()
 
     def draw_input(self, word, x, y):
+        self.surface.fill((0, 0, 0))
+        self.draw_text(self.surface, "Please enter your name:", self.width / 2, self.height / 3, self.menu_font)
         text = self.menu_font.render("{}".format(word), True, (255, 0, 0))
         rect = text.get_rect()
         rect.center = x, y
