@@ -5,10 +5,11 @@ from drawable import Drawable
 
 class Player(Drawable, pygame.sprite.Sprite):
 
-    def __init__(self, x, y, width=20, height=20, color=(0, 0, 255), max_speed=4, angle=180):
+    def __init__(self, game, x, y, width=20, height=20, color=(0, 0, 255), max_speed=4, angle=180):
         super(Player, self).__init__(width, height, x, y, color)
         pygame.sprite.Sprite.__init__(self)
         self.max_speed = max_speed
+        self.game = game
         self.angle = angle
         self.image = self.surface
         self.width = width
@@ -27,22 +28,27 @@ class Player(Drawable, pygame.sprite.Sprite):
             self.picture = pygame.transform.scale(self.picture, (self.width, self.height))
             self.surface.blit(self.picture, blit_destination, (0, 0, self.width, self.height))
 
-    def move_x(self, x, x_limit):
-        if x != 0:
-            delta_x = x - self.rect.x
-            if abs(delta_x) <= x_limit - self.width / 2 and delta_x <= 0:
-                delta_x = -self.max_speed
-                if x > 0:
+    def move(self, dx=0, dy=0):
+        # if not self.collide_with_walls(dx, dy):
+        self.rect.x += dx
+        self.rect.y += dy
+
+    def move_x(self, dx, x_limit):
+        if dx != 0:
+            delta_x = dx - self.rect.x
+            if abs(delta_x) <= x_limit-self.width / 2 and delta_x <= 0:
+                delta_x = - abs(dx)
+                if dx > 0:
                     self.rect.x += delta_x
                 else:
                     self.rect.x -= delta_x
 
-    def move_y(self, y, y_limit):
-        if y != 0:
-            delta_y = y - self.rect.y
+    def move_y(self, dy, y_limit):
+        if dy != 0:
+            delta_y = dy - self.rect.y
             if abs(delta_y) <= y_limit - self.height and delta_y <= 0:
-                delta_y = -self.max_speed
-                if y > 0:
+                delta_y = - abs(dy)
+                if dy > 0:
                     self.rect.y += delta_y
                 else:
                     self.rect.y -= delta_y
@@ -50,3 +56,9 @@ class Player(Drawable, pygame.sprite.Sprite):
     def shoot(self, angle):
         bullet = Bullet(self.rect.centerx, self.rect.centery, angle)
         return bullet
+
+    def collide_with_walls(self, dx=0, dy=0):
+        for wall in self.game.walls:
+            if wall.x == self.rect.x + dx and wall.y == self.rect.y + dy:
+                return True
+        return False

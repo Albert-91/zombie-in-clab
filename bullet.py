@@ -18,7 +18,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.centery = y
         self.max_speed = 5
 
-    def update(self, direction, dead, max_width, max_height):
+    def update(self, direction, max_width, max_height):
         if self.angle == 180:
             self.rect.y += self.max_speed
         elif self.angle == 0:
@@ -27,11 +27,9 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.x += self.max_speed
         elif self.angle == 90:
             self.rect.x -= self.max_speed
-        # kill if it moves off the top of the screen
+
         if self.rect.top < 0 or \
-                        self.rect.bottom > max_height or \
-                        self.rect.right > max_width or \
-                        self.rect.left < 0:
-            self.kill()
-        if dead:
+                self.rect.bottom > max_height or \
+                self.rect.right > max_width or \
+                self.rect.left < 0:
             self.kill()
