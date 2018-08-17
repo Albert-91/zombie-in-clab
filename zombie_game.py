@@ -20,11 +20,14 @@ class Board:
         self.game_over_font = pygame.font.Font(my_font, 150)
 
     def draw(self, *args):
+        for drawable in args:
+            drawable.draw_on(self.surface)
+
+    def draw_game(self, *args):
         background = (255, 255, 255)
         self.surface.fill(background)
         self.surface.blit(self.bg, (200, 200), (0, 0, 90, 150))
-        for drawable in args:
-            drawable.draw_on(self.surface)
+        self.draw(args)
 
     def draw_menu(self, *args):
         background = (0, 0, 0)
@@ -36,10 +39,8 @@ class Board:
         self.draw_text(self.surface, "Play", TheGame.game_width / 2, TheGame.game_height * 0.6, self.menu_font)
         self.draw_text(self.surface, "Options", TheGame.game_width / 2, TheGame.game_height * 0.7, self.menu_font)
         self.draw_text(self.surface, "Quit", TheGame.game_width / 2, TheGame.game_height * 0.8, self.menu_font)
-        for drawable in args:
-            drawable.draw_on(self.surface)
-
-        pygame.display.update()
+        self.draw(args)
+        # pygame.display.update()
 
     def draw_options(self, *args):
         background = (0, 0, 0)
@@ -49,20 +50,16 @@ class Board:
         self.draw_text(self.surface, "Controls", TheGame.game_width / 2, TheGame.game_height * 0.35, self.options_font)
         self.draw_text(self.surface, "Audio", TheGame.game_width / 2, TheGame.game_height * 0.5, self.options_font)
         self.draw_text(self.surface, "Return", TheGame.game_width / 2, TheGame.game_height * 0.65, self.options_font)
-        for drawable in args:
-            drawable.draw_on(self.surface)
-
-        pygame.display.update()
+        self.draw(args)
+        # pygame.display.update()
 
     def draw_game_over(self, *args):
         background = (0, 0, 0)
         self.surface.fill(background)
         self.draw_text(self.surface, "Game over", TheGame.game_width / 2, TheGame.game_height * 0.4,
                        self.game_over_font)
-        for drawable in args:
-            drawable.draw_on(self.surface)
-
-        pygame.display.update()
+        self.draw(args)
+        # pygame.display.update()
 
     @staticmethod
     def draw_text(surface, text, x, y, font):
@@ -293,5 +290,5 @@ class TheGame:
 
 if __name__ == "__main__":
     game = TheGame(1000, 600)
-    game.game_intro()
-    # game.run()
+    # game.game_intro()
+    game.run()
