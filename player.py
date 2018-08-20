@@ -34,26 +34,6 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.rect.x += dx
         self.rect.y += dy
 
-    def move_x(self, dx, x_limit):
-        if dx != 0:
-            delta_x = dx - self.rect.x
-            if abs(delta_x) <= x_limit-self.width / 2 and delta_x <= 0:
-                delta_x = - abs(dx)
-                if dx > 0:
-                    self.rect.x += delta_x
-                else:
-                    self.rect.x -= delta_x
-
-    def move_y(self, dy, y_limit):
-        if dy != 0:
-            delta_y = dy - self.rect.y
-            if abs(delta_y) <= y_limit - self.height and delta_y <= 0:
-                delta_y = - abs(dy)
-                if dy > 0:
-                    self.rect.y += delta_y
-                else:
-                    self.rect.y -= delta_y
-
     def shoot(self, angle):
         bullet = Bullet(self.rect.centerx, self.rect.centery, angle)
         return bullet
