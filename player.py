@@ -1,6 +1,7 @@
 import pygame
 from bullet import Bullet
 from drawable import Drawable
+from settings import *
 
 
 class Player(Drawable, pygame.sprite.Sprite):
@@ -16,8 +17,8 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.height = height
         self.rect = self.image.get_rect(x=x, y=y)
         self.picture = None
-        self.lives = 3
-        self.shield = 100
+        self.lives = PLAYER_LIVES
+        self.shield = PLAYER_SHIELD
 
     def animation(self, image_file, blit_destination, blit_area, serial=True):
         self.picture = pygame.image.load(image_file)

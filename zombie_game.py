@@ -1,11 +1,12 @@
-from os import path
 import pygame
-from random import randint
 import math
+from random import randint
+from os import path
 from board import Board
 from player import Player
 from walls import Wall
 from zombie import Zombie
+from settings import *
 
 
 class TheGame:
@@ -16,10 +17,10 @@ class TheGame:
         self.turn_to_shoot = "down"
         self.width = width
         self.height = height
-        self.number_of_zombies = 20
+        self.number_of_zombies = QUANTITY_OF_ZOMBIES
         self.board = Board(width, height)
         self.fps_clock = pygame.time.Clock()
-        self.player = Player(self, width / 2, height / 2, 26, 26)
+        self.player = Player(self, width / 2, height / 2, PLAYER_WIDTH, PLAYER_HEIGHT)
         self.zombie_group = pygame.sprite.Group()
         self.all_sprites_group = pygame.sprite.Group()
         self.other_group = pygame.sprite.Group()
@@ -32,7 +33,7 @@ class TheGame:
         for i in range(self.number_of_zombies):
             x = randint(self.player.width, self.width - self.player.width)
             y = randint(self.player.height, self.height - self.player.height)
-            self.zombie_person = Zombie(x, y, self.player, 23, 28, self.width, self.height)
+            self.zombie_person = Zombie(x, y, self.player, ZOMBIE_WIDTH, ZOMBIE_HEIGHT, self.width, self.height)
             self.zombie_group.add(self.zombie_person)
             self.other_group.add(self.zombie_person)
             self.all_sprites_group.add(self.zombie_person)
@@ -41,8 +42,8 @@ class TheGame:
         i = 0.56
         while True:
             mark_pos_y = self.height * i
-            mark_pos_x = self.width * 0.37
-            intro_object = Player(self, mark_pos_x, mark_pos_y, 40, 40)
+            mark_pos_x = self.width * INTRO_SPRITE_POS_X
+            intro_object = Player(self, mark_pos_x, mark_pos_y, INTRO_SPRITE_WIDTH, INTRO_SPRITE_HEIGHT)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_menu(intro_object)
             for event in pygame.event.get():
@@ -69,8 +70,8 @@ class TheGame:
         i = 0.31
         while True:
             mark_pos_y = self.height * i
-            mark_pos_x = self.width * 0.3
-            intro_object = Player(self, mark_pos_x, mark_pos_y, 45, 45)
+            mark_pos_x = self.width * OPTIONS_SPRITE_POS_X
+            intro_object = Player(self, mark_pos_x, mark_pos_y, OPTIONS_SPRITE_WIDTH, OPTIONS_SPRITE_HEIGHT)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_options(intro_object)
             for event in pygame.event.get():
@@ -97,8 +98,8 @@ class TheGame:
         i = 0.16
         while True:
             mark_pos_y = self.height * i
-            mark_pos_x = self.width * 0.25
-            intro_object = Player(self, mark_pos_x, mark_pos_y, 40, 40)
+            mark_pos_x = self.width * DIFFICULT_SPRITE_POS_X
+            intro_object = Player(self, mark_pos_x, mark_pos_y, DIFFICULT_SPRITE_WIDTH, DIFFICULT_SPRITE_HEIGHT)
             intro_object.animation("images/menu_head.png", (0, 0), (0, 0, mark_pos_x, mark_pos_y), False)
             self.board.draw_choosing_difficulty(intro_object)
             for event in pygame.event.get():
@@ -180,7 +181,7 @@ class TheGame:
             self.all_sprites_group.update(self.turn_to_shoot, self.width, self.height)
             self.bullets.update(self.turn_to_shoot, self.width, self.height)
             pygame.display.flip()
-            self.fps_clock.tick(80)
+            self.fps_clock.tick(FPS)
 
     def zombie_behavior(self, max_distance, zombie_speed, zombie_attack):
         for self.zombie_person in self.zombie_group:
@@ -278,7 +279,7 @@ class TheGame:
 
 
 if __name__ == "__main__":
-    game = TheGame(1000, 600)
+    game = TheGame(GAME_WIDTH, GAME_HEIGHT)
     # game.game_intro()
     game.run('Albert', "easy")
 

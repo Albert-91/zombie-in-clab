@@ -1,5 +1,5 @@
 import pygame
-
+from settings import *
 
 class Board:
 
@@ -73,7 +73,7 @@ class Board:
     def draw_input(self, word, x, y):
         self.surface.fill((0, 0, 0))
         self.draw_text(self.surface, "Please enter your name:", self.width / 2, self.height / 3, self.menu_font)
-        text = self.menu_font.render("{}".format(word), True, (255, 0, 0))
+        text = self.menu_font.render("{}".format(word), True, MENU_FONT_COLOR)
         rect = text.get_rect()
         rect.center = x, y
         pygame.display.update()
@@ -81,7 +81,7 @@ class Board:
 
     @staticmethod
     def draw_text(surface, text, x, y, font):
-        text = font.render(text, True, (255, 0, 0))
+        text = font.render(text, True, MENU_FONT_COLOR)
         rect = text.get_rect()
         rect.center = x, y
         surface.blit(text, rect)

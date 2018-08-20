@@ -1,6 +1,5 @@
 import pygame
-
-wall_width = 5
+from settings import *
 
 
 class Wall(pygame.sprite.Sprite):
@@ -8,11 +7,11 @@ class Wall(pygame.sprite.Sprite):
         self.groups = game.all_sprites_group, game.walls
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pygame.Surface((wall_width, wall_width))
-        self.image.fill((0, 0, 0))
+        self.image = pygame.Surface((WALL_SIZE, WALL_SIZE))
+        self.image.fill(WALL_COLOR)
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
-        self.rect.x = x * wall_width
-        self.rect.y = y * wall_width
+        self.rect.x = x * WALL_SIZE
+        self.rect.y = y * WALL_SIZE
 

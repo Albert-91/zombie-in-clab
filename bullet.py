@@ -11,7 +11,6 @@ class Bullet(pygame.sprite.Sprite):
         self.angle = angle
         self.image = pygame.Surface((self.width, self.height))
         self.rect = self.image.get_rect()
-
         self.rect.centerx = x
         self.rect.centery = y
         self.max_speed = 5
