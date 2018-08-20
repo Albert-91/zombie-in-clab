@@ -21,7 +21,8 @@ class TheGame:
         self.number_of_zombies = QUANTITY_OF_ZOMBIES
         self.board = Board(width, height)
         self.fps_clock = pygame.time.Clock()
-        self.player = Player(self, width / 2, height / 2, PLAYER_WIDTH, PLAYER_HEIGHT)
+        self.dt = None
+        self.player = Player(self, width / 2, height / 2, PLAYER_WIDTH, PLAYER_HEIGHT, max_speed=PLAYER_SPEED)
         self.zombie_group = pygame.sprite.Group()
         self.all_sprites_group = pygame.sprite.Group()
         self.other_group = pygame.sprite.Group()
@@ -173,8 +174,8 @@ class TheGame:
             zombie_speed = 1.7
             zombie_attack = 4
         while True:
-            dead = False
-            self.handle_events()
+            self.dt = self.fps_clock.tick(FPS) / 1000
+            self.turn_to_shoot = self.handle_events()
             self.zombie_behavior(max_distance, zombie_speed, zombie_attack)
             self.board.draw()
             self.player.animation("images/character.png", (0, 0), (14, 11, 20, 39))
@@ -182,7 +183,6 @@ class TheGame:
             self.all_sprites_group.update(self.turn_to_shoot, self.width, self.height)
             self.bullets.update(self.turn_to_shoot, self.width, self.height)
             pygame.display.flip()
-            self.fps_clock.tick(FPS)
 
     def zombie_behavior(self, max_distance, zombie_speed, zombie_attack):
         for self.zombie_person in self.zombie_group:
@@ -217,55 +217,25 @@ class TheGame:
                         self.zombie_person.move(dy=zombie_speed)
 
     def handle_events(self):
+        self.turn_to_shoot = self.player.refresh()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.display.quit()
                 pygame.quit()
                 return True
 
-            elif event.type == pygame.KEYUP:
-                """activate continuous moves by pressing buttons"""
-                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    pygame.key.set_repeat(50, 25)
-                elif event.key == pygame.K_UP or event.key == pygame.K_w:
-                    pygame.key.set_repeat(50, 25)
-                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    pygame.key.set_repeat(50, 25)
-                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    pygame.key.set_repeat(50, 25)
-
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     return True
 
-                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    self.player.move(dx=-self.player.max_speed)
-                    self.set_angle = 90
-                    self.turn_to_shoot = "left"
-
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    self.player.move(dx=self.player.max_speed)
-                    self.set_angle = 270
-                    self.turn_to_shoot = "right"
-
-                if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    self.player.move(dy=-self.player.max_speed)
-                    self.set_angle = 0
-                    self.turn_to_shoot = "up"
-
-                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    self.player.move(dy=self.player.max_speed)
-                    self.set_angle = 180
-                    self.turn_to_shoot = "down"
-
                 if event.key == pygame.K_SPACE:
-                    pygame.key.set_repeat(50, 25)
                     bullet = Bullet(self.player.rect.x + self.player.width / 2,
                                     self.player.rect.y + self.player.height / 2,
                                     self.set_angle)
                     self.all_sprites_group.add(bullet)
                     self.bullets.add(bullet)
+        return self.turn_to_shoot
 
     def load_data(self):
         game_folder = path.dirname(__file__)
@@ -286,4 +256,3 @@ if __name__ == "__main__":
     game = TheGame(GAME_WIDTH, GAME_HEIGHT)
     # game.game_intro()
     game.run('Albert', "easy")
-
