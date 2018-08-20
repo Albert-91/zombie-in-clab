@@ -13,7 +13,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.centery = y
-        self.max_speed = 5
+        self.max_speed = 4
 
     def update(self, direction, max_width, max_height):
         self.image = Bullet.bullet_img

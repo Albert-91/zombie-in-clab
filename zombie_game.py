@@ -3,6 +3,7 @@ import math
 from random import randint
 from os import path
 from board import Board
+from bullet import Bullet
 from player import Player
 from walls import Wall
 from zombie import Zombie
@@ -198,7 +199,7 @@ class TheGame:
             for bullet in self.bullets:
                 if pygame.sprite.collide_rect(self.zombie_person, bullet):
                     self.zombie_person.kill()
-                    # bullet.kill()
+                    bullet.kill()
             for other_zombie in self.other_group:
                 if other_zombie != self.zombie_person and \
                         pygame.sprite.collide_rect(self.zombie_person, other_zombie):
@@ -260,8 +261,11 @@ class TheGame:
 
                 if event.key == pygame.K_SPACE:
                     pygame.key.set_repeat(50, 25)
-                    self.all_sprites_group.add(self.player.shoot(self.set_angle))
-                    self.bullets.add(self.player.shoot(self.set_angle))
+                    bullet = Bullet(self.player.rect.x + self.player.width / 2,
+                                    self.player.rect.y + self.player.height / 2,
+                                    self.set_angle)
+                    self.all_sprites_group.add(bullet)
+                    self.bullets.add(bullet)
 
     def load_data(self):
         game_folder = path.dirname(__file__)
