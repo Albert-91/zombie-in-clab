@@ -34,7 +34,6 @@ class Player(Drawable, pygame.sprite.Sprite):
             self.surface.blit(self.picture, blit_destination, (0, 0, self.width, self.height))
 
     def move(self, dx=0, dy=0):
-        # if not self.collide_with_walls(dx, dy):
         self.rect.x += dx
         self.rect.y += dy
 
@@ -63,8 +62,8 @@ class Player(Drawable, pygame.sprite.Sprite):
         return self.turn_to_shoot
 
     def collide_with_walls(self, direction):
+        hits = pygame.sprite.spritecollide(self, self.game.walls, False)
         if direction == 'x':
-            hits = pygame.sprite.spritecollide(self, self.game.walls, False)
             if hits:
                 if self.vx > 0:
                     self.x = hits[0].rect.left - self.rect.width
@@ -73,7 +72,6 @@ class Player(Drawable, pygame.sprite.Sprite):
                 self.vx = 0
                 self.rect.x = self.x
         if direction == 'y':
-            hits = pygame.sprite.spritecollide(self, self.game.walls, False)
             if hits:
                 if self.vy > 0:
                     self.y = hits[0].rect.top - self.rect.height

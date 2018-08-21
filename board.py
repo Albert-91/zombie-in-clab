@@ -1,6 +1,7 @@
 import pygame
 from settings import *
 
+
 class Board:
 
     def __init__(self, width, height):
