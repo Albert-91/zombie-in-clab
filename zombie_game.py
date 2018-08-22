@@ -3,6 +3,9 @@ import pygame
 import math
 from random import randint
 from os import path
+
+from pygame.midi import quit
+
 from board import Board
 from bullet import Bullet
 from player import Player
@@ -36,7 +39,6 @@ class TheGame:
         self.other_group = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.all_sprites_group.add(self.player)
-
         for i in range(self.number_of_zombies):
             x = randint(self.player.width, self.width - self.player.width)
             y = randint(self.player.height, self.height - self.player.height)
@@ -55,11 +57,10 @@ class TheGame:
             self.board.draw_menu(intro_object)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    self.quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
+                        self.quit()
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
                         if mark_pos_y > 337:
                             i -= 0.1
@@ -72,8 +73,7 @@ class TheGame:
                         elif 385 < mark_pos_y < 397:
                             game.game_options()
                         else:
-                            pygame.quit()
-                            sys.exit()
+                            self.quit()
 
     def game_options(self):
         i = 0.31
@@ -85,8 +85,7 @@ class TheGame:
             self.board.draw_options(intro_object)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    self.quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE:
                         game.game_intro()
@@ -114,8 +113,7 @@ class TheGame:
             self.board.draw_choosing_difficulty(intro_object)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    self.quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE:
                         game.game_intro()
@@ -143,8 +141,7 @@ class TheGame:
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    self.quit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         game.game_choosing_difficulty()
@@ -155,7 +152,6 @@ class TheGame:
                     if event.key == pygame.K_RETURN:
                         if len(word) > 0:
                             return self.run(word, difficult)
-
                 self.board.draw_input(word, self.width / 2, self.height / 2)
 
     def game_over(self):
@@ -163,8 +159,7 @@ class TheGame:
             self.board.draw_game_over()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    self.quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                         return False
@@ -187,10 +182,8 @@ class TheGame:
             self.dt = self.fps_clock.tick(FPS) / 1000
             self.turn_to_shoot = self.handle_events()
             self.zombie_behavior(max_distance, zombie_speed, zombie_attack)
-            # self.board.draw()
             self.draw()
             self.player.animation("images/character.png", (0, 0), (14, 11, 20, 39))
-            # self.all_sprites_group.draw(self.board.surface)
             self.all_sprites_group.update(self.turn_to_shoot, self.width, self.height)
             self.bullets.update(self.turn_to_shoot, self.width, self.height)
             self.camera.update(self.player)
@@ -232,15 +225,10 @@ class TheGame:
         self.turn_to_shoot = self.player.refresh()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.display.quit()
-                pygame.quit()
-                return True
-
+                self.quit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
-
+                    self.quit()
                 if event.key == pygame.K_SPACE:
                     bullet = Bullet(self.player.rect.x + self.player.width / 2,
                                     self.player.rect.y + self.player.height / 2,
@@ -261,7 +249,10 @@ class TheGame:
         self.board.surface.fill((255, 255, 255))
         for sprite in self.all_sprites_group:
             self.board.surface.blit(sprite.image, self.camera.apply(sprite))
-        pygame.display.flip()
+
+    def quit(self):
+        pygame.quit()
+        sys.exit()
 
 if __name__ == "__main__":
     game = TheGame(SCREEN_WIDTH, SCREEN_HEIGHT)
