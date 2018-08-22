@@ -15,7 +15,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.centery = y
         self.max_speed = 4
 
-    def update(self, direction, max_width, max_height):
+    def update(self, max_width, max_height):
         self.image = Bullet.bullet_img
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.rotate(self.image, self.angle)

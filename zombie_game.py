@@ -3,9 +3,6 @@ import pygame
 import math
 from random import randint
 from os import path
-
-from pygame.midi import quit
-
 from board import Board
 from bullet import Bullet
 from player import Player
@@ -184,8 +181,8 @@ class TheGame:
             self.zombie_behavior(max_distance, zombie_speed, zombie_attack)
             self.draw()
             self.player.animation("images/character.png", (0, 0), (14, 11, 20, 39))
-            self.all_sprites_group.update(self.turn_to_shoot, self.width, self.height)
-            self.bullets.update(self.turn_to_shoot, self.width, self.height)
+            self.all_sprites_group.update(self.width, self.height)
+            self.bullets.update(self.map.width, self.map.height)
             self.camera.update(self.player)
             pygame.display.flip()
 
@@ -222,7 +219,7 @@ class TheGame:
                         self.zombie_person.move(dy=zombie_speed)
 
     def handle_events(self):
-        self.turn_to_shoot = self.player.refresh()
+        self.set_angle = self.player.refresh()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit()
@@ -235,7 +232,6 @@ class TheGame:
                                     self.set_angle)
                     self.all_sprites_group.add(bullet)
                     self.bullets.add(bullet)
-        return self.turn_to_shoot
 
     def new(self):
         for row, tiles in enumerate(self.map_data):
@@ -253,6 +249,7 @@ class TheGame:
     def quit(self):
         pygame.quit()
         sys.exit()
+
 
 if __name__ == "__main__":
     game = TheGame(SCREEN_WIDTH, SCREEN_HEIGHT)
