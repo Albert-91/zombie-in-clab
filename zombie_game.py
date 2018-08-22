@@ -187,9 +187,10 @@ class TheGame:
             self.dt = self.fps_clock.tick(FPS) / 1000
             self.turn_to_shoot = self.handle_events()
             self.zombie_behavior(max_distance, zombie_speed, zombie_attack)
-            self.board.draw()
+            # self.board.draw()
+            self.draw()
             self.player.animation("images/character.png", (0, 0), (14, 11, 20, 39))
-            self.all_sprites_group.draw(self.board.surface)
+            # self.all_sprites_group.draw(self.board.surface)
             self.all_sprites_group.update(self.turn_to_shoot, self.width, self.height)
             self.bullets.update(self.turn_to_shoot, self.width, self.height)
             self.camera.update(self.player)
@@ -256,6 +257,11 @@ class TheGame:
                 # if tile == 'P':
                 #     self.player = Player(self, col, row)
 
+    def draw(self):
+        self.board.surface.fill((255, 255, 255))
+        for sprite in self.all_sprites_group:
+            self.board.surface.blit(sprite.image, self.camera.apply(sprite))
+        pygame.display.flip()
 
 if __name__ == "__main__":
     game = TheGame(SCREEN_WIDTH, SCREEN_HEIGHT)
