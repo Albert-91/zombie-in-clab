@@ -187,7 +187,6 @@ class TheGame:
             pygame.display.flip()
 
     def zombie_behavior(self, max_distance, zombie_speed, zombie_attack):
-        zombie_state = 0
         for self.zombie_person in self.zombie_group:
             self.zombie_person.animation("images/zombies.png", (0, 0), (5, 1, 23, 29))
             distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
@@ -231,7 +230,7 @@ class TheGame:
                 if event.key == pygame.K_ESCAPE:
                     self.quit()
                 if event.key == pygame.K_SPACE:
-                    attack_list = [0, 1, 1, 1, 2, 2, 2, 2, 2, 3]
+                    attack_list = [0, 1, 1, 2, 2, 2, 2, 2, 3, 3]
                     attack_pos = randint(0, len(attack_list) - 1)
                     attack_value = attack_list[attack_pos]
                     bullet = Bullet(self.player.rect.x + self.player.width / 2,
