@@ -5,34 +5,32 @@ from player import Player
 
 class Zombie(Player, pygame.sprite.Sprite):
 
-    def __init__(self, x, y, victim, width, height, x_limit, y_limit, color=(255, 0, 0), max_speed=1):
+    def __init__(self, x, y, width, height, color=(255, 0, 0), max_speed=1):
         super(Player, self).__init__(width, height, x, y, color)
         pygame.sprite.Sprite.__init__(self)
         self.max_speed = max_speed
         self.image = self.surface
         self.rect = self.image.get_rect(x=x, y=y)
-        self.victim = victim
         self.picture = None
-        self.x_limit = x_limit
-        self.y_limit = y_limit
+        self.shield = 8
 
-    def zombie_natural_moves(self):
+    def natural_moves(self):
         moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
         x = randint(0, len(moves_list) - 1)
         y = randint(0, len(moves_list) - 1)
         self.move(dx=moves_list[x], dy=moves_list[y])
 
-    def zombie_follows(self, speed):
-        if self.rect.x > self.victim.rect.x:
+    def follows_by_victim(self, speed, victim):
+        if self.rect.x > victim.rect.x:
             x = - speed
         else:
             x = speed
         self.move(dx=x)
-        if self.rect.y > self.victim.rect.y:
+        if self.rect.y > victim.rect.y:
             y = - speed
         else:
             y = speed
         self.move(dy=y)
 
-    def zombie_attacks(self, attack):
+    def attack(self, attack):
         pass

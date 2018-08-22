@@ -4,7 +4,7 @@ import pygame
 class Bullet(pygame.sprite.Sprite):
     bullet_img = pygame.image.load("images/bullet.png")
 
-    def __init__(self, x, y, angle):
+    def __init__(self, x, y, angle, attack):
         pygame.sprite.Sprite.__init__(self)
         self.width = 5
         self.height = 10
@@ -14,6 +14,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.centery = y
         self.max_speed = 4
+        self.attack = attack
 
     def update(self, max_width, max_height):
         self.image = Bullet.bullet_img
@@ -28,8 +29,8 @@ class Bullet(pygame.sprite.Sprite):
         elif self.angle == 90:
             self.rect.x -= self.max_speed
 
-        if self.rect.top < 0 or \
-                self.rect.bottom > max_height or \
-                self.rect.right > max_width or \
-                self.rect.left < 0:
-            self.kill()
+        # if self.rect.top < 0 or \
+        #         self.rect.bottom > max_height or \
+        #         self.rect.right > max_width or \
+        #         self.rect.left < 0:
+        #     self.kill()

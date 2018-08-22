@@ -39,7 +39,7 @@ class TheGame:
         for i in range(self.number_of_zombies):
             x = randint(self.player.width, self.width - self.player.width)
             y = randint(self.player.height, self.height - self.player.height)
-            self.zombie_person = Zombie(x, y, self.player, ZOMBIE_WIDTH, ZOMBIE_HEIGHT, self.width, self.height)
+            self.zombie_person = Zombie(x, y, ZOMBIE_WIDTH, ZOMBIE_HEIGHT)
             self.zombie_group.add(self.zombie_person)
             self.other_group.add(self.zombie_person)
             self.all_sprites_group.add(self.zombie_person)
@@ -187,21 +187,25 @@ class TheGame:
             pygame.display.flip()
 
     def zombie_behavior(self, max_distance, zombie_speed, zombie_attack):
+        zombie_state = 0
         for self.zombie_person in self.zombie_group:
             self.zombie_person.animation("images/zombies.png", (0, 0), (5, 1, 23, 29))
             distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
                        (self.zombie_person.rect.y - self.player.rect.y) ** 2
             distance = math.sqrt(distance)
             if distance > max_distance:
-                self.zombie_person.zombie_natural_moves()
-            elif distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player):
-                self.zombie_person.zombie_follows(zombie_speed)
+                self.zombie_person.natural_moves()
+            if distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player):
+                self.zombie_person.follows_by_victim(zombie_speed, self.player)
             else:
-                self.zombie_person.zombie_attacks(zombie_attack)
+                self.zombie_person.attack(zombie_attack)
             for bullet in self.bullets:
                 if pygame.sprite.collide_rect(self.zombie_person, bullet):
-                    # self.zombie_person.kill()
+                    self.zombie_person.shield -= bullet.attack
                     bullet.kill()
+                    self.zombie_person.follows_by_victim(zombie_speed, self.player)
+                    if self.zombie_person.shield <= 0:
+                        self.zombie_person.kill()
             for other_zombie in self.other_group:
                 if other_zombie != self.zombie_person and \
                         pygame.sprite.collide_rect(self.zombie_person, other_zombie):
@@ -227,9 +231,12 @@ class TheGame:
                 if event.key == pygame.K_ESCAPE:
                     self.quit()
                 if event.key == pygame.K_SPACE:
+                    attack_list = [0, 1, 1, 1, 2, 2, 2, 2, 2, 3]
+                    attack_pos = randint(0, len(attack_list) - 1)
+                    attack_value = attack_list[attack_pos]
                     bullet = Bullet(self.player.rect.x + self.player.width / 2,
                                     self.player.rect.y + self.player.height / 2,
-                                    self.set_angle)
+                                    self.set_angle, attack_value)
                     self.all_sprites_group.add(bullet)
                     self.bullets.add(bullet)
 

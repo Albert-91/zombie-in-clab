@@ -43,19 +43,15 @@ class Player(Drawable, pygame.sprite.Sprite):
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.vx = - self.max_speed
             self.angle = 90
-            self.turn_to_shoot = "left"
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.vx = self.max_speed
             self.angle = 270
-            self.turn_to_shoot = "right"
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             self.vy = -self.max_speed
             self.angle = 0
-            self.turn_to_shoot = "up"
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.vy = self.max_speed
             self.angle = 180
-            self.turn_to_shoot = "down"
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071
             self.vy *= 0.7071
