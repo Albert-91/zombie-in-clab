@@ -177,7 +177,7 @@ class TheGame:
             zombie_attack = 4
         while True:
             self.dt = self.fps_clock.tick(FPS) / 1000
-            self.turn_to_shoot = self.handle_events()
+            self.handle_events()
             self.zombie_behavior(max_distance, zombie_speed, zombie_attack)
             self.draw()
             self.player.animation("images/character.png", (0, 0), (14, 11, 20, 39))
@@ -200,7 +200,7 @@ class TheGame:
                 self.zombie_person.zombie_attacks(zombie_attack)
             for bullet in self.bullets:
                 if pygame.sprite.collide_rect(self.zombie_person, bullet):
-                    self.zombie_person.kill()
+                    # self.zombie_person.kill()
                     bullet.kill()
             for other_zombie in self.other_group:
                 if other_zombie != self.zombie_person and \
