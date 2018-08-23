@@ -14,4 +14,3 @@ class Wall(pygame.sprite.Sprite):
         self.y = y
         self.rect.x = x * WALL_SIZE
         self.rect.y = y * WALL_SIZE
-

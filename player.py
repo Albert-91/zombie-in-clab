@@ -11,7 +11,6 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.max_speed = max_speed
         self.game = game
         self.angle = angle
-        self.turn_to_shoot = "down"
         self.image = self.surface
         self.width = width
         self.height = height
