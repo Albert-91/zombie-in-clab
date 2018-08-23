@@ -17,7 +17,6 @@ class TheGame:
     def __init__(self, width, height):
         pygame.init()
         self.set_angle = 180
-        self.turn_to_shoot = "down"
         self.width = width
         self.height = height
         self.number_of_zombies = QUANTITY_OF_ZOMBIES
