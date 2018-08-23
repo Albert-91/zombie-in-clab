@@ -192,9 +192,10 @@ class TheGame:
             distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
                        (self.zombie_person.rect.y - self.player.rect.y) ** 2
             distance = math.sqrt(distance)
-            if distance > max_distance:
+            if distance > max_distance and self.zombie_person.state == False:
                 self.zombie_person.natural_moves()
-            if distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player):
+            if (distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player)) or\
+                            self.zombie_person.state == True:
                 self.zombie_person.follows_by_victim(zombie_speed, self.player)
             else:
                 self.zombie_person.attack(zombie_attack)
@@ -202,6 +203,7 @@ class TheGame:
                 if pygame.sprite.collide_rect(self.zombie_person, bullet):
                     self.zombie_person.shield -= bullet.attack
                     bullet.kill()
+                    self.zombie_person.state = True
                     self.zombie_person.follows_by_victim(zombie_speed, self.player)
                     if self.zombie_person.shield <= 0:
                         self.zombie_person.kill()
