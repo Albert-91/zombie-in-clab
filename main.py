@@ -13,7 +13,6 @@ from settings import *
 
 
 class TheGame:
-
     def __init__(self, width, height):
         pygame.init()
         self.set_angle = 180
@@ -30,11 +29,17 @@ class TheGame:
         self.board = Board(width, height)
         self.fps_clock = pygame.time.Clock()
         self.dt = None
-        self.player = Player(self, width / 2, height / 2, PLAYER_WIDTH, PLAYER_HEIGHT, max_speed=PLAYER_SPEED)
+        self.player = Player(self,
+                             START_POSITION_X,
+                             START_POSITION_Y,
+                             PLAYER_WIDTH,
+                             PLAYER_HEIGHT,
+                             max_speed=PLAYER_SPEED)
         self.zombie_group = pygame.sprite.Group()
         self.other_group = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.all_sprites_group.add(self.player)
+        self.name = None
         for i in range(self.number_of_zombies):
             x = randint(self.player.width, self.width - self.player.width)
             y = randint(self.player.height, self.height - self.player.height)
@@ -147,20 +152,21 @@ class TheGame:
                         word = word[:-1]
                     if event.key == pygame.K_RETURN:
                         if len(word) > 0:
-                            return self.run(word, difficult)
+                            self.name = word
+                            return self.run(difficult)
                 self.board.draw_input(word, self.width / 2, self.height / 2)
 
     def game_over(self):
         while True:
-            self.board.draw_game_over()
+            self.board.draw_game_over(self.name)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                        return False
+                        self.game_intro()
 
-    def run(self, name, difficulty):
+    def run(self, difficulty):
         max_distance = 170
         if difficulty == "easy":
             zombie_speed = 1
@@ -173,7 +179,7 @@ class TheGame:
             zombie_attack = 3
         else:
             zombie_speed = 1.7
-            zombie_attack = 4
+            zombie_attack = 5
         while True:
             self.dt = self.fps_clock.tick(FPS) / 1000
             self.handle_events()
@@ -196,8 +202,17 @@ class TheGame:
             if (distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player)) or \
                     self.zombie_person.state is True:
                 self.zombie_person.follows_by_victim(zombie_speed, self.player)
-            else:
-                self.zombie_person.attack(zombie_attack)
+            if pygame.sprite.collide_rect(self.zombie_person, self.player):
+                self.zombie_person.attack(zombie_attack, self.player)
+                print(self.player.shield)
+                if self.player.shield <= 0:
+                    self.player.lives -= 1
+                    self.player.shield = PLAYER_SHIELD
+                    self.player.x = START_POSITION_X
+                    self.player.y = START_POSITION_Y
+                    if self.player.lives < 1:
+                        self.player.kill()
+                        self.game_over()
             for bullet in self.bullets:
                 if pygame.sprite.collide_rect(self.zombie_person, bullet):
                     self.zombie_person.shield -= bullet.attack
@@ -245,8 +260,8 @@ class TheGame:
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
-                # if tile == 'P':
-                #     self.player = Player(self, col, row)
+                    # if tile == 'P':
+                    #     self.player = Player(self, col, row)
 
     def draw(self):
         self.board.surface.fill((255, 255, 255))
@@ -260,5 +275,5 @@ class TheGame:
 
 if __name__ == "__main__":
     game = TheGame(SCREEN_WIDTH, SCREEN_HEIGHT)
-    # game.game_intro()
-    game.run('Albert', "easy")
+    game.game_intro()
+    # game.run("easy")

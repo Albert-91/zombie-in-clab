@@ -49,7 +49,7 @@ class Board:
 
         pygame.display.update()
 
-    def draw_game_over(self, *args):
+    def draw_game_over(self, name, *args):
         background = (0, 0, 0)
         self.surface.fill(background)
         self.draw_text(self.surface, "Game over", self.width / 2, self.height * 0.4,
