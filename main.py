@@ -1,4 +1,6 @@
 import sys
+from tkinter import Place
+
 import pygame
 import math
 from random import randint
@@ -186,6 +188,7 @@ class TheGame:
             pygame.display.flip()
 
     def zombie_behavior(self, max_distance, zombie_speed, zombie_attack):
+        zombie_attack = 10
         for self.zombie_person in self.zombie_group:
             self.zombie_person.animation("images/zombies.png", (0, 0), (5, 1, 23, 29))
             distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
@@ -196,8 +199,17 @@ class TheGame:
             if (distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player)) or\
                             self.zombie_person.state == True:
                 self.zombie_person.follows_by_victim(zombie_speed, self.player)
-            else:
-                self.zombie_person.attack(zombie_attack)
+            elif pygame.sprite.collide_rect(self.zombie_person, self.player):
+                self.zombie_person.attack(zombie_attack, self.player)
+                print(self.player.shield)
+                if self.player.shield <= 0:
+                    self.player.lives -= 1
+                    self.player.shield = PLAYER_SHIELD
+                    self.player.x = -50
+                    self.player.y = -50
+                    if self.player.lives < 1:
+                        self.player.kill()
+                        self.game_over()
             for bullet in self.bullets:
                 if pygame.sprite.collide_rect(self.zombie_person, bullet):
                     self.zombie_person.shield -= bullet.attack

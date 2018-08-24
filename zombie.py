@@ -33,5 +33,5 @@ class Zombie(Player, pygame.sprite.Sprite):
             y = speed
         self.move(dy=y)
 
-    def attack(self, attack):
-        pass
+    def attack(self, attack, victim):
+        victim.shield -= attack
