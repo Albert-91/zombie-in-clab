@@ -15,7 +15,6 @@ from settings import *
 
 
 class TheGame:
-
     def __init__(self, width, height):
         pygame.init()
         self.set_angle = 180
@@ -32,7 +31,12 @@ class TheGame:
         self.board = Board(width, height)
         self.fps_clock = pygame.time.Clock()
         self.dt = None
-        self.player = Player(self, width / 2, height / 2, PLAYER_WIDTH, PLAYER_HEIGHT, max_speed=PLAYER_SPEED)
+        self.player = Player(self,
+                             START_POSITION_X,
+                             START_POSITION_Y,
+                             PLAYER_WIDTH,
+                             PLAYER_HEIGHT,
+                             max_speed=PLAYER_SPEED)
         self.zombie_group = pygame.sprite.Group()
         self.other_group = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
@@ -152,7 +156,7 @@ class TheGame:
                             return self.run(word, difficult)
                 self.board.draw_input(word, self.width / 2, self.height / 2)
 
-    def game_over(self):
+    def game_over(self, name):
         while True:
             self.board.draw_game_over()
             for event in pygame.event.get():
@@ -160,7 +164,7 @@ class TheGame:
                     self.quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                        return False
+                        self.game_intro()
 
     def run(self, name, difficulty):
         max_distance = 170
@@ -175,7 +179,7 @@ class TheGame:
             zombie_attack = 3
         else:
             zombie_speed = 1.7
-            zombie_attack = 4
+            zombie_attack = 5
         while True:
             self.dt = self.fps_clock.tick(FPS) / 1000
             self.handle_events()
@@ -194,10 +198,10 @@ class TheGame:
             distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
                        (self.zombie_person.rect.y - self.player.rect.y) ** 2
             distance = math.sqrt(distance)
-            if distance > max_distance and self.zombie_person.state == False:
+            if distance > max_distance and self.zombie_person.state is False:
                 self.zombie_person.natural_moves()
             if (distance <= max_distance and not pygame.sprite.collide_rect(self.zombie_person, self.player)) or\
-                            self.zombie_person.state == True:
+                            self.zombie_person.state is True:
                 self.zombie_person.follows_by_victim(zombie_speed, self.player)
             elif pygame.sprite.collide_rect(self.zombie_person, self.player):
                 self.zombie_person.attack(zombie_attack, self.player)
@@ -205,8 +209,8 @@ class TheGame:
                 if self.player.shield <= 0:
                     self.player.lives -= 1
                     self.player.shield = PLAYER_SHIELD
-                    self.player.x = -50
-                    self.player.y = -50
+                    self.player.x = START_POSITION_X
+                    self.player.y = START_POSITION_Y
                     if self.player.lives < 1:
                         self.player.kill()
                         self.game_over()
@@ -257,8 +261,8 @@ class TheGame:
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
-                # if tile == 'P':
-                #     self.player = Player(self, col, row)
+                    # if tile == 'P':
+                    #     self.player = Player(self, col, row)
 
     def draw(self):
         self.board.surface.fill((255, 255, 255))
