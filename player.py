@@ -55,8 +55,8 @@ class Player(Drawable, pygame.sprite.Sprite):
             self.vx *= 0.7071
             self.vy *= 0.7071
 
-    def collide_with_walls(self, direction):
-        hits = pygame.sprite.spritecollide(self, self.game.walls, False)
+    def collide_with_object(self, direction, object_to_collide):
+        hits = pygame.sprite.spritecollide(self, object_to_collide, False)
         if direction == 'x':
             if hits:
                 if self.vx > 0:
@@ -79,7 +79,7 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
-        self.collide_with_walls('x')
+        self.collide_with_object('x', self.game.walls)
         self.rect.y = self.y
-        self.collide_with_walls('y')
+        self.collide_with_object('y', self.game.walls)
         return self.angle

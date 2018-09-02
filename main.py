@@ -167,7 +167,7 @@ class TheGame:
                         self.game_intro()
 
     def run(self, difficulty):
-        max_distance = 170
+        max_distance = 300
         if difficulty == "easy":
             zombie_speed = 1
             zombie_attack = 1
@@ -275,5 +275,5 @@ class TheGame:
 
 if __name__ == "__main__":
     game = TheGame(SCREEN_WIDTH, SCREEN_HEIGHT)
-    game.game_intro()
-    # game.run("easy")
+    # game.game_intro()
+    game.run("easy")
