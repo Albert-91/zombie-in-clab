@@ -275,11 +275,12 @@ class TheGame:
                 #     self.player = Player(self, col, row)
 
     def draw(self):
-        self.board.surface.fill((255, 255, 255))
+        self.board.surface.fill((128, 128, 128))
         for sprite in self.all_sprites_group:
             self.board.surface.blit(sprite.image, self.camera.apply(sprite))
 
-    def quit(self):
+    @staticmethod
+    def quit():
         pygame.quit()
         sys.exit()
 

@@ -29,8 +29,7 @@ class Map:
         with open(filename, 'rt') as lines:
             for line in lines:
                 self.map_data.append(line)
-
-        self.tiles_quantity_row = len(self.map_data[0])
+        self.tiles_quantity_row = len(self.map_data[0]) - 1
         self.tiles_quantity_col = len(self.map_data)
         self.width = self.tiles_quantity_row * WALL_SIZE
         self.height = self.tiles_quantity_col * WALL_SIZE

@@ -9,7 +9,6 @@ class Board:
         pygame.display.set_caption('Zombie in CLab')
         self.width = width
         self.height = height
-        self.bg = pygame.image.load("images/terrain_atlas.png")
         self.intro_bg = pygame.image.load("images/intro.jpg")
         my_font = "font/Exquisite Corpse.ttf"
         self.menu_font = pygame.font.Font(my_font, 45)
@@ -17,13 +16,6 @@ class Board:
         self.title_font = pygame.font.Font(my_font, 90)
         self.difficulty_font = pygame.font.Font(my_font, 70)
         self.game_over_font = pygame.font.Font(my_font, 150)
-
-    def draw(self, *args):
-        background = (255, 255, 255)
-        self.surface.fill(background)
-        self.surface.blit(self.bg, (200, 200), (0, 0, 90, 150))
-        for drawable in args:
-            drawable.draw_on(self.surface)
 
     def draw_menu(self, *args):
         self.intro_bg = pygame.transform.scale(self.intro_bg, (self.width, self.height))
