@@ -236,6 +236,16 @@ class TheGame:
                     else:
                         other_zombie.move(dy=-zombie_speed)
                         self.zombie_person.move(dy=zombie_speed)
+            for wall in self.walls:
+                if pygame.sprite.collide_rect(self.zombie_person, wall):
+                    if wall.rect.x > self.zombie_person.rect.x:
+                        self.zombie_person.move(dx=-zombie_speed)
+                    else:
+                        self.zombie_person.move(dx=zombie_speed)
+                    if wall.rect.y > self.zombie_person.rect.y:
+                        self.zombie_person.move(dy=-zombie_speed)
+                    else:
+                        self.zombie_person.move(dy=zombie_speed)
 
     def handle_events(self):
         self.set_angle = self.player.refresh()
@@ -260,8 +270,8 @@ class TheGame:
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
-                    # if tile == 'P':
-                    #     self.player = Player(self, col, row)
+                # if tile == 'P':
+                #     self.player = Player(self, col, row)
 
     def draw(self):
         self.board.surface.fill((255, 255, 255))
