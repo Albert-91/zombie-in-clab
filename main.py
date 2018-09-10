@@ -246,6 +246,7 @@ class TheGame:
                         self.zombie_person.move(dy=-zombie_speed)
                     else:
                         self.zombie_person.move(dy=zombie_speed)
+            pygame.sprite.groupcollide(self.bullets, self.walls, True, False)
 
     def handle_events(self):
         self.set_angle = self.player.refresh()
