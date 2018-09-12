@@ -21,8 +21,9 @@ class TheGame:
         self.number_of_zombies = QUANTITY_OF_ZOMBIES
         self.all_sprites_group = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
-        game_folder = path.dirname(__file__)
-        self.map = Map(path.join(game_folder, 'map.txt'))
+        self.map = None
+        self.player_img = None
+        self.load_data()
         self.map_data = self.map.get_map()
         self.new()
         self.camera = Camera(self.map.width, self.map.height)
@@ -47,6 +48,12 @@ class TheGame:
             self.zombie_group.add(self.zombie_person)
             self.other_group.add(self.zombie_person)
             self.all_sprites_group.add(self.zombie_person)
+
+    def load_data(self):
+        game_folder = path.dirname(__file__)
+        img_folder = path.join(game_folder, 'images')
+        self.map = Map(path.join(game_folder, 'map.txt'))
+        self.player_img = pygame.image.load(path.join(img_folder, PLAYER_IMAGE))
 
     def game_intro(self):
         i = 0.56
@@ -185,7 +192,6 @@ class TheGame:
             self.handle_events()
             self.zombie_behavior(max_distance, zombie_speed, zombie_attack)
             self.draw()
-            self.player.animation("images/character.png", (0, 0), (14, 11, 20, 39))
             self.all_sprites_group.update(self.width, self.height)
             self.bullets.update(self.map.width, self.map.height)
             self.camera.update(self.player)
