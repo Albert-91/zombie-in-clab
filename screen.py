@@ -2,6 +2,10 @@ import pygame
 from settings import *
 
 
+def collide_hit_rect(one, two):
+    return one.hit_rect.colliderect(one, two)
+
+
 class Camera:
 
     def __init__(self, width, height):
@@ -13,8 +17,8 @@ class Camera:
         return entity.rect.move(self.screen.topleft)
 
     def update(self, target):
-        x = -target.rect.x + int(SCREEN_WIDTH / 2)
-        y = -target.rect.y + int(SCREEN_HEIGHT / 2)
+        x = -target.rect.centerx + int(SCREEN_WIDTH / 2)
+        y = -target.rect.centery + int(SCREEN_HEIGHT / 2)
         x = min(0, x)
         y = min(0, y)
         x = max(-(self.width - SCREEN_WIDTH), x)

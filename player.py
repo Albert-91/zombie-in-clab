@@ -1,5 +1,6 @@
 import pygame
 from drawable import Drawable
+from screen import collide_hit_rect
 from settings import *
 vector = pygame.math.Vector2
 
@@ -15,11 +16,15 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.width = width
         self.height = height
         self.rect = self.image.get_rect(x=x, y=y)
+        self.hit_rect = PLAYER_HIT_RECT
+        self.hit_rect.center = self.rect.center
         self.vel = vector(0, 0)
         self.position = vector(x, y)
         self.picture = None
         self.lives = PLAYER_LIVES
         self.shield = PLAYER_SHIELD
+        self.rotation = 0
+        self.rotation_speed = 0
 
     def animation(self, image_file, blit_destination, blit_area, serial=True):
         self.picture = pygame.image.load(image_file)
@@ -36,46 +41,50 @@ class Player(Drawable, pygame.sprite.Sprite):
 
     def get_keys(self):
         self.vel = vector(0, 0)
+        self.rotation_speed = 0
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            self.vel.x = - self.max_speed
+            self.rotation_speed = PLAYER_ROTATION_SPEED
             self.angle = 90
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            self.vel.x = self.max_speed
+            self.rotation_speed = - PLAYER_ROTATION_SPEED
             self.angle = 270
         if keys[pygame.K_UP] or keys[pygame.K_w]:
-            self.vel.y = -self.max_speed
+            self.vel = vector(self.max_speed, 0).rotate(-self.rotation)
             self.angle = 0
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            self.vel.y = self.max_speed
+            self.vel = vector(-self.max_speed/2, 0).rotate(-self.rotation)
             self.angle = 180
-        if self.vel.x != 0 and self.vel.y != 0:
-            self.vel *= 0.7071
 
     def collide_with_object(self, direction, object_to_collide):
         hits = pygame.sprite.spritecollide(self, object_to_collide, False)
         if direction == 'x':
             if hits:
                 if self.vel.x > 0:
-                    self.position.x = hits[0].rect.left - self.rect.width
+                    self.position.x = hits[0].rect.left - self.hit_rect.width / 2
                 if self.vel.x < 0:
-                    self.position.x = hits[0].rect.right
+                    self.position.x = hits[0].rect.right + self.hit_rect.width / 2
                 self.vel.x = 0
-                self.rect.x = self.position.x
+                self.hit_rect.centerx = self.position.x
         if direction == 'y':
             if hits:
                 if self.vel.y > 0:
-                    self.position.y = hits[0].rect.top - self.rect.height
+                    self.position.y = hits[0].rect.top - self.hit_rect.height / 2
                 if self.vel.y < 0:
-                    self.position.y = hits[0].rect.bottom
+                    self.position.y = hits[0].rect.bottom + self.hit_rect.height / 2
                 self.vel.y = 0
-                self.rect.y = self.position.y
+                self.hit_rect.centery = self.position.y
 
     def refresh(self):
         self.get_keys()
+        self.rotation = (self.rotation + self.rotation_speed * self.game.dt) % 360
+        self.image = pygame.transform.rotate(self.game.player_img, self.rotation)
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position
         self.position += self.vel * self.game.dt
-        self.rect.x = self.position.x
+        self.hit_rect.centerx = self.position.x
         self.collide_with_object('x', self.game.walls)
-        self.rect.y = self.position.y
+        self.hit_rect.centery = self.position.y
         self.collide_with_object('y', self.game.walls)
+        self.rect.center = self.hit_rect.center
         return self.angle
