@@ -57,7 +57,7 @@ class Player(Drawable, pygame.sprite.Sprite):
             self.angle = 180
 
     def collide_with_object(self, direction, object_to_collide):
-        hits = pygame.sprite.spritecollide(self, object_to_collide, False)
+        hits = pygame.sprite.spritecollide(self, object_to_collide, False, collide_hit_rect)
         if direction == 'x':
             if hits:
                 if self.vel.x > 0:
