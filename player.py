@@ -84,9 +84,9 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.position += self.vel * self.game.dt
         self.hit_rect.centerx = self.position.x
         self.collide_with_object('x', self.game.walls)
-        self.collide_with_object('x', self.game.zombie_group)
+        self.collide_with_object('x', self.game.zombies)
         self.hit_rect.centery = self.position.y
         self.collide_with_object('y', self.game.walls)
-        self.collide_with_object('y', self.game.zombie_group)
+        self.collide_with_object('y', self.game.zombies)
         self.rect.center = self.hit_rect.center
         return self.angle

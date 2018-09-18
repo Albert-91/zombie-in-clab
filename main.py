@@ -8,7 +8,7 @@ from bullet import Bullet
 from player import Player
 from screen import Camera, Map
 from walls import Wall
-from zombie import Zombie
+from zombie import Zombie, Monster
 from settings import *
 
 
@@ -23,6 +23,9 @@ class TheGame:
         self.walls = pygame.sprite.Group()
         self.map = None
         self.player_img = None
+        self.zombie_img = None
+        self.zombies = pygame.sprite.Group()
+        self.monsters = pygame.sprite.Group()
         self.load_data()
         self.map_data = self.map.get_map()
         self.new()
@@ -36,8 +39,7 @@ class TheGame:
                              PLAYER_WIDTH,
                              PLAYER_HEIGHT,
                              max_speed=PLAYER_SPEED)
-        self.zombie_group = pygame.sprite.Group()
-        self.other_group = pygame.sprite.Group()
+        # self.other_group = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.all_sprites_group.add(self.player)
         self.name = None
@@ -45,8 +47,8 @@ class TheGame:
             x = randint(self.player.width, self.width - self.player.width)
             y = randint(self.player.height, self.height - self.player.height)
             self.zombie_person = Zombie(x, y, ZOMBIE_WIDTH, ZOMBIE_HEIGHT)
-            self.zombie_group.add(self.zombie_person)
-            self.other_group.add(self.zombie_person)
+            # self.zombies.add(self.zombie_person)
+            # self.other_group.add(self.zombie_person)
             self.all_sprites_group.add(self.zombie_person)
 
     def load_data(self):
@@ -54,6 +56,7 @@ class TheGame:
         img_folder = path.join(game_folder, 'images')
         self.map = Map(path.join(game_folder, 'map.txt'))
         self.player_img = pygame.image.load(path.join(img_folder, PLAYER_IMAGE))
+        self.zombie_img = pygame.image.load(path.join(img_folder, ZOMBIE_IMAGE))
 
     def game_intro(self):
         i = 0.56
@@ -198,7 +201,7 @@ class TheGame:
             pygame.display.flip()
 
     def zombie_behavior(self, max_distance, zombie_speed, zombie_attack):
-        for self.zombie_person in self.zombie_group:
+        for self.zombie_person in self.zombies:
             self.zombie_person.animation("images/zombies.png", (0, 0), (5, 1, 23, 29))
             distance = (self.zombie_person.rect.x - self.player.rect.x) ** 2 + \
                        (self.zombie_person.rect.y - self.player.rect.y) ** 2
@@ -277,6 +280,8 @@ class TheGame:
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
+                if tile == 'Z':
+                    Monster(self, col, row)
                 # if tile == 'P':
                 #     self.player = Player(self, col, row)
 

@@ -1,6 +1,7 @@
 from random import randint
 import pygame
-from player import Player
+from player import Player, vector
+from settings import *
 
 
 class Zombie(Player, pygame.sprite.Sprite):
@@ -35,3 +36,23 @@ class Zombie(Player, pygame.sprite.Sprite):
 
     def attack(self, attack, victim):
         victim.shield -= attack
+
+
+class Monster(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites_group, game.monsters
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.zombie_img
+        self.rect = self.image.get_rect()
+        self.position = vector(x, y) * WALL_SIZE
+        self.rect.center = self.position
+        self.rotation = 0
+
+    def update(self, width, height):
+        self.rotation = (self.game.player.position - self.position).angle_to(vector(1, 0))
+        self.image = pygame.transform.rotate(self.game.zombie_img, self.rotation)
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position
+
+
