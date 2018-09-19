@@ -1,5 +1,5 @@
-import pygame
 from drawable import Drawable
+from functions import collide_with_object
 from settings import *
 vector = pygame.math.Vector2
 
@@ -63,10 +63,10 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.rect.center = self.position
         self.position += self.vel * self.game.dt
         self.hit_rect.centerx = self.position.x
-        self.collide_with_object('x', self.game.walls)
-        self.collide_with_object('x', self.game.zombies)
+        collide_with_object(self, self.game.walls, 'x')
+        collide_with_object(self, self.game.monsters, 'x')
         self.hit_rect.centery = self.position.y
-        self.collide_with_object('y', self.game.walls)
-        self.collide_with_object('y', self.game.zombies)
+        collide_with_object(self, self.game.walls, 'y')
+        collide_with_object(self, self.game.monsters, 'y')
         self.rect.center = self.hit_rect.center
         return self.angle

@@ -1,5 +1,7 @@
 from random import randint
 import pygame
+
+from functions import collide_with_object
 from player import Player, vector
 from settings import *
 
@@ -47,6 +49,8 @@ class Monster(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.position = vector(x, y) * WALL_SIZE
         self.rect.center = self.position
+        self.hit_rect = ZOMBIE_HIT_RECT.copy()
+        self.hit_rect.center = self.rect.center
         self.vel = vector(0, 0)
         self.acc = vector(0, 0)
         self.rotation = 0
@@ -60,7 +64,13 @@ class Monster(pygame.sprite.Sprite):
         self.acc += self.vel * (-1)
         self.vel += self.acc * self.game.dt
         self.position += self.vel * self.game.dt + (self.acc * self.game.dt ** 2) / 2
-        self.rect.center = self.position
+        self.hit_rect.centerx = self.position.x
+        collide_with_object(self, self.game.walls, 'x')
+        collide_with_object(self, self.game.all_sprites_group, 'x')
+        self.hit_rect.centery = self.position.y
+        collide_with_object(self, self.game.walls, 'y')
+        collide_with_object(self, self.game.all_sprites_group, 'y')
+        self.rect.center = self.hit_rect.center
 
 
 

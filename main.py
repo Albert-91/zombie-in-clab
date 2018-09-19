@@ -1,5 +1,4 @@
 import sys
-import pygame
 import math
 from random import randint
 from os import path
