@@ -47,6 +47,8 @@ class Monster(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.position = vector(x, y) * WALL_SIZE
         self.rect.center = self.position
+        self.vel = vector(0, 0)
+        self.acc = vector(0, 0)
         self.rotation = 0
 
     def update(self, width, height):
@@ -54,5 +56,12 @@ class Monster(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.game.zombie_img, self.rotation)
         self.rect = self.image.get_rect()
         self.rect.center = self.position
+        self.acc = vector(ZOMBIE_SPEED_EASY, 0).rotate(-self.rotation)
+        self.acc += self.vel * (-1)
+        self.vel += self.acc * self.game.dt
+        self.position += self.vel * self.game.dt + (self.acc * self.game.dt ** 2) / 2
+        self.rect.center = self.position
+
+
 
 

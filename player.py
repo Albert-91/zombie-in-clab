@@ -1,6 +1,5 @@
 import pygame
 from drawable import Drawable
-from screen import collide_hit_rect
 from settings import *
 vector = pygame.math.Vector2
 
@@ -55,25 +54,6 @@ class Player(Drawable, pygame.sprite.Sprite):
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.vel = vector(-self.max_speed/2, 0).rotate(-self.rotation)
             self.angle = 180
-
-    def collide_with_object(self, direction, object_to_collide):
-        hits = pygame.sprite.spritecollide(self, object_to_collide, False, collide_hit_rect)
-        if direction == 'x':
-            if hits:
-                if self.vel.x > 0:
-                    self.position.x = hits[0].rect.left - self.hit_rect.width / 2
-                if self.vel.x < 0:
-                    self.position.x = hits[0].rect.right + self.hit_rect.width / 2
-                self.vel.x = 0
-                self.hit_rect.centerx = self.position.x
-        if direction == 'y':
-            if hits:
-                if self.vel.y > 0:
-                    self.position.y = hits[0].rect.top - self.hit_rect.height / 2
-                if self.vel.y < 0:
-                    self.position.y = hits[0].rect.bottom + self.hit_rect.height / 2
-                self.vel.y = 0
-                self.hit_rect.centery = self.position.y
 
     def refresh(self):
         self.get_keys()
