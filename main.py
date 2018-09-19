@@ -4,7 +4,7 @@ from random import randint
 from os import path
 from board import Board
 from bullet import Bullet
-from player import Player
+from player import Player, vector
 from screen import Camera, Map
 from walls import Wall
 from zombie import Zombie, Monster
@@ -23,6 +23,7 @@ class TheGame:
         self.map = None
         self.player_img = None
         self.zombie_img = None
+        self.bullet_img = None
         self.zombies = pygame.sprite.Group()
         self.monsters = pygame.sprite.Group()
         self.load_data()
@@ -56,6 +57,8 @@ class TheGame:
         self.map = Map(path.join(game_folder, 'map.txt'))
         self.player_img = pygame.image.load(path.join(img_folder, PLAYER_IMAGE))
         self.zombie_img = pygame.image.load(path.join(img_folder, ZOMBIE_IMAGE))
+        self.bullet_img = pygame.image.load(path.join(img_folder, BULLET_IMG))
+        self.bullet_img = pygame.transform.scale(self.bullet_img, (BULLET_WIDTH, BULLET_HEIGHT))
 
     def game_intro(self):
         i = 0.56
@@ -229,21 +232,6 @@ class TheGame:
                     self.zombie_person.follows_by_victim(zombie_speed, self.player)
                     if self.zombie_person.shield <= 0:
                         self.zombie_person.kill()
-            for other_zombie in self.other_group:
-                if other_zombie != self.zombie_person and \
-                        pygame.sprite.collide_rect(self.zombie_person, other_zombie):
-                    if other_zombie.rect.x > self.zombie_person.rect.x:
-                        other_zombie.move(dx=zombie_speed)
-                        self.zombie_person.move(dx=-zombie_speed)
-                    else:
-                        other_zombie.move(dx=-zombie_speed)
-                        self.zombie_person.move(dx=zombie_speed)
-                    if other_zombie.rect.y > self.zombie_person.rect.y:
-                        other_zombie.move(dy=zombie_speed)
-                        self.zombie_person.move(dy=-zombie_speed)
-                    else:
-                        other_zombie.move(dy=-zombie_speed)
-                        self.zombie_person.move(dy=zombie_speed)
             for wall in self.walls:
                 if pygame.sprite.collide_rect(self.zombie_person, wall):
                     if wall.rect.x > self.zombie_person.rect.x:
@@ -264,15 +252,14 @@ class TheGame:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.quit()
-                if event.key == pygame.K_SPACE:
-                    attack_list = [0, 1, 1, 2, 2, 2, 2, 2, 3, 3]
-                    attack_pos = randint(0, len(attack_list) - 1)
-                    attack_value = attack_list[attack_pos]
-                    bullet = Bullet(self.player.rect.x + self.player.width / 2,
-                                    self.player.rect.y + self.player.height / 2,
-                                    self.set_angle, attack_value)
-                    self.all_sprites_group.add(bullet)
-                    self.bullets.add(bullet)
+                # if event.key == pygame.K_SPACE:
+                #     attack_list = [0, 1, 1, 2, 2, 2, 2, 2, 3, 3]
+                #     attack_pos = randint(0, len(attack_list) - 1)
+                #     attack_value = attack_list[attack_pos]
+                #     dir = vector(1, 0).rotate(-self)
+                #     bullet = Bullet(self, )
+                #     self.all_sprites_group.add(bullet)
+                #     self.bullets.add(bullet)
 
     def new(self):
         for row, tiles in enumerate(self.map_data):

@@ -1,6 +1,4 @@
 from random import randint
-import pygame
-
 from functions import collide_with_object
 from player import Player, vector
 from settings import *
@@ -71,7 +69,3 @@ class Monster(pygame.sprite.Sprite):
         collide_with_object(self, self.game.walls, 'y')
         collide_with_object(self, self.game.all_sprites_group, 'y')
         self.rect.center = self.hit_rect.center
-
-
-
-

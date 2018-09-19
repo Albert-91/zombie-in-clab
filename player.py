@@ -1,7 +1,7 @@
+from bullet import Bullet
 from drawable import Drawable
-from functions import collide_with_object
+from functions import collide_with_object, vector
 from settings import *
-vector = pygame.math.Vector2
 
 
 class Player(Drawable, pygame.sprite.Sprite):
@@ -24,6 +24,7 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.shield = PLAYER_SHIELD
         self.rotation = 0
         self.rotation_speed = 0
+        self.last_shot = 0
 
     def animation(self, image_file, blit_destination, blit_area, serial=True):
         self.picture = pygame.image.load(image_file)
@@ -54,6 +55,12 @@ class Player(Drawable, pygame.sprite.Sprite):
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.vel = vector(-self.max_speed/2, 0).rotate(-self.rotation)
             self.angle = 180
+        if keys[pygame.K_SPACE]:
+            now = pygame.time.get_ticks()
+            if now - self.last_shot > BULLET_RATE:
+                self.last_shot = now
+                dir = vector(1, 0).rotate(-self.rotation)
+                Bullet(self.game, self.position, dir)
 
     def refresh(self):
         self.get_keys()

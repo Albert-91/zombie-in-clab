@@ -1,5 +1,7 @@
 import pygame
 
+vector = pygame.math.Vector2
+
 
 def collide_hit_rect(one, two):
     return one.hit_rect.colliderect(two)
