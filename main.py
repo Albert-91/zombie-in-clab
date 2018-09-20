@@ -3,8 +3,7 @@ import math
 from random import randint
 from os import path
 from board import Board
-from bullet import Bullet
-from player import Player, vector
+from player import Player
 from screen import Camera, Map
 from walls import Wall
 from zombie import Zombie, Monster
@@ -39,17 +38,9 @@ class TheGame:
                              PLAYER_WIDTH,
                              PLAYER_HEIGHT,
                              max_speed=PLAYER_SPEED)
-        # self.other_group = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.all_sprites_group.add(self.player)
         self.name = None
-        for i in range(self.number_of_zombies):
-            x = randint(self.player.width, self.width - self.player.width)
-            y = randint(self.player.height, self.height - self.player.height)
-            self.zombie_person = Zombie(x, y, ZOMBIE_WIDTH, ZOMBIE_HEIGHT)
-            # self.zombies.add(self.zombie_person)
-            # self.other_group.add(self.zombie_person)
-            self.all_sprites_group.add(self.zombie_person)
 
     def load_data(self):
         game_folder = path.dirname(__file__)
@@ -197,9 +188,7 @@ class TheGame:
             self.handle_events()
             self.zombie_behavior(max_distance, zombie_speed, zombie_attack)
             self.draw()
-            self.all_sprites_group.update(self.width, self.height)
-            self.bullets.update(self.map.width, self.map.height)
-            self.camera.update(self.player)
+            self.update()
             pygame.display.flip()
 
     def zombie_behavior(self, max_distance, zombie_speed, zombie_attack):
@@ -232,17 +221,14 @@ class TheGame:
                     self.zombie_person.follows_by_victim(zombie_speed, self.player)
                     if self.zombie_person.shield <= 0:
                         self.zombie_person.kill()
-            for wall in self.walls:
-                if pygame.sprite.collide_rect(self.zombie_person, wall):
-                    if wall.rect.x > self.zombie_person.rect.x:
-                        self.zombie_person.move(dx=-zombie_speed)
-                    else:
-                        self.zombie_person.move(dx=zombie_speed)
-                    if wall.rect.y > self.zombie_person.rect.y:
-                        self.zombie_person.move(dy=-zombie_speed)
-                    else:
-                        self.zombie_person.move(dy=zombie_speed)
             pygame.sprite.groupcollide(self.bullets, self.walls, True, False)
+
+    def update(self):
+        self.all_sprites_group.update(self.width, self.height)
+        self.camera.update(self.player)
+        hits = pygame.sprite.groupcollide(self.bullets, self.monsters, True, False)
+        for hit in hits:
+            hit.kill()
 
     def handle_events(self):
         self.set_angle = self.player.refresh()
@@ -252,14 +238,6 @@ class TheGame:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.quit()
-                # if event.key == pygame.K_SPACE:
-                #     attack_list = [0, 1, 1, 2, 2, 2, 2, 2, 3, 3]
-                #     attack_pos = randint(0, len(attack_list) - 1)
-                #     attack_value = attack_list[attack_pos]
-                #     dir = vector(1, 0).rotate(-self)
-                #     bullet = Bullet(self, )
-                #     self.all_sprites_group.add(bullet)
-                #     self.bullets.add(bullet)
 
     def new(self):
         for row, tiles in enumerate(self.map_data):
