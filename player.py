@@ -62,6 +62,7 @@ class Player(Drawable, pygame.sprite.Sprite):
                 dir = vector(1, 0).rotate(-self.rotation)
                 position = self.position + BARREL_OFFSET.rotate(-self.rotation)
                 Bullet(self.game, position, dir)
+                self.vel = vector(-KICKBACK, 0).rotate(-self.rotation)
 
     def refresh(self):
         self.get_keys()

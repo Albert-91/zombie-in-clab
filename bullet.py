@@ -1,7 +1,9 @@
+from random import uniform
+
 import pygame
 
 from functions import vector
-from settings import BULLET_SPEED
+from settings import BULLET_SPEED, GUN_SPREAD
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -14,7 +16,8 @@ class Bullet(pygame.sprite.Sprite):
         self.position = vector(position)
         self.game = game
         self.rect.center = position
-        self.vel = direction * BULLET_SPEED
+        spread = uniform(-GUN_SPREAD, GUN_SPREAD)
+        self.vel = direction.rotate(spread) * BULLET_SPEED
         self.spawn_time = pygame.time.get_ticks()
 
     def update(self, max_width, max_height):
