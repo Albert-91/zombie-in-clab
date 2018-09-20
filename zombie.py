@@ -64,8 +64,6 @@ class Monster(pygame.sprite.Sprite):
         self.position += self.vel * self.game.dt + (self.acc * self.game.dt ** 2) / 2
         self.hit_rect.centerx = self.position.x
         collide_with_object(self, self.game.walls, 'x')
-        collide_with_object(self, self.game.all_sprites_group, 'x')
         self.hit_rect.centery = self.position.y
         collide_with_object(self, self.game.walls, 'y')
-        collide_with_object(self, self.game.all_sprites_group, 'y')
         self.rect.center = self.hit_rect.center

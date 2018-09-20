@@ -60,7 +60,8 @@ class Player(Drawable, pygame.sprite.Sprite):
             if now - self.last_shot > BULLET_RATE:
                 self.last_shot = now
                 dir = vector(1, 0).rotate(-self.rotation)
-                Bullet(self.game, self.position, dir)
+                position = self.position + BARREL_OFFSET.rotate(-self.rotation)
+                Bullet(self.game, position, dir)
 
     def refresh(self):
         self.get_keys()
@@ -71,9 +72,7 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.position += self.vel * self.game.dt
         self.hit_rect.centerx = self.position.x
         collide_with_object(self, self.game.walls, 'x')
-        collide_with_object(self, self.game.monsters, 'x')
         self.hit_rect.centery = self.position.y
         collide_with_object(self, self.game.walls, 'y')
-        collide_with_object(self, self.game.monsters, 'y')
         self.rect.center = self.hit_rect.center
         return self.angle

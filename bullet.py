@@ -20,5 +20,6 @@ class Bullet(pygame.sprite.Sprite):
     def update(self, max_width, max_height):
         self.position += self.vel * self.game.dt
         self.rect.center = self.position
-
+        if pygame.sprite.spritecollideany(self, self.game.walls):
+            self.kill()
 

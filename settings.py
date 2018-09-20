@@ -1,5 +1,7 @@
 import pygame
 
+from functions import vector
+
 FPS = 80
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600
@@ -28,12 +30,13 @@ ZOMBIE_IMAGE = 'zombie1_hold.png'
 ZOMBIE_HIT_RECT = pygame.Rect(0, 0, 30, 30)
 QUANTITY_OF_ZOMBIES = 0
 
-BULLET_IMG = 'bullet.png'
+BULLET_IMG = 'bulletYellowSilver_outline.png'
 BULLET_WIDTH = 5
 BULLET_HEIGHT = 10
 BULLET_SPEED = 500
 BULLET_LIFETIME = 1000
 BULLET_RATE = 150
+BARREL_OFFSET = vector(30, 10)
 
 WALL_COLOR = (0, 0, 0)
 WALL_SIZE = 10
