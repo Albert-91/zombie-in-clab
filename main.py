@@ -6,7 +6,7 @@ from screen import Camera, Map
 from walls import Wall
 from zombie import Zombie
 from settings import *
-from functions import quit
+from functions import quit, collide_hit_rect, draw_player_health
 
 
 class TheGame:
@@ -68,9 +68,18 @@ class TheGame:
     def update(self):
         self.all_sprites.update()
         self.camera.update(self.player)
-        hits = pygame.sprite.groupcollide(self.bullets, self.zombies, True, False)
+        hits = pygame.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
         for hit in hits:
-            hit.kill()
+            self.player.shield -= ZOMBIE_DMG
+            hit.vel = vector(0, 0)
+            if self.player.shield <= 0:
+                self.menu.game_over()
+        if hits:
+            self.player.position += vector(KNOCKBACK, 0).rotate(-hits[0].rotation)
+        hits = pygame.sprite.groupcollide(self.zombies, self.bullets, False, True)
+        for hit in hits:
+            hit.shield -= BULLET_DMG
+            hit.vel = vector(0, 0)
 
     def handle_events(self):
         self.player.update()
@@ -94,7 +103,10 @@ class TheGame:
     def draw(self):
         self.board.surface.fill((128, 128, 128))
         for sprite in self.all_sprites:
+            if isinstance(sprite, Zombie):
+                sprite.draw_shield()
             self.board.surface.blit(sprite.image, self.camera.apply(sprite))
+        draw_player_health(self.board.surface, 20, 10, self.player.shield / PLAYER_SHIELD)
 
 
 if __name__ == "__main__":

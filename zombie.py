@@ -18,6 +18,8 @@ class Zombie(pygame.sprite.Sprite):
         self.vel = vector(0, 0)
         self.acc = vector(0, 0)
         self.rotation = 0
+        self.shield = ZOMBIE_SHIELD
+        self.shield_bar = None
 
     def natural_moves(self):
         moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
@@ -42,5 +44,17 @@ class Zombie(pygame.sprite.Sprite):
         self.hit_rect.centery = self.position.y
         collide_with_object(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
+        if self.shield <= 0:
+            self.kill()
 
-
+    def draw_shield(self):
+        if self.shield > 60:
+            color = GREEN
+        elif self.shield > 30:
+            color = YELLOW
+        else:
+            color = RED
+        width = int(self.rect.width * self.shield / ZOMBIE_SHIELD)
+        self.shield_bar = pygame.Rect(0, 0, width, 7)
+        if self.shield < ZOMBIE_SHIELD:
+            pygame.draw.rect(self.image, color, self.shield_bar)
