@@ -4,7 +4,7 @@ from settings import *
 
 class Wall(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites_group, game.walls
+        self.groups = game.all_sprites, game.walls
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pygame.Surface((WALL_SIZE, WALL_SIZE))

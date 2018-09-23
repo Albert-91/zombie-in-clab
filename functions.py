@@ -1,6 +1,12 @@
+import sys
 import pygame
 
 vector = pygame.math.Vector2
+
+
+def quit():
+    pygame.quit()
+    sys.exit()
 
 
 def collide_hit_rect(one, two):
@@ -25,3 +31,5 @@ def collide_with_object(sprite, group, direction):
                 sprite.position.y = hits[0].rect.bottom + sprite.hit_rect.height / 2
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.position.y
+
+

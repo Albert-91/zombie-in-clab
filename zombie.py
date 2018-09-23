@@ -1,46 +1,12 @@
 from random import randint
 from functions import collide_with_object
-from player import Player, vector
 from settings import *
 
 
-class Zombie(Player, pygame.sprite.Sprite):
+class Zombie(pygame.sprite.Sprite):
 
-    def __init__(self, x, y, width, height, color=(255, 0, 0), max_speed=1, state=False):
-        super(Player, self).__init__(width, height, x, y, color)
-        pygame.sprite.Sprite.__init__(self)
-        self.max_speed = max_speed
-        self.image = self.surface
-        self.rect = self.image.get_rect(x=x, y=y)
-        self.picture = None
-        self.shield = 8
-        self.state = state
-
-    def natural_moves(self):
-        moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
-        x = randint(0, len(moves_list) - 1)
-        y = randint(0, len(moves_list) - 1)
-        self.move(dx=moves_list[x], dy=moves_list[y])
-
-    def follows_by_victim(self, speed, victim):
-        if self.rect.x > victim.rect.x:
-            x = - speed
-        else:
-            x = speed
-        self.move(dx=x)
-        if self.rect.y > victim.rect.y:
-            y = - speed
-        else:
-            y = speed
-        self.move(dy=y)
-
-    def attack(self, attack, victim):
-        victim.shield -= attack
-
-
-class Monster(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites_group, game.monsters
+        self.groups = game.all_sprites, game.zombies
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.zombie_img
@@ -53,7 +19,16 @@ class Monster(pygame.sprite.Sprite):
         self.acc = vector(0, 0)
         self.rotation = 0
 
-    def update(self, width, height):
+    def natural_moves(self):
+        moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
+        x = randint(0, len(moves_list) - 1)
+        y = randint(0, len(moves_list) - 1)
+        self.move(dx=moves_list[x], dy=moves_list[y])
+
+    def attack(self, attack, victim):
+        victim.shield -= attack
+
+    def update(self):
         self.rotation = (self.game.player.position - self.position).angle_to(vector(1, 0))
         self.image = pygame.transform.rotate(self.game.zombie_img, self.rotation)
         self.rect = self.image.get_rect()
@@ -67,3 +42,5 @@ class Monster(pygame.sprite.Sprite):
         self.hit_rect.centery = self.position.y
         collide_with_object(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
+
+
