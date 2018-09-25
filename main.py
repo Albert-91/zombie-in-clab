@@ -2,7 +2,7 @@ from os import path
 from board import Board
 from menu import Menu
 from player import Player
-from screen import Camera, Map
+from screen import Camera, Map, TiledMap
 from walls import Wall
 from zombie import Zombie
 from settings import *
@@ -14,21 +14,23 @@ class TheGame:
         pygame.init()
         self.width = width
         self.height = height
+        self.board = Board(width, height)
         self.all_sprites = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         self.zombies = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.map = None
+        self.map_img = None
+        self.map_rect = None
         self.player_img = None
         self.intro_img = None
         self.zombie_img = None
         self.bullet_img = None
         self.player = None
         self.load_data()
-        self.map_data = self.map.get_map()
+        self.map_data = self.map.make_map()
         self.new()
         self.camera = Camera(self.map.width, self.map.height)
-        self.board = Board(width, height)
         self.fps_clock = pygame.time.Clock()
         self.dt = None
         self.all_sprites.add(self.player)
@@ -37,7 +39,10 @@ class TheGame:
     def load_data(self):
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'images')
-        self.map = Map(path.join(game_folder, 'map.txt'))
+        map_folder = path.join(game_folder, 'maps')
+        self.map = TiledMap(path.join(map_folder, 'clab_map.tmx'))
+        self.map_img = self.map.make_map()
+        self.map_rect = self.map_img.get_rect()
         self.intro_img = pygame.image.load(path.join(img_folder, INTRO_IMG))
         self.player_img = pygame.image.load(path.join(img_folder, PLAYER_IMAGE))
         self.zombie_img = pygame.image.load(path.join(img_folder, ZOMBIE_IMAGE))
@@ -91,17 +96,19 @@ class TheGame:
                     quit()
 
     def new(self):
-        for row, tiles in enumerate(self.map_data):
-            for col, tile in enumerate(tiles):
-                if tile == '1':
-                    Wall(self, col, row)
-                if tile == 'Z':
-                    Zombie(self, col, row)
-                if tile == 'P':
-                    self.player = Player(self, col, row)
+        self.player = Player(self, 10, 10)
+        # for row, tiles in enumerate(self.map_data):
+        #     for col, tile in enumerate(tiles):
+        #         if tile == '1':
+        #             Wall(self, col, row)
+        #         if tile == 'Z':
+        #             Zombie(self, col, row)
+        #         if tile == 'P':
+        #             self.player = Player(self, col, row)
 
     def draw(self):
-        self.board.surface.fill((128, 128, 128))
+        # self.board.surface.fill((128, 128, 128))
+        self.board.surface.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         for sprite in self.all_sprites:
             if isinstance(sprite, Zombie):
                 sprite.draw_shield()
