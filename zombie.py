@@ -11,7 +11,7 @@ class Zombie(pygame.sprite.Sprite):
         self.game = game
         self.image = game.zombie_img
         self.rect = self.image.get_rect()
-        self.position = vector(x, y) * WALL_SIZE
+        self.position = vector(x, y)
         self.rect.center = self.position
         self.hit_rect = ZOMBIE_HIT_RECT.copy()
         self.hit_rect.center = self.rect.center

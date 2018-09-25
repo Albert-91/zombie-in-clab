@@ -15,7 +15,7 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = self.rect.center
         self.vel = vector(0, 0)
-        self.position = vector(x, y) * WALL_SIZE
+        self.position = vector(x, y)
         self.picture = None
         self.lives = PLAYER_LIVES
         self.shield = PLAYER_SHIELD

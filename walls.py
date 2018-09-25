@@ -2,15 +2,13 @@ import pygame
 from settings import *
 
 
-class Wall(pygame.sprite.Sprite):
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.walls
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self, game, x, y, width, height):
+        self.groups = game.walls
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pygame.Surface((WALL_SIZE, WALL_SIZE))
-        self.image.fill(WALL_COLOR)
-        self.rect = self.image.get_rect()
+        self.rect = pygame.Rect(x, y, width, height)
         self.x = x
         self.y = y
-        self.rect.x = x * WALL_SIZE
-        self.rect.y = y * WALL_SIZE
+        self.rect.x = x
+        self.rect.y = y

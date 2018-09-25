@@ -3,7 +3,7 @@ from board import Board
 from menu import Menu
 from player import Player
 from screen import Camera, Map, TiledMap
-from walls import Wall
+from walls import Obstacle
 from zombie import Zombie
 from settings import *
 from functions import quit, collide_hit_rect, draw_player_health
@@ -96,18 +96,15 @@ class TheGame:
                     quit()
 
     def new(self):
-        self.player = Player(self, 10, 10)
-        # for row, tiles in enumerate(self.map_data):
-        #     for col, tile in enumerate(tiles):
-        #         if tile == '1':
-        #             Wall(self, col, row)
-        #         if tile == 'Z':
-        #             Zombie(self, col, row)
-        #         if tile == 'P':
-        #             self.player = Player(self, col, row)
+        for tile_object in self.map.tmxdata.objects:
+            if tile_object.name == 'player':
+                self.player = Player(self, tile_object.x, tile_object.y)
+            if tile_object.name == 'wall':
+                Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+            if tile_object.name == 'zombie':
+                Zombie(self, tile_object.x, tile_object.y)
 
     def draw(self):
-        # self.board.surface.fill((128, 128, 128))
         self.board.surface.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         for sprite in self.all_sprites:
             if isinstance(sprite, Zombie):
