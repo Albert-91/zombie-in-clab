@@ -2,15 +2,18 @@ from bullet import Bullet
 from drawable import Drawable
 from functions import collide_with_object
 from settings import *
+from smoke import Smoke
 
 
 class Player(Drawable, pygame.sprite.Sprite):
 
     def __init__(self, game, x, y):
-        pygame.sprite.Sprite.__init__(self)
+        self.groups = game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.player_img
         self.rect = self.image.get_rect(x=x, y=y)
+        self.rect.center = (x, y)
         self.surface = pygame.Surface([PLAYER_WIDTH, PLAYER_HEIGHT], pygame.SRCALPHA, 32)
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = self.rect.center
@@ -47,6 +50,7 @@ class Player(Drawable, pygame.sprite.Sprite):
                 position = self.position + BARREL_OFFSET.rotate(-self.rotation)
                 Bullet(self.game, position, direction)
                 self.vel = vector(-KICKBACK, 0).rotate(-self.rotation)
+                Smoke(self.game, position)
 
     def update(self):
         self.get_keys()

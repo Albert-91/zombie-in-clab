@@ -15,7 +15,7 @@ class TheGame:
         self.width = width
         self.height = height
         self.board = Board(width, height)
-        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites = pygame.sprite.LayeredUpdates()
         self.walls = pygame.sprite.Group()
         self.zombies = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
@@ -27,13 +27,13 @@ class TheGame:
         self.zombie_img = None
         self.bullet_img = None
         self.player = None
+        self.gun_smoke = []
         self.load_data()
         self.map_data = self.map.make_map()
         self.new()
         self.camera = Camera(self.map.width, self.map.height)
         self.fps_clock = pygame.time.Clock()
         self.dt = None
-        self.all_sprites.add(self.player)
         self.menu = Menu(self)
 
     def load_data(self):
@@ -48,6 +48,12 @@ class TheGame:
         self.zombie_img = pygame.image.load(path.join(img_folder, ZOMBIE_IMAGE))
         self.bullet_img = pygame.image.load(path.join(img_folder, BULLET_IMG))
         self.bullet_img = pygame.transform.scale(self.bullet_img, (BULLET_WIDTH, BULLET_HEIGHT))
+        black_smokes = []
+        for i in range(9):
+            i = str(i).zfill(2)
+            black_smokes.append('flash{}.png'.format(i))
+        for smoke in black_smokes:
+            self.gun_smoke.append(pygame.image.load(path.join(game_folder, 'images/smokes/Flash/{}'.format(smoke))))
 
     def run(self, difficulty):
         max_distance = 300
