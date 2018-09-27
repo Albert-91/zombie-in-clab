@@ -1,11 +1,11 @@
 import sys
 from settings import *
 
-vector = pygame.math.Vector2
+vector = pg.math.Vector2
 
 
 def quit():
-    pygame.quit()
+    pg.quit()
     sys.exit()
 
 
@@ -14,7 +14,7 @@ def collide_hit_rect(one, two):
 
 
 def collide_with_object(sprite, group, direction):
-    hits = pygame.sprite.spritecollide(sprite, group, False, collide_hit_rect)
+    hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
     if direction == 'x':
         if hits:
             if hits[0].rect.centerx > sprite.hit_rect.centerx:
@@ -37,13 +37,13 @@ def draw_player_health(surface, x, y, picture):
     if picture < 0:
         picture = 0
     fill = picture * 100
-    outline_rect = pygame.Rect(x, y, 100, 20)
-    fill_rect = pygame.Rect(x, y, fill, 20)
+    outline_rect = pg.Rect(x, y, 100, 20)
+    fill_rect = pg.Rect(x, y, fill, 20)
     if picture > 0.6:
         color = (0, 255, 0)
     elif picture > 0.3:
         color = (255, 255, 0)
     else:
         color = (255, 0, 0)
-    pygame.draw.rect(surface, color, fill_rect)
-    pygame.draw.rect(surface, (255, 255, 255), outline_rect, 2)
+    pg.draw.rect(surface, color, fill_rect)
+    pg.draw.rect(surface, (255, 255, 255), outline_rect, 2)

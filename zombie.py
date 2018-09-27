@@ -4,12 +4,12 @@ from settings import *
 from smoke import Smoke
 
 
-class Zombie(pygame.sprite.Sprite):
+class Zombie(pg.sprite.Sprite):
 
     def __init__(self, game, x, y):
         self._layer = ZOMBIE_LAYER
         self.groups = game.all_sprites, game.zombies
-        pygame.sprite.Sprite.__init__(self, self.groups)
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.zombie_img
         self.rect = self.image.get_rect()
@@ -33,7 +33,7 @@ class Zombie(pygame.sprite.Sprite):
 
     def update(self):
         self.rotation = (self.game.player.position - self.position).angle_to(vector(1, 0))
-        self.image = pygame.transform.rotate(self.game.zombie_img, self.rotation)
+        self.image = pg.transform.rotate(self.game.zombie_img, self.rotation)
         self.rect = self.image.get_rect()
         self.rect.center = self.position
         self.acc = vector(1, 0).rotate(-self.rotation)
@@ -59,9 +59,9 @@ class Zombie(pygame.sprite.Sprite):
         else:
             color = RED
         width = int(self.rect.width * self.shield / ZOMBIE_SHIELD)
-        self.shield_bar = pygame.Rect(0, 0, width, 7)
+        self.shield_bar = pg.Rect(0, 0, width, 7)
         if self.shield < ZOMBIE_SHIELD:
-            pygame.draw.rect(self.image, color, self.shield_bar)
+            pg.draw.rect(self.image, color, self.shield_bar)
 
     def avoid_other_zombies(self):
         for zombie in self.game.zombies:

@@ -1,4 +1,4 @@
-import pygame
+import pygame as pg
 from functions import vector
 
 GREEN = (0, 255, 0)
@@ -23,7 +23,7 @@ PLAYER_SHIELD = 1000
 PLAYER_SPEED = 400
 PLAYER_ROTATION_SPEED = 150
 PLAYER_IMAGE = 'hitman1_silencer.png'
-PLAYER_HIT_RECT = pygame.Rect(0, 0, 35, 35)
+PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 
 ZOMBIE_WIDTH = 23
 ZOMBIE_HEIGHT = 28
@@ -33,7 +33,7 @@ ZOMBIE_SPEEDS_EASY = [70, 90, 110, 130, 150]
 # ZOMBIE_SPEED_HARD = 40
 # ZOMBIE_SPEED_HELL = 50
 ZOMBIE_IMAGE = 'zombie1_hold.png'
-ZOMBIE_HIT_RECT = pygame.Rect(0, 0, 30, 30)
+ZOMBIE_HIT_RECT = pg.Rect(0, 0, 30, 30)
 ZOMBIE_DMG = 5
 AVOID_RADIUS = 80
 KNOCKBACK = 10

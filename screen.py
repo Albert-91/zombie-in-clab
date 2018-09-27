@@ -7,7 +7,7 @@ class Camera:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.screen = pygame.Rect(0, 0, self.width, self.height)
+        self.screen = pg.Rect(0, 0, self.width, self.height)
 
     def apply(self, entity):
         return entity.rect.move(self.screen.topleft)
@@ -22,7 +22,7 @@ class Camera:
         y = min(0, y)
         x = max(-(self.width - SCREEN_WIDTH), x)
         y = max(-(self.height - SCREEN_HEIGHT), y)
-        self.screen = pygame.Rect(x, y, self.width, self.height)
+        self.screen = pg.Rect(x, y, self.width, self.height)
 
 
 class TiledMap:
@@ -42,6 +42,6 @@ class TiledMap:
                         surface.blit(tile, (x * self.tmxdata.tilewidth, y * self.tmxdata.tileheight))
 
     def make_map(self):
-        temp_surface = pygame.Surface((self.width, self.height))
+        temp_surface = pg.Surface((self.width, self.height))
         self.render(temp_surface)
         return temp_surface

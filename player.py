@@ -5,17 +5,17 @@ from settings import *
 from smoke import Smoke
 
 
-class Player(Drawable, pygame.sprite.Sprite):
+class Player(Drawable, pg.sprite.Sprite):
 
     def __init__(self, game, x, y):
         self._layer = PLAYER_LAYER
         self.groups = game.all_sprites
-        pygame.sprite.Sprite.__init__(self, self.groups)
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.player_img
         self.rect = self.image.get_rect(x=x, y=y)
         self.rect.center = (x, y)
-        self.surface = pygame.Surface([PLAYER_WIDTH, PLAYER_HEIGHT], pygame.SRCALPHA, 32)
+        self.surface = pg.Surface([PLAYER_WIDTH, PLAYER_HEIGHT], pg.SRCALPHA, 32)
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = self.rect.center
         self.vel = vector(0, 0)
@@ -34,17 +34,17 @@ class Player(Drawable, pygame.sprite.Sprite):
     def get_keys(self):
         self.vel = vector(0, 0)
         self.rotation_speed = 0
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT] or keys[pg.K_a]:
             self.rotation_speed = PLAYER_ROTATION_SPEED
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        if keys[pg.K_RIGHT] or keys[pg.K_d]:
             self.rotation_speed = - PLAYER_ROTATION_SPEED
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
+        if keys[pg.K_UP] or keys[pg.K_w]:
             self.vel = vector(PLAYER_SPEED, 0).rotate(-self.rotation)
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        if keys[pg.K_DOWN] or keys[pg.K_s]:
             self.vel = vector(-PLAYER_SPEED/2, 0).rotate(-self.rotation)
-        if keys[pygame.K_SPACE]:
-            now = pygame.time.get_ticks()
+        if keys[pg.K_SPACE]:
+            now = pg.time.get_ticks()
             if now - self.last_shot > BULLET_RATE:
                 self.last_shot = now
                 direction = vector(1, 0).rotate(-self.rotation)
@@ -56,7 +56,7 @@ class Player(Drawable, pygame.sprite.Sprite):
     def update(self):
         self.get_keys()
         self.rotation = (self.rotation + self.rotation_speed * self.game.dt) % 360
-        self.image = pygame.transform.rotate(self.game.player_img, self.rotation)
+        self.image = pg.transform.rotate(self.game.player_img, self.rotation)
         self.rect = self.image.get_rect()
         self.rect.center = self.position
         self.position += self.vel * self.game.dt

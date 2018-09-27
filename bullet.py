@@ -1,17 +1,13 @@
 from random import uniform
-
-import pygame
-
-from functions import vector
-from settings import BULLET_SPEED, GUN_SPREAD, BULLET_LAYER
+from settings import *
 
 
-class Bullet(pygame.sprite.Sprite):
+class Bullet(pg.sprite.Sprite):
 
     def __init__(self, game, position, direction):
         self._layer = BULLET_LAYER
         self.groups = game.all_sprites, game.bullets
-        pygame.sprite.Sprite.__init__(self, self.groups)
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.image = game.bullet_img
         self.rect = self.image.get_rect()
         self.position = vector(position)
@@ -19,11 +15,11 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.center = position
         spread = uniform(-GUN_SPREAD, GUN_SPREAD)
         self.vel = direction.rotate(spread) * BULLET_SPEED
-        self.spawn_time = pygame.time.get_ticks()
+        self.spawn_time = pg.time.get_ticks()
 
     def update(self):
         self.position += self.vel * self.game.dt
         self.rect.center = self.position
-        if pygame.sprite.spritecollideany(self, self.game.walls):
+        if pg.sprite.spritecollideany(self, self.game.walls):
             self.kill()
 

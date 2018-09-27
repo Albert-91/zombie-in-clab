@@ -1,4 +1,4 @@
-import pygame
+from settings import *
 
 
 class Drawable:
@@ -7,8 +7,8 @@ class Drawable:
         self.width = width
         self.height = height
         self.color = color
-        self.surface = pygame.Surface([width, height], pygame.SRCALPHA, 32)
-        self.surface = pygame.Surface.convert_alpha(self.surface)
+        self.surface = pg.Surface([width, height], pg.SRCALPHA, 32)
+        self.surface = pg.Surface.convert_alpha(self.surface)
         self.rect = self.surface.get_rect(x=x, y=y)
 
     def draw_on(self, surface):

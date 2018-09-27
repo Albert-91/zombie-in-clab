@@ -18,19 +18,19 @@ class Menu(Drawable):
             mark_pos_x = self.game.width * INTRO_SPRITE_POS_X
             intro_object = Player(self.game, mark_pos_x, mark_pos_y)
             self.game.board.draw_menu(intro_object)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
                     quit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
                         quit()
-                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    if event.key == pg.K_UP or event.key == pg.K_w:
                         if mark_pos_y > 337:
                             i -= 0.1
-                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    if event.key == pg.K_DOWN or event.key == pg.K_s:
                         if mark_pos_y < 455:
                             i += 0.1
-                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
                         if 335 < mark_pos_y < 337:
                             self.game_choosing_difficulty()
                         elif 385 < mark_pos_y < 397:
@@ -45,19 +45,19 @@ class Menu(Drawable):
             mark_pos_x = self.game.width * OPTIONS_SPRITE_POS_X
             intro_object = Player(self.game, mark_pos_x, mark_pos_y)
             self.game.board.draw_options(intro_object)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
                     quit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE:
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE or event.key == pg.K_BACKSPACE:
                         self.game_intro()
-                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    if event.key == pg.K_UP or event.key == pg.K_w:
                         if mark_pos_y > 196:
                             i -= 0.15
-                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    if event.key == pg.K_DOWN or event.key == pg.K_s:
                         if mark_pos_y < 366:
                             i += 0.15
-                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
                         if 185 < mark_pos_y < 187:
                             """controls"""
                         elif 275 < mark_pos_y < 277:
@@ -72,19 +72,19 @@ class Menu(Drawable):
             mark_pos_x = self.game.width * DIFFICULT_SPRITE_POS_X
             intro_object = Player(self.game, mark_pos_x, mark_pos_y)
             self.game.board.draw_choosing_difficulty(intro_object)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
                     quit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_BACKSPACE:
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE or event.key == pg.K_BACKSPACE:
                         self.game_intro()
-                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    if event.key == pg.K_UP or event.key == pg.K_w:
                         if mark_pos_y > 97:
                             i -= 0.2
-                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    if event.key == pg.K_DOWN or event.key == pg.K_s:
                         if mark_pos_y < 455:
                             i += 0.2
-                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
                         if 95 < mark_pos_y < 97:
                             difficulty = "easy"
                         elif 215 < mark_pos_y < 217:
@@ -99,18 +99,18 @@ class Menu(Drawable):
     def game_input(self, difficult):
         word = ""
         while True:
-            pygame.display.flip()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+            pg.display.flip()
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
                     quit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
                         self.game_choosing_difficulty()
                     if event.unicode.isalpha():
                         word += event.unicode
-                    if event.key == pygame.K_BACKSPACE:
+                    if event.key == pg.K_BACKSPACE:
                         word = word[:-1]
-                    if event.key == pygame.K_RETURN:
+                    if event.key == pg.K_RETURN:
                         if len(word) > 0:
                             self.name = word
                             return self.game.run(difficult)
@@ -119,9 +119,9 @@ class Menu(Drawable):
     def game_over(self):
         while True:
             self.game.board.draw_game_over(self.name)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
                     quit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
                         self.game_intro()

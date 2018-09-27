@@ -12,15 +12,15 @@ from functions import quit, collide_hit_rect, draw_player_health
 
 class TheGame:
     def __init__(self, width, height):
-        pygame.init()
+        pg.init()
         self.width = width
         self.height = height
         self.board = Board(width, height)
-        self.all_sprites = pygame.sprite.LayeredUpdates()
-        self.walls = pygame.sprite.Group()
-        self.zombies = pygame.sprite.Group()
-        self.bullets = pygame.sprite.Group()
-        self.items= pygame.sprite.Group()
+        self.all_sprites = pg.sprite.LayeredUpdates()
+        self.walls = pg.sprite.Group()
+        self.zombies = pg.sprite.Group()
+        self.bullets = pg.sprite.Group()
+        self.items = pg.sprite.Group()
         self.map = None
         self.map_img = None
         self.map_rect = None
@@ -35,7 +35,7 @@ class TheGame:
         self.map_data = self.map.make_map()
         self.new()
         self.camera = Camera(self.map.width, self.map.height)
-        self.fps_clock = pygame.time.Clock()
+        self.fps_clock = pg.time.Clock()
         self.dt = None
         self.menu = Menu(self)
 
@@ -47,20 +47,20 @@ class TheGame:
         self.map = TiledMap(path.join(map_folder, 'clab_map.tmx'))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
-        self.intro_img = pygame.image.load(path.join(img_folder, INTRO_IMG))
-        self.player_img = pygame.image.load(path.join(img_folder, PLAYER_IMAGE))
-        self.zombie_img = pygame.image.load(path.join(img_folder, ZOMBIE_IMAGE))
-        self.bullet_img = pygame.image.load(path.join(img_folder, BULLET_IMG))
-        self.bullet_img = pygame.transform.scale(self.bullet_img, (BULLET_WIDTH, BULLET_HEIGHT))
+        self.intro_img = pg.image.load(path.join(img_folder, INTRO_IMG))
+        self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMAGE))
+        self.zombie_img = pg.image.load(path.join(img_folder, ZOMBIE_IMAGE))
+        self.bullet_img = pg.image.load(path.join(img_folder, BULLET_IMG))
+        self.bullet_img = pg.transform.scale(self.bullet_img, (BULLET_WIDTH, BULLET_HEIGHT))
         black_smokes = []
         for i in range(9):
             i = str(i).zfill(2)
             black_smokes.append('flash{}.png'.format(i))
         for smoke in black_smokes:
-            self.gun_smoke.append(pygame.image.load(path.join(game_folder, 'images/smokes/Flash/{}'.format(smoke))))
+            self.gun_smoke.append(pg.image.load(path.join(game_folder, 'images/smokes/Flash/{}'.format(smoke))))
         for item in ITEM_IMAGES:
-            self.items_images[item] = pygame.image.load(path.join(items_img_folder, ITEM_IMAGES[item]))
-            self.items_images[item] = pygame.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
+            self.items_images[item] = pg.image.load(path.join(items_img_folder, ITEM_IMAGES[item]))
+            self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
 
     def run(self, difficulty):
         max_distance = 300
@@ -81,18 +81,18 @@ class TheGame:
             self.handle_events()
             self.draw()
             self.update()
-            pygame.display.flip()
+            pg.display.flip()
 
     def update(self):
         self.all_sprites.update()
         self.camera.update(self.player)
-        hits = pygame.sprite.spritecollide(self.player, self.items, False)
+        hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
             if hit.type == 'health' and self.player.shield < PLAYER_SHIELD:
                 hit.kill()
                 self.player.add_shield(BIG_HEALTH_PACK)
 
-        hits = pygame.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
+        hits = pg.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
         for hit in hits:
             self.player.shield -= ZOMBIE_DMG
             hit.vel = vector(0, 0)
@@ -100,18 +100,18 @@ class TheGame:
                 self.menu.game_over()
         if hits:
             self.player.position += vector(KNOCKBACK, 0).rotate(-hits[0].rotation)
-        hits = pygame.sprite.groupcollide(self.zombies, self.bullets, False, True)
+        hits = pg.sprite.groupcollide(self.zombies, self.bullets, False, True)
         for hit in hits:
             hit.shield -= BULLET_DMG
             hit.vel = vector(0, 0)
 
     def handle_events(self):
         self.player.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
                 quit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
                     quit()
 
     def new(self):
