@@ -32,6 +32,7 @@ class TheGame:
         self.gun_smoke = []
         self.zombie_death_smoke = []
         self.items_images = {}
+        self.sound_effects = {}
         self.load_data()
         self.map_data = self.map.make_map()
         self.new()
@@ -45,6 +46,7 @@ class TheGame:
         img_folder = path.join(game_folder, 'images')
         items_img_folder = path.join(img_folder, 'items')
         map_folder = path.join(game_folder, 'maps')
+        sounds_folder = path.join(game_folder, 'sounds')
         self.map = TiledMap(path.join(map_folder, 'clab_map.tmx'))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
@@ -60,6 +62,8 @@ class TheGame:
         for item in ITEM_IMAGES:
             self.items_images[item] = pg.image.load(path.join(items_img_folder, ITEM_IMAGES[item]))
             self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
+        for sound in SOUND_EFFECTS:
+            self.sound_effects[sound] = pg.mixer.Sound(path.join(sounds_folder, SOUND_EFFECTS[sound]))
 
     def run(self, difficulty):
         if difficulty == "easy":
@@ -88,6 +92,7 @@ class TheGame:
         for hit in hits:
             if hit.type == 'health' and self.player.shield < PLAYER_SHIELD:
                 hit.kill()
+                self.sound_effects['heal'].play()
                 self.player.add_shield(BIG_HEALTH_PACK)
         hits = pg.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
         for hit in hits:

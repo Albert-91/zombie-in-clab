@@ -111,7 +111,9 @@ FLASH_SMOKE = [
     'flash08.png',
 ]
 
-PLAYER_HEALED = 'healed.wav'
+SOUND_EFFECTS = {
+    'heal': 'healed.wav'
+}
 PLAYER_PAIN_SOUNDS = [
     'pain1.wav',
     'pain2.wav',
