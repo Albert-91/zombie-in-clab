@@ -65,3 +65,8 @@ class Player(Drawable, pygame.sprite.Sprite):
         self.hit_rect.centery = self.position.y
         collide_with_object(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
+
+    def add_shield(self, amount):
+        self.shield += amount
+        if self.shield > PLAYER_SHIELD:
+            self.shield = PLAYER_SHIELD

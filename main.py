@@ -1,5 +1,6 @@
 from os import path
 from board import Board
+from item import Item
 from menu import Menu
 from player import Player
 from screen import Camera, TiledMap
@@ -19,6 +20,7 @@ class TheGame:
         self.walls = pygame.sprite.Group()
         self.zombies = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
+        self.items= pygame.sprite.Group()
         self.map = None
         self.map_img = None
         self.map_rect = None
@@ -28,6 +30,7 @@ class TheGame:
         self.bullet_img = None
         self.player = None
         self.gun_smoke = []
+        self.items_images = {}
         self.load_data()
         self.map_data = self.map.make_map()
         self.new()
@@ -39,6 +42,7 @@ class TheGame:
     def load_data(self):
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'images')
+        items_img_folder = path.join(img_folder, 'items')
         map_folder = path.join(game_folder, 'maps')
         self.map = TiledMap(path.join(map_folder, 'clab_map.tmx'))
         self.map_img = self.map.make_map()
@@ -54,6 +58,9 @@ class TheGame:
             black_smokes.append('flash{}.png'.format(i))
         for smoke in black_smokes:
             self.gun_smoke.append(pygame.image.load(path.join(game_folder, 'images/smokes/Flash/{}'.format(smoke))))
+        for item in ITEM_IMAGES:
+            self.items_images[item] = pygame.image.load(path.join(items_img_folder, ITEM_IMAGES[item]))
+            self.items_images[item] = pygame.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
 
     def run(self, difficulty):
         max_distance = 300
@@ -79,6 +86,12 @@ class TheGame:
     def update(self):
         self.all_sprites.update()
         self.camera.update(self.player)
+        hits = pygame.sprite.spritecollide(self.player, self.items, False)
+        for hit in hits:
+            if hit.type == 'health' and self.player.shield < PLAYER_SHIELD:
+                hit.kill()
+                self.player.add_shield(BIG_HEALTH_PACK)
+
         hits = pygame.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
         for hit in hits:
             self.player.shield -= ZOMBIE_DMG
@@ -103,12 +116,16 @@ class TheGame:
 
     def new(self):
         for tile_object in self.map.tmxdata.objects:
+            object_center = vector(tile_object.x + tile_object.width / 2,
+                                   tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
-                self.player = Player(self, tile_object.x, tile_object.y)
+                self.player = Player(self, object_center.x, object_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == 'zombie':
-                Zombie(self, tile_object.x, tile_object.y)
+                Zombie(self, object_center.x, object_center.y)
+            if tile_object.name in ['health']:
+                Item(self, object_center, tile_object.name)
 
     def draw(self):
         self.board.surface.blit(self.map_img, self.camera.apply_rect(self.map_rect))

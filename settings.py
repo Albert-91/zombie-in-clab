@@ -50,7 +50,6 @@ KICKBACK = 200
 GUN_SPREAD = 5
 SMOKE_DURATION = 40
 
-WALL_COLOR = (0, 0, 0)
 WALL_SIZE = 10
 
 INTRO_IMG = 'menu_head.png'
@@ -66,7 +65,21 @@ DIFFICULT_SPRITE_WIDTH = 40
 DIFFICULT_SPRITE_HEIGHT = 40
 DIFFICULT_SPRITE_POS_X = 0.25
 
+ITEM_LAYER = 1
 PLAYER_LAYER = 2
 ZOMBIE_LAYER = 2
 BULLET_LAYER = 3
-SMOKE_LAYER = 4
+SMOKE_LAYER = 5
+
+BIG_HEALTH_PACK = 300
+ITEM_SIZE = 40
+ITEM_IMAGES = {'health': 'genericItem_color_102.png',
+               'mini_health': 'genericItem_color_100.png',
+               'water': 'genericItem_color_118.png',
+               'beer': 'genericItem_color_119.png',
+               'coffee': 'genericItem_color_124.png',
+               'usb_flash': 'genericItem_color_099.png',
+               'id_card': 'genericItem_color_151.png',
+               'key': 'genericItem_color_155.png',
+               'money': 'genericItem_color_158.png'
+               }
