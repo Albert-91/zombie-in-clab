@@ -30,6 +30,7 @@ class TheGame:
         self.bullet_img = None
         self.player = None
         self.gun_smoke = []
+        self.zombie_death_smoke = []
         self.items_images = {}
         self.load_data()
         self.map_data = self.map.make_map()
@@ -52,18 +53,15 @@ class TheGame:
         self.zombie_img = pg.image.load(path.join(img_folder, ZOMBIE_IMAGE))
         self.bullet_img = pg.image.load(path.join(img_folder, BULLET_IMG))
         self.bullet_img = pg.transform.scale(self.bullet_img, (BULLET_WIDTH, BULLET_HEIGHT))
-        black_smokes = []
-        for i in range(9):
-            i = str(i).zfill(2)
-            black_smokes.append('flash{}.png'.format(i))
-        for smoke in black_smokes:
+        for smoke in FLASH_SMOKE:
             self.gun_smoke.append(pg.image.load(path.join(game_folder, 'images/smokes/Flash/{}'.format(smoke))))
+        for smoke in GREEN_SMOKE:
+            self.zombie_death_smoke.append(pg.image.load(path.join(game_folder, 'images/smokes/Green smoke/{}'.format(smoke))))
         for item in ITEM_IMAGES:
             self.items_images[item] = pg.image.load(path.join(items_img_folder, ITEM_IMAGES[item]))
             self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
 
     def run(self, difficulty):
-        max_distance = 300
         if difficulty == "easy":
             zombie_speed = 1
             zombie_attack = 1
@@ -91,7 +89,6 @@ class TheGame:
             if hit.type == 'health' and self.player.shield < PLAYER_SHIELD:
                 hit.kill()
                 self.player.add_shield(BIG_HEALTH_PACK)
-
         hits = pg.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
         for hit in hits:
             self.player.shield -= ZOMBIE_DMG

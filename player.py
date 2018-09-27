@@ -1,3 +1,4 @@
+from random import randint
 from bullet import Bullet
 from drawable import Drawable
 from functions import collide_with_object
@@ -51,7 +52,8 @@ class Player(Drawable, pg.sprite.Sprite):
                 position = self.position + BARREL_OFFSET.rotate(-self.rotation)
                 Bullet(self.game, position, direction)
                 self.vel = vector(-KICKBACK, 0).rotate(-self.rotation)
-                Smoke(self.game, position)
+                size = randint(20, 50)
+                Smoke(self.game, position, self.game.gun_smoke, size)
 
     def update(self):
         self.get_keys()

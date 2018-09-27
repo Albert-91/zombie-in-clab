@@ -51,7 +51,8 @@ class Zombie(pg.sprite.Sprite):
             collide_with_object(self, self.game.walls, 'y')
             self.rect.center = self.hit_rect.center
         if self.shield <= 0:
-            Smoke(self.game, self.rect.center)
+            size = randint(70, 120)
+            Smoke(self.game, self.rect.center, self.game.zombie_death_smoke, size)
             self.kill()
 
     def draw_shield(self):
