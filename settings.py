@@ -76,14 +76,47 @@ ITEM_BOB_RANGE = 20
 ITEM_BOB_SPEED = 0.4
 BIG_HEALTH_PACK = 300
 ITEM_SIZE = 40
-ITEM_IMAGES = {'health': 'genericItem_color_102.png',
-               'mini_health': 'genericItem_color_100.png',
-               'water': 'genericItem_color_118.png',
-               'beer': 'genericItem_color_119.png',
-               'coffee': 'genericItem_color_124.png',
-               'usb_flash': 'genericItem_color_099.png',
-               'id_card': 'genericItem_color_151.png',
-               'key': 'genericItem_color_155.png',
-               'money': 'genericItem_color_158.png'
-               }
+ITEM_IMAGES = {
+    'health': 'genericItem_color_102.png',
+    'mini_health': 'genericItem_color_100.png',
+    'water': 'genericItem_color_118.png',
+    'beer': 'genericItem_color_119.png',
+    'coffee': 'genericItem_color_124.png',
+    'usb_flash': 'genericItem_color_099.png',
+    'id_card': 'genericItem_color_151.png',
+    'key': 'genericItem_color_155.png',
+    'money': 'genericItem_color_158.png'
+}
 
+PLAYER_PAIN_SOUNDS = [
+    'pain1.wav',
+    'pain2.wav',
+    'pain3.wav',
+    'pain4.wav',
+    'pain5.wav',
+    'pain6.wav'
+]
+PLAYER_DEATH_SOUNDS = [
+    'die1.wav',
+    'die2.wav'
+]
+ZOMBIE_MOAN_SOUNDS = [
+    'zombie-1.wav',
+    'zombie-2.wav',
+    'zombie-3.wav',
+    'zombie-4.wav',
+    'zombie-5.wav'
+]
+ZOMBIE_PAIN_SOUNDS = [
+    'monster-2.wav',
+    'monster-3.wav',
+    'monster-4.wav',
+    'monster-5.wav',
+    'monster-6.wav',
+    'monster-7.wav',
+]
+GUN_SOUNDS = [
+    'pistol.ogg',
+    'pistol2.ogg',
+    'pistol3.ogg'
+]
