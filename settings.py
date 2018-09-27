@@ -35,6 +35,7 @@ ZOMBIE_SPEEDS_EASY = [70, 90, 110, 130, 150]
 ZOMBIE_IMAGE = 'zombie1_hold.png'
 ZOMBIE_HIT_RECT = pg.Rect(0, 0, 30, 30)
 ZOMBIE_DMG = 5
+DETECT_RADIUS = 400
 AVOID_RADIUS = 80
 KNOCKBACK = 10
 
@@ -71,6 +72,8 @@ ZOMBIE_LAYER = 2
 BULLET_LAYER = 3
 SMOKE_LAYER = 5
 
+ITEM_BOB_RANGE = 20
+ITEM_BOB_SPEED = 0.4
 BIG_HEALTH_PACK = 300
 ITEM_SIZE = 40
 ITEM_IMAGES = {'health': 'genericItem_color_102.png',
@@ -83,3 +86,4 @@ ITEM_IMAGES = {'health': 'genericItem_color_102.png',
                'key': 'genericItem_color_155.png',
                'money': 'genericItem_color_158.png'
                }
+
