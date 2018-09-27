@@ -11,7 +11,7 @@ class Zombie(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.zombies
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.zombie_img
+        self.image = game.zombie_img.copy()
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.position = vector(x, y)
@@ -24,6 +24,7 @@ class Zombie(pg.sprite.Sprite):
         self.shield = ZOMBIE_SHIELD
         self.shield_bar = None
         self.speed = choice(ZOMBIE_SPEEDS_EASY)
+        self.target = game.player
 
     def natural_moves(self):
         moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
@@ -32,21 +33,23 @@ class Zombie(pg.sprite.Sprite):
         self.move(dx=moves_list[x], dy=moves_list[y])
 
     def update(self):
-        self.rotation = (self.game.player.position - self.position).angle_to(vector(1, 0))
-        self.image = pg.transform.rotate(self.game.zombie_img, self.rotation)
-        self.rect = self.image.get_rect()
-        self.rect.center = self.position
-        self.acc = vector(1, 0).rotate(-self.rotation)
-        self.avoid_other_zombies()
-        self.acc.scale_to_length(self.speed)
-        self.acc += self.vel * (-1)
-        self.vel += self.acc * self.game.dt
-        self.position += self.vel * self.game.dt + (self.acc * self.game.dt ** 2) / 2
-        self.hit_rect.centerx = self.position.x
-        collide_with_object(self, self.game.walls, 'x')
-        self.hit_rect.centery = self.position.y
-        collide_with_object(self, self.game.walls, 'y')
-        self.rect.center = self.hit_rect.center
+        target_distance = self.target.position - self.position
+        if target_distance.length_squared() < DETECT_RADIUS ** 2:
+            self.rotation = (self.game.player.position - self.position).angle_to(vector(1, 0))
+            self.image = pg.transform.rotate(self.game.zombie_img, self.rotation)
+            self.rect = self.image.get_rect()
+            self.rect.center = self.position
+            self.acc = vector(1, 0).rotate(-self.rotation)
+            self.avoid_other_zombies()
+            self.acc.scale_to_length(self.speed)
+            self.acc += self.vel * (-1)
+            self.vel += self.acc * self.game.dt
+            self.position += self.vel * self.game.dt + (self.acc * self.game.dt ** 2) / 2
+            self.hit_rect.centerx = self.position.x
+            collide_with_object(self, self.game.walls, 'x')
+            self.hit_rect.centery = self.position.y
+            collide_with_object(self, self.game.walls, 'y')
+            self.rect.center = self.hit_rect.center
         if self.shield <= 0:
             Smoke(self.game, self.rect.center)
             self.kill()
