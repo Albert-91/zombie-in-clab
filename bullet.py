@@ -3,12 +3,13 @@ from random import uniform
 import pygame
 
 from functions import vector
-from settings import BULLET_SPEED, GUN_SPREAD
+from settings import BULLET_SPEED, GUN_SPREAD, BULLET_LAYER
 
 
 class Bullet(pygame.sprite.Sprite):
 
     def __init__(self, game, position, direction):
+        self._layer = BULLET_LAYER
         self.groups = game.all_sprites, game.bullets
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.image = game.bullet_img

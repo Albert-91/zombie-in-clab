@@ -2,7 +2,7 @@ from os import path
 from board import Board
 from menu import Menu
 from player import Player
-from screen import Camera, Map, TiledMap
+from screen import Camera, TiledMap
 from walls import Obstacle
 from zombie import Zombie
 from settings import *

@@ -1,11 +1,13 @@
 from random import randint, choice
 from functions import collide_with_object
 from settings import *
+from smoke import Smoke
 
 
 class Zombie(pygame.sprite.Sprite):
 
     def __init__(self, game, x, y):
+        self._layer = ZOMBIE_LAYER
         self.groups = game.all_sprites, game.zombies
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -46,6 +48,7 @@ class Zombie(pygame.sprite.Sprite):
         collide_with_object(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
         if self.shield <= 0:
+            Smoke(self.game, self.rect.center)
             self.kill()
 
     def draw_shield(self):

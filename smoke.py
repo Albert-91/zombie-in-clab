@@ -1,10 +1,11 @@
 from random import randint, choice
-
 from settings import *
 
 
 class Smoke(pygame.sprite.Sprite):
+
     def __init__(self, game, position):
+        self._layer = SMOKE_LAYER
         self.groups = game.all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
