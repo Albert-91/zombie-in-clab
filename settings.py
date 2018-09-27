@@ -88,6 +88,30 @@ ITEM_IMAGES = {
     'money': 'genericItem_color_158.png'
 }
 
+GREEN_SMOKE = [
+    'fart00.png',
+    'fart01.png',
+    'fart02.png',
+    'fart03.png',
+    'fart04.png',
+    'fart05.png',
+    'fart06.png',
+    'fart07.png',
+    'fart08.png',
+]
+FLASH_SMOKE = [
+    'flash00.png',
+    'flash01.png',
+    'flash02.png',
+    'flash03.png',
+    'flash04.png',
+    'flash05.png',
+    'flash06.png',
+    'flash07.png',
+    'flash08.png',
+]
+
+PLAYER_HEALED = 'healed.wav'
 PLAYER_PAIN_SOUNDS = [
     'pain1.wav',
     'pain2.wav',
