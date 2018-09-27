@@ -141,7 +141,7 @@ ZOMBIE_PAIN_SOUNDS = [
     'monster-6.wav',
     'monster-7.wav',
 ]
-GUN_SOUNDS = [
+WEAPON_SOUNDS = [
     'pistol.ogg',
     'pistol2.ogg',
     'pistol3.ogg'

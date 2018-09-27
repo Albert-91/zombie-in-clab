@@ -1,4 +1,4 @@
-from random import randint, choice
+from random import randint, choice, random
 from functions import collide_with_object
 from settings import *
 from smoke import Smoke
@@ -35,6 +35,8 @@ class Zombie(pg.sprite.Sprite):
     def update(self):
         target_distance = self.target.position - self.position
         if target_distance.length_squared() < DETECT_RADIUS ** 2:
+            if random() < 0.002:
+                choice(self.game.zombie_moan_sound).play()
             self.rotation = (self.game.player.position - self.position).angle_to(vector(1, 0))
             self.image = pg.transform.rotate(self.game.zombie_img, self.rotation)
             self.rect = self.image.get_rect()

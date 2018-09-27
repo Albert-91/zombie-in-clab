@@ -12,6 +12,7 @@ from functions import quit, collide_hit_rect, draw_player_health
 
 class TheGame:
     def __init__(self, width, height):
+        pg.mixer.init()
         pg.init()
         self.width = width
         self.height = height
@@ -33,6 +34,11 @@ class TheGame:
         self.zombie_death_smoke = []
         self.items_images = {}
         self.sound_effects = {}
+        self.weapon_sounds = {}
+        self.zombie_moan_sound = []
+        self.zombie_pain_sound = []
+        self.player_pain_sound = []
+        self.player_die_sound = []
         self.load_data()
         self.map_data = self.map.make_map()
         self.new()
@@ -64,6 +70,13 @@ class TheGame:
             self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
         for sound in SOUND_EFFECTS:
             self.sound_effects[sound] = pg.mixer.Sound(path.join(sounds_folder, SOUND_EFFECTS[sound]))
+        self.weapon_sounds['gun'] = []
+        for sound in WEAPON_SOUNDS:
+            self.weapon_sounds['gun'].append(pg.mixer.Sound(path.join(sounds_folder, sound)))
+        for sound in ZOMBIE_MOAN_SOUNDS:
+            track = pg.mixer.Sound(path.join(sounds_folder, sound))
+            track.set_volume(0.4)
+            self.zombie_moan_sound.append(track)
 
     def run(self, difficulty):
         if difficulty == "easy":

@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, choice
 from bullet import Bullet
 from drawable import Drawable
 from functions import collide_with_object
@@ -47,6 +47,7 @@ class Player(Drawable, pg.sprite.Sprite):
         if keys[pg.K_SPACE]:
             now = pg.time.get_ticks()
             if now - self.last_shot > BULLET_RATE:
+                choice(self.game.weapon_sounds['gun']).play()
                 self.last_shot = now
                 direction = vector(1, 0).rotate(-self.rotation)
                 position = self.position + BARREL_OFFSET.rotate(-self.rotation)
