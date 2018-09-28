@@ -21,6 +21,10 @@ class Bullet(pg.sprite.Sprite):
         self.rect.center = self.position
         if pg.sprite.spritecollideany(self, self.game.walls):
             self.kill()
-        if pg.time.get_ticks() - self.spawn_time > WEAPONS[self.game.player.weapon]['bullet_lifetime']:
-            self.kill()
+        try:
+            if pg.time.get_ticks() - self.spawn_time > WEAPONS[self.game.player.weapon]['bullet_lifetime']:
+                self.kill()
+        except KeyError:
+            if pg.time.get_ticks() - self.spawn_time > 1000:
+                self.kill()
 
