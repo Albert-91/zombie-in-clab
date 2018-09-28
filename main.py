@@ -30,6 +30,8 @@ class TheGame:
         self.zombie_img = None
         self.bullet_images = {}
         self.player = None
+        self.fog = pg.Surface(self.board.surface.get_size())
+        self.light_mask = None
         self.splats = []
         self.gun_smoke = []
         self.zombie_death_smoke = []
@@ -42,7 +44,9 @@ class TheGame:
         self.player_die_sound = []
         self.dim_screen = pg.Surface(self.board.surface.get_size())
         self.load_data()
+        self.light_rect = self.light_mask.get_rect()
         self.map_data = self.map.make_map()
+        self.night = False
         self.new()
         self.camera = Camera(self.map.width, self.map.height)
         self.fps_clock = pg.time.Clock()
@@ -82,6 +86,9 @@ class TheGame:
                 self.items_images[item] = pg.transform.scale(self.items_images[item], (2 * ITEM_SIZE, ITEM_SIZE))
             else:
                 self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
+        self.fog.fill(NIGHT_COLOR)
+        self.light_mask = pg.image.load(path.join(img_folder, LIGHT_MASK))
+        self.light_mask = pg.transform.scale(self.light_mask, LIGHT_RADIUS)
         for sound in SOUND_EFFECTS:
             self.sound_effects[sound] = pg.mixer.Sound(path.join(sounds_folder, SOUND_EFFECTS[sound]))
         for weapon in WEAPON_SOUNDS:
@@ -141,7 +148,7 @@ class TheGame:
                 self.menu.game_over()
         if hits:
             get_hit(self.player)
-            self.player.position += vector(KNOCKBACK, 0).rotate(-hits[0].rotation)
+            self.player.position += vector(KICKBACK, 0).rotate(-hits[0].rotation)
         hits = pg.sprite.groupcollide(self.zombies, self.bullets, False, True)
         for hit in hits:
             hit.shield -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
@@ -158,6 +165,8 @@ class TheGame:
                     quit()
                 if event.key == pg.K_p:
                     self.game_paused = not self.game_paused
+                if event.key == pg.K_n:
+                    self.night = not self.night
 
     def new(self):
         for tile_object in self.map.tmxdata.objects:
@@ -178,11 +187,19 @@ class TheGame:
             if isinstance(sprite, Zombie):
                 sprite.draw_shield()
             self.board.surface.blit(sprite.image, self.camera.apply(sprite))
+        if self.night:
+            self.render_fog()
         draw_player_health(self.board.surface, 20, 10, self.player.shield / PLAYER_SHIELD)
         self.board.draw_zombies_left(len(self.zombies))
         if self.game_paused:
             self.board.surface.blit(self.dim_screen, (0, 0))
             self.board.draw_pause()
+
+    def render_fog(self):
+        self.fog.fill(NIGHT_COLOR)
+        self.light_rect.center = self.camera.apply(self.player).center
+        self.fog.blit(self.light_mask, self.light_rect)
+        self.board.surface.blit(self.fog, (0, 0), special_flags=pg.BLEND_MULT)
 
 
 if __name__ == "__main__":
