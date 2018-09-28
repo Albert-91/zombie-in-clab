@@ -38,7 +38,7 @@ ZOMBIE_DMG = 5
 DETECT_RADIUS = 400
 AVOID_RADIUS = 80
 KNOCKBACK = 10
-
+DAMAGE_ALPHA = [i for i in range(0, 255, 25)]
 BULLET_IMG = 'bulletYellowSilver_outline.png'
 WEAPONS = {}
 WEAPONS['pistol'] = {

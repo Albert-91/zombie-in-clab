@@ -1,3 +1,4 @@
+from itertools import chain
 from random import randint, choice, uniform
 from bullet import Bullet
 from drawable import Drawable
@@ -27,11 +28,17 @@ class Player(Drawable, pg.sprite.Sprite):
         self.rotation = 0
         self.rotation_speed = 0
         self.last_shot = 0
-        self.weapon = 'pistol'
+        self.weapon = None
+        self.damaged = False
+        self.damage_alpha = None
 
     def move(self, dx=0, dy=0):
         self.rect.x += dx
         self.rect.y += dy
+
+    def hit(self):
+        self.damaged = True
+        self.damage_alpha = chain(DAMAGE_ALPHA * 2)
 
     def get_keys(self):
         self.vel = vector(0, 0)
@@ -46,7 +53,8 @@ class Player(Drawable, pg.sprite.Sprite):
         if keys[pg.K_DOWN] or keys[pg.K_s]:
             self.vel = vector(-PLAYER_SPEED/2, 0).rotate(-self.rotation)
         if keys[pg.K_SPACE]:
-            self.shoot()
+            if self.weapon is not None:
+                self.shoot()
 
     def shoot(self):
         now = pg.time.get_ticks()
@@ -67,8 +75,13 @@ class Player(Drawable, pg.sprite.Sprite):
 
     def update(self):
         self.get_keys()
-        self    .rotation = (self.rotation + self.rotation_speed * self.game.dt) % 360
+        self.rotation = (self.rotation + self.rotation_speed * self.game.dt) % 360
         self.image = pg.transform.rotate(self.game.player_img, self.rotation)
+        if self.damaged:
+            try:
+                self.image.fill((255, 0, 0, next(self.damage_alpha)), special_flags=pg.BLEND_RGB_MULT)
+            except:
+                self.damaged = False
         self.rect = self.image.get_rect()
         self.rect.center = self.position
         self.position += self.vel * self.game.dt

@@ -140,6 +140,7 @@ class TheGame:
             if self.player.shield <= 0:
                 self.menu.game_over()
         if hits:
+            self.player.hit()
             self.player.position += vector(KNOCKBACK, 0).rotate(-hits[0].rotation)
         hits = pg.sprite.groupcollide(self.zombies, self.bullets, False, True)
         for hit in hits:
