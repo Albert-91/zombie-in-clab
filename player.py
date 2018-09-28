@@ -1,3 +1,4 @@
+from os import path
 from random import randint, choice, uniform
 from bullet import Bullet
 from drawable import Drawable
@@ -52,10 +53,12 @@ class Player(Drawable, pg.sprite.Sprite):
             if self.weapon is not None:
                 self.shoot()
         if keys[pg.K_1]:
-            if 'pistol' in self.all_weapons:
+            if 'pistol' in self.all_weapons and self.weapon is not 'pistol':
+                self.game.sound_effects['pistol_pickup'].play()
                 self.weapon = 'pistol'
         if keys[pg.K_2]:
-            if 'shotgun' in self.all_weapons:
+            if 'shotgun' in self.all_weapons and self.weapon is not 'shotgun':
+                self.game.sound_effects['shotgun_pickup'].play()
                 self.weapon = 'shotgun'
 
     def shoot(self):
@@ -77,6 +80,10 @@ class Player(Drawable, pg.sprite.Sprite):
 
     def update(self):
         self.get_keys()
+        if self.weapon == 'shotgun':
+            self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_SHOTGUN))
+        elif self.weapon == 'pistol':
+            self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_PISTOL))
         self.rotation = (self.rotation + self.rotation_speed * self.game.dt) % 360
         self.image = pg.transform.rotate(self.game.player_img, self.rotation)
         if self.damaged:

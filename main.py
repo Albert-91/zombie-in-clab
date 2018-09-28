@@ -42,6 +42,7 @@ class TheGame:
         self.zombie_pain_sound = []
         self.player_pain_sound = []
         self.player_die_sound = []
+        self.img_folder = None
         self.dim_screen = pg.Surface(self.board.surface.get_size())
         self.load_data()
         self.light_rect = self.light_mask.get_rect()
@@ -58,18 +59,18 @@ class TheGame:
         self.dim_screen.set_alpha(80)
         self.dim_screen.fill((0, 0, 0))
         game_folder = path.dirname(__file__)
-        img_folder = path.join(game_folder, 'images')
-        items_img_folder = path.join(img_folder, 'items')
+        self.img_folder = path.join(game_folder, 'images')
+        items_img_folder = path.join(self.img_folder, 'items')
         map_folder = path.join(game_folder, 'maps')
         sounds_folder = path.join(game_folder, 'sounds')
-        splats_folder = path.join(img_folder, 'splat')
+        splats_folder = path.join(self.img_folder, 'splat')
         self.map = TiledMap(path.join(map_folder, 'clab_map.tmx'))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
-        self.intro_img = pg.image.load(path.join(img_folder, INTRO_IMG))
-        self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMAGE))
-        self.zombie_img = pg.image.load(path.join(img_folder, ZOMBIE_IMAGE))
-        self.bullet_images['large'] = pg.image.load(path.join(img_folder, BULLET_IMG))
+        self.intro_img = pg.image.load(path.join(self.img_folder, INTRO_IMG))
+        self.player_img = pg.image.load(path.join(self.img_folder, PLAYER_IMAGE_NAKED))
+        self.zombie_img = pg.image.load(path.join(self.img_folder, ZOMBIE_IMAGE))
+        self.bullet_images['large'] = pg.image.load(path.join(self.img_folder, BULLET_IMG))
         self.bullet_images['large'] = pg.transform.scale(self.bullet_images['large'], (5, 10))
         self.bullet_images['small'] = pg.transform.scale(self.bullet_images['large'], (3, 7))
         for smoke in FLASH_SMOKE:
@@ -87,7 +88,7 @@ class TheGame:
             else:
                 self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
         self.fog.fill(NIGHT_COLOR)
-        self.light_mask = pg.image.load(path.join(img_folder, LIGHT_MASK))
+        self.light_mask = pg.image.load(path.join(self.img_folder, LIGHT_MASK))
         self.light_mask = pg.transform.scale(self.light_mask, LIGHT_RADIUS)
         for sound in SOUND_EFFECTS:
             self.sound_effects[sound] = pg.mixer.Sound(path.join(sounds_folder, SOUND_EFFECTS[sound]))

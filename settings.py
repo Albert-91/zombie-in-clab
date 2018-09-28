@@ -23,7 +23,9 @@ PLAYER_LIVES = 3
 PLAYER_SHIELD = 1000
 PLAYER_SPEED = 400
 PLAYER_ROTATION_SPEED = 150
-PLAYER_IMAGE = 'hitman1_silencer.png'
+PLAYER_IMAGE_NAKED = 'hitman1_hold.png'
+PLAYER_IMAGE_PISTOL = 'hitman1_silencer.png'
+PLAYER_IMAGE_SHOTGUN = 'hitman1_machine.png'
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 
 ZOMBIE_WIDTH = 23
