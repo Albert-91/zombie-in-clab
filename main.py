@@ -179,6 +179,7 @@ class TheGame:
                 sprite.draw_shield()
             self.board.surface.blit(sprite.image, self.camera.apply(sprite))
         draw_player_health(self.board.surface, 20, 10, self.player.shield / PLAYER_SHIELD)
+        self.board.draw_zombies_left(len(self.zombies))
         if self.game_paused:
             self.board.surface.blit(self.dim_screen, (0, 0))
             self.board.draw_pause()

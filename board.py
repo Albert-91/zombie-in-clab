@@ -72,6 +72,9 @@ class Board:
     def draw_pause(self):
         self.draw_text(self.surface, "Paused", self.width / 2, self.height / 2, self.title_font)
 
+    def draw_zombies_left(self, left):
+        self.draw_text(self.surface, "Zombies: {}".format(left), self.width - 120, 40, self.menu_font)
+
     @staticmethod
     def draw_text(surface, text, x, y, font):
         text = font.render(text, True, MENU_FONT_COLOR)
