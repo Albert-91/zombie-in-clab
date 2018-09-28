@@ -53,10 +53,12 @@ class Player(Drawable, pg.sprite.Sprite):
             if self.weapon is not None:
                 self.shoot()
         if keys[pg.K_1]:
+            self.weapon = None
+        if keys[pg.K_2]:
             if 'pistol' in self.all_weapons and self.weapon is not 'pistol':
                 self.game.sound_effects['pistol_pickup'].play()
                 self.weapon = 'pistol'
-        if keys[pg.K_2]:
+        if keys[pg.K_3]:
             if 'shotgun' in self.all_weapons and self.weapon is not 'shotgun':
                 self.game.sound_effects['shotgun_pickup'].play()
                 self.weapon = 'shotgun'
@@ -80,7 +82,9 @@ class Player(Drawable, pg.sprite.Sprite):
 
     def update(self):
         self.get_keys()
-        if self.weapon == 'shotgun':
+        if self.weapon is None:
+            self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_NAKED ))
+        elif self.weapon == 'shotgun':
             self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_SHOTGUN))
         elif self.weapon == 'pistol':
             self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_PISTOL))
