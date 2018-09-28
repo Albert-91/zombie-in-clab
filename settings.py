@@ -67,6 +67,7 @@ DIFFICULT_SPRITE_HEIGHT = 40
 DIFFICULT_SPRITE_POS_X = 0.25
 
 ITEM_LAYER = 1
+SPLAT_LAYER = 1
 PLAYER_LAYER = 2
 ZOMBIE_LAYER = 2
 BULLET_LAYER = 3
@@ -87,7 +88,6 @@ ITEM_IMAGES = {
     'key': 'genericItem_color_155.png',
     'money': 'genericItem_color_158.png'
 }
-
 GREEN_SMOKE = [
     'fart00.png',
     'fart01.png',
@@ -110,7 +110,12 @@ FLASH_SMOKE = [
     'flash07.png',
     'flash08.png',
 ]
-
+SPLATS = [
+    'bloodsplats_0003.png',
+    'bloodsplats_0004.png',
+    'bloodsplats_0006.png',
+    'bloodsplats_0007.png',
+]
 SOUND_EFFECTS = {
     'heal': 'healed.wav'
 }

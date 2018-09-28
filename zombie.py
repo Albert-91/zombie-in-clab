@@ -36,7 +36,7 @@ class Zombie(pg.sprite.Sprite):
         target_distance = self.target.position - self.position
         if target_distance.length_squared() < DETECT_RADIUS ** 2:
             if random() < 0.002:
-                choice(self.game.zombie_moan_sound).play()
+                choice(self.game.zombie_moan_sounds).play()
             self.rotation = (self.game.player.position - self.position).angle_to(vector(1, 0))
             self.image = pg.transform.rotate(self.game.zombie_img, self.rotation)
             self.rect = self.image.get_rect()
@@ -56,6 +56,7 @@ class Zombie(pg.sprite.Sprite):
             size = randint(70, 120)
             Smoke(self.game, self.rect.center, self.game.zombie_death_smoke, size)
             self.kill()
+            self.game.map_img.blit(choice(self.game.splats), self.position - vector(32, 32))
 
     def draw_shield(self):
         if self.shield > 60:

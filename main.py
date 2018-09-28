@@ -30,12 +30,13 @@ class TheGame:
         self.zombie_img = None
         self.bullet_img = None
         self.player = None
+        self.splats = []
         self.gun_smoke = []
         self.zombie_death_smoke = []
         self.items_images = {}
         self.sound_effects = {}
         self.weapon_sounds = {}
-        self.zombie_moan_sound = []
+        self.zombie_moan_sounds = []
         self.zombie_pain_sound = []
         self.player_pain_sound = []
         self.player_die_sound = []
@@ -53,6 +54,7 @@ class TheGame:
         items_img_folder = path.join(img_folder, 'items')
         map_folder = path.join(game_folder, 'maps')
         sounds_folder = path.join(game_folder, 'sounds')
+        splats_folder = path.join(img_folder, 'splat')
         self.map = TiledMap(path.join(map_folder, 'clab_map.tmx'))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
@@ -65,6 +67,10 @@ class TheGame:
             self.gun_smoke.append(pg.image.load(path.join(game_folder, 'images/smokes/Flash/{}'.format(smoke))))
         for smoke in GREEN_SMOKE:
             self.zombie_death_smoke.append(pg.image.load(path.join(game_folder, 'images/smokes/Green smoke/{}'.format(smoke))))
+        for splat in SPLATS:
+            splat_img = pg.image.load(path.join(splats_folder, splat))
+            splat_img = pg.transform.scale(splat_img, (64, 64))
+            self.splats.append(splat_img)
         for item in ITEM_IMAGES:
             self.items_images[item] = pg.image.load(path.join(items_img_folder, ITEM_IMAGES[item]))
             self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
@@ -76,7 +82,7 @@ class TheGame:
         for sound in ZOMBIE_MOAN_SOUNDS:
             track = pg.mixer.Sound(path.join(sounds_folder, sound))
             track.set_volume(0.4)
-            self.zombie_moan_sound.append(track)
+            self.zombie_moan_sounds.append(track)
 
     def run(self, difficulty):
         if difficulty == "easy":
