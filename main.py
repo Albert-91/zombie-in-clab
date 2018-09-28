@@ -136,10 +136,12 @@ class TheGame:
                 hit.kill()
                 self.sound_effects['shotgun_pickup'].play()
                 self.player.weapon = 'shotgun'
+                self.player.all_weapons.append('shotgun')
             if hit.type == 'pistol':
                 hit.kill()
                 self.sound_effects['pistol_pickup'].play()
                 self.player.weapon = 'pistol'
+                self.player.all_weapons.append('pistol')
         hits = pg.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
         for hit in hits:
             self.player.shield -= ZOMBIE_DMG

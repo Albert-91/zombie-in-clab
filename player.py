@@ -28,6 +28,7 @@ class Player(Drawable, pg.sprite.Sprite):
         self.rotation_speed = 0
         self.last_shot = 0
         self.weapon = None
+        self.all_weapons = []
         self.damaged = False
         self.damage_alpha = None
 
@@ -50,6 +51,12 @@ class Player(Drawable, pg.sprite.Sprite):
         if keys[pg.K_SPACE]:
             if self.weapon is not None:
                 self.shoot()
+        if keys[pg.K_1]:
+            if 'pistol' in self.all_weapons:
+                self.weapon = 'pistol'
+        if keys[pg.K_2]:
+            if 'shotgun' in self.all_weapons:
+                self.weapon = 'shotgun'
 
     def shoot(self):
         now = pg.time.get_ticks()
@@ -75,7 +82,7 @@ class Player(Drawable, pg.sprite.Sprite):
         if self.damaged:
             try:
                 self.image.fill((255, 0, 0, next(self.damage_alpha)), special_flags=pg.BLEND_RGB_MULT)
-            except:
+            except StopIteration:
                 self.damaged = False
         self.rect = self.image.get_rect()
         self.rect.center = self.position
