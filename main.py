@@ -7,7 +7,7 @@ from screen import Camera, TiledMap
 from walls import Obstacle
 from zombie import Zombie
 from settings import *
-from functions import quit, collide_hit_rect, draw_player_health
+from functions import quit, collide_hit_rect, draw_player_health, get_hit
 
 
 class TheGame:
@@ -140,12 +140,13 @@ class TheGame:
             if self.player.shield <= 0:
                 self.menu.game_over()
         if hits:
-            self.player.hit()
+            get_hit(self.player)
             self.player.position += vector(KNOCKBACK, 0).rotate(-hits[0].rotation)
         hits = pg.sprite.groupcollide(self.zombies, self.bullets, False, True)
         for hit in hits:
             hit.shield -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
             hit.vel = vector(0, 0)
+            get_hit(hit)
 
     def handle_events(self):
         self.player.update()

@@ -1,7 +1,14 @@
 import sys
+from itertools import chain
 from settings import *
 
 vector = pg.math.Vector2
+
+
+def get_hit(object):
+    alphas = [i for i in range(0, 255, 25)]
+    object.damaged = True
+    object.damage_alpha = chain(alphas * 2)
 
 
 def quit():

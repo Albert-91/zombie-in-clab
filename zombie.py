@@ -25,6 +25,8 @@ class Zombie(pg.sprite.Sprite):
         self.shield_bar = None
         self.speed = choice(ZOMBIE_SPEEDS_EASY)
         self.target = game.player
+        self.damaged = False
+        self.damage_alpha = None
 
     def natural_moves(self):
         moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
@@ -39,6 +41,11 @@ class Zombie(pg.sprite.Sprite):
                 choice(self.game.zombie_moan_sounds).play()
             self.rotation = (self.game.player.position - self.position).angle_to(vector(1, 0))
             self.image = pg.transform.rotate(self.game.zombie_img, self.rotation)
+            if self.damaged:
+                try:
+                    self.image.fill((255, 0, 0, next(self.damage_alpha)), special_flags=pg.BLEND_RGB_MULT)
+                except:
+                    self.damaged = False
             self.rect = self.image.get_rect()
             self.rect.center = self.position
             self.acc = vector(1, 0).rotate(-self.rotation)

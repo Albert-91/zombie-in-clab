@@ -1,4 +1,3 @@
-from itertools import chain
 from random import randint, choice, uniform
 from bullet import Bullet
 from drawable import Drawable
@@ -35,10 +34,6 @@ class Player(Drawable, pg.sprite.Sprite):
     def move(self, dx=0, dy=0):
         self.rect.x += dx
         self.rect.y += dy
-
-    def hit(self):
-        self.damaged = True
-        self.damage_alpha = chain(DAMAGE_ALPHA * 2)
 
     def get_keys(self):
         self.vel = vector(0, 0)
