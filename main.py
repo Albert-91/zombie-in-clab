@@ -40,6 +40,7 @@ class TheGame:
         self.zombie_pain_sound = []
         self.player_pain_sound = []
         self.player_die_sound = []
+        self.dim_screen = pg.Surface(self.board.surface.get_size())
         self.load_data()
         self.map_data = self.map.make_map()
         self.new()
@@ -47,8 +48,11 @@ class TheGame:
         self.fps_clock = pg.time.Clock()
         self.dt = None
         self.menu = Menu(self)
+        self.game_paused = False
 
     def load_data(self):
+        self.dim_screen.set_alpha(80)
+        self.dim_screen.fill((0, 0, 0))
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'images')
         items_img_folder = path.join(img_folder, 'items')
@@ -100,8 +104,9 @@ class TheGame:
         while True:
             self.dt = self.fps_clock.tick(FPS) / 1000
             self.handle_events()
+            if not self.game_paused:
+                self.update()
             self.draw()
-            self.update()
             pg.display.flip()
 
     def update(self):
@@ -134,6 +139,8 @@ class TheGame:
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     quit()
+                if event.key == pg.K_p:
+                    self.game_paused = not self.game_paused
 
     def new(self):
         for tile_object in self.map.tmxdata.objects:
@@ -155,6 +162,9 @@ class TheGame:
                 sprite.draw_shield()
             self.board.surface.blit(sprite.image, self.camera.apply(sprite))
         draw_player_health(self.board.surface, 20, 10, self.player.shield / PLAYER_SHIELD)
+        if self.game_paused:
+            self.board.surface.blit(self.dim_screen, (0, 0))
+            self.board.draw_pause()
 
 
 if __name__ == "__main__":

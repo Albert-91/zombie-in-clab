@@ -69,6 +69,9 @@ class Board:
         pg.display.update()
         return self.surface.blit(text, rect)
 
+    def draw_pause(self):
+        self.draw_text(self.surface, "Paused", self.width / 2, self.height / 2, self.title_font)
+
     @staticmethod
     def draw_text(surface, text, x, y, font):
         text = font.render(text, True, MENU_FONT_COLOR)
