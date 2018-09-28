@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.1" tiledversion="2018.09.12" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="64" tileheight="64" infinite="0" nextlayerid="4" nextobjectid="9">
+<map version="1.1" tiledversion="2018.09.12" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="64" tileheight="64" infinite="0" nextlayerid="4" nextobjectid="11">
  <tileset firstgid="1" source="spritesheet_tiles.tsx"/>
  <layer id="1" name="Floor" width="100" height="100">
   <data encoding="csv">
@@ -217,5 +217,7 @@
   <object id="5" name="zombie" x="697" y="290" width="64" height="58"/>
   <object id="6" name="zombie" x="915" y="412" width="64" height="58"/>
   <object id="7" name="health" x="140" y="771" width="45" height="44"/>
+  <object id="9" name="shotgun" x="379.5" y="836" width="45" height="44"/>
+  <object id="10" name="pistol" x="1061.5" y="1006" width="45" height="44"/>
  </objectgroup>
 </map>

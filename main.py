@@ -78,7 +78,10 @@ class TheGame:
             self.splats.append(splat_img)
         for item in ITEM_IMAGES:
             self.items_images[item] = pg.image.load(path.join(items_img_folder, ITEM_IMAGES[item]))
-            self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
+            if item == 'shotgun':
+                self.items_images[item] = pg.transform.scale(self.items_images[item], (2 * ITEM_SIZE, ITEM_SIZE))
+            else:
+                self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
         for sound in SOUND_EFFECTS:
             self.sound_effects[sound] = pg.mixer.Sound(path.join(sounds_folder, SOUND_EFFECTS[sound]))
         for weapon in WEAPON_SOUNDS:
@@ -122,6 +125,14 @@ class TheGame:
                 hit.kill()
                 self.sound_effects['heal'].play()
                 self.player.add_shield(BIG_HEALTH_PACK)
+            if hit.type == 'shotgun':
+                hit.kill()
+                self.sound_effects['shotgun_pickup'].play()
+                self.player.weapon = 'shotgun'
+            if hit.type == 'pistol':
+                hit.kill()
+                self.sound_effects['pistol_pickup'].play()
+                self.player.weapon = 'pistol'
         hits = pg.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
         for hit in hits:
             self.player.shield -= ZOMBIE_DMG
@@ -156,7 +167,7 @@ class TheGame:
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == 'zombie':
                 Zombie(self, object_center.x, object_center.y)
-            if tile_object.name in ['health']:
+            if tile_object.name in ['health', 'shotgun', 'pistol']:
                 Item(self, object_center, tile_object.name)
 
     def draw(self):

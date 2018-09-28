@@ -88,7 +88,7 @@ SMOKE_LAYER = 5
 ITEM_BOB_RANGE = 20
 ITEM_BOB_SPEED = 0.4
 BIG_HEALTH_PACK = 300
-ITEM_SIZE = 40
+ITEM_SIZE = 30
 ITEM_IMAGES = {
     'health': 'genericItem_color_102.png',
     'mini_health': 'genericItem_color_100.png',
@@ -98,7 +98,9 @@ ITEM_IMAGES = {
     'usb_flash': 'genericItem_color_099.png',
     'id_card': 'genericItem_color_151.png',
     'key': 'genericItem_color_155.png',
-    'money': 'genericItem_color_158.png'
+    'money': 'genericItem_color_158.png',
+    'pistol': 'pistol.png',
+    'shotgun': 'shotgun.png'
 }
 GREEN_SMOKE = [
     'fart00.png',
@@ -129,7 +131,9 @@ SPLATS = [
     'bloodsplats_0007.png',
 ]
 SOUND_EFFECTS = {
-    'heal': 'healed.wav'
+    'heal': 'healed.wav',
+    'pistol_pickup': 'pistol_reload.wav',
+    'shotgun_pickup': 'shotgun_reload.wav'
 }
 PLAYER_PAIN_SOUNDS = [
     'pain1.wav',
