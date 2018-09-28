@@ -1,4 +1,4 @@
-from random import randint, choice
+from random import randint, choice, uniform
 from bullet import Bullet
 from drawable import Drawable
 from functions import collide_with_object
@@ -27,6 +27,7 @@ class Player(Drawable, pg.sprite.Sprite):
         self.rotation = 0
         self.rotation_speed = 0
         self.last_shot = 0
+        self.weapon = 'pistol'
 
     def move(self, dx=0, dy=0):
         self.rect.x += dx
@@ -45,20 +46,28 @@ class Player(Drawable, pg.sprite.Sprite):
         if keys[pg.K_DOWN] or keys[pg.K_s]:
             self.vel = vector(-PLAYER_SPEED/2, 0).rotate(-self.rotation)
         if keys[pg.K_SPACE]:
-            now = pg.time.get_ticks()
-            if now - self.last_shot > BULLET_RATE:
-                choice(self.game.weapon_sounds['gun']).play()
-                self.last_shot = now
-                direction = vector(1, 0).rotate(-self.rotation)
-                position = self.position + BARREL_OFFSET.rotate(-self.rotation)
-                Bullet(self.game, position, direction)
-                self.vel = vector(-KICKBACK, 0).rotate(-self.rotation)
-                size = randint(20, 50)
-                Smoke(self.game, position, self.game.gun_smoke, size)
+            self.shoot()
+
+    def shoot(self):
+        now = pg.time.get_ticks()
+        if now - self.last_shot > WEAPONS[self.weapon]['rate']:
+            self.last_shot = now
+            direction = vector(1, 0).rotate(-self.rotation)
+            position = self.position + BARREL_OFFSET.rotate(-self.rotation)
+            self.vel = vector(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rotation)
+            for i in range(WEAPONS[self.weapon]['bullet_count']):
+                spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
+                Bullet(self.game, position, direction.rotate(spread))
+                sound = choice(self.game.weapon_sounds[self.weapon])
+                if sound.get_num_channels() > 2:
+                    sound.stop()
+                sound.play()
+            size = randint(20, 50)
+            Smoke(self.game, position, self.game.gun_smoke, size)
 
     def update(self):
         self.get_keys()
-        self.rotation = (self.rotation + self.rotation_speed * self.game.dt) % 360
+        self    .rotation = (self.rotation + self.rotation_speed * self.game.dt) % 360
         self.image = pg.transform.rotate(self.game.player_img, self.rotation)
         self.rect = self.image.get_rect()
         self.rect.center = self.position

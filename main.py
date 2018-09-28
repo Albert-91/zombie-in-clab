@@ -12,7 +12,7 @@ from functions import quit, collide_hit_rect, draw_player_health
 
 class TheGame:
     def __init__(self, width, height):
-        pg.mixer.init()
+        pg.mixer.pre_init(44100, 16, 1, 2048)
         pg.init()
         self.width = width
         self.height = height
@@ -28,7 +28,7 @@ class TheGame:
         self.player_img = None
         self.intro_img = None
         self.zombie_img = None
-        self.bullet_img = None
+        self.bullet_images = {}
         self.player = None
         self.splats = []
         self.gun_smoke = []
@@ -65,8 +65,9 @@ class TheGame:
         self.intro_img = pg.image.load(path.join(img_folder, INTRO_IMG))
         self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMAGE))
         self.zombie_img = pg.image.load(path.join(img_folder, ZOMBIE_IMAGE))
-        self.bullet_img = pg.image.load(path.join(img_folder, BULLET_IMG))
-        self.bullet_img = pg.transform.scale(self.bullet_img, (BULLET_WIDTH, BULLET_HEIGHT))
+        self.bullet_images['large'] = pg.image.load(path.join(img_folder, BULLET_IMG))
+        self.bullet_images['large'] = pg.transform.scale(self.bullet_images['large'], (5, 10))
+        self.bullet_images['small'] = pg.transform.scale(self.bullet_images['large'], (3, 7))
         for smoke in FLASH_SMOKE:
             self.gun_smoke.append(pg.image.load(path.join(game_folder, 'images/smokes/Flash/{}'.format(smoke))))
         for smoke in GREEN_SMOKE:
@@ -80,9 +81,12 @@ class TheGame:
             self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
         for sound in SOUND_EFFECTS:
             self.sound_effects[sound] = pg.mixer.Sound(path.join(sounds_folder, SOUND_EFFECTS[sound]))
-        self.weapon_sounds['gun'] = []
-        for sound in WEAPON_SOUNDS:
-            self.weapon_sounds['gun'].append(pg.mixer.Sound(path.join(sounds_folder, sound)))
+        for weapon in WEAPON_SOUNDS:
+            self.weapon_sounds[weapon] = []
+            for sound in WEAPON_SOUNDS[weapon]:
+                track = pg.mixer.Sound(path.join(sounds_folder, sound))
+                track.set_volume(0.3)
+                self.weapon_sounds[weapon].append(track)
         for sound in ZOMBIE_MOAN_SOUNDS:
             track = pg.mixer.Sound(path.join(sounds_folder, sound))
             track.set_volume(0.4)
@@ -128,7 +132,7 @@ class TheGame:
             self.player.position += vector(KNOCKBACK, 0).rotate(-hits[0].rotation)
         hits = pg.sprite.groupcollide(self.zombies, self.bullets, False, True)
         for hit in hits:
-            hit.shield -= BULLET_DMG
+            hit.shield -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
             hit.vel = vector(0, 0)
 
     def handle_events(self):

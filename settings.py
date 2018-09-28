@@ -40,18 +40,30 @@ AVOID_RADIUS = 80
 KNOCKBACK = 10
 
 BULLET_IMG = 'bulletYellowSilver_outline.png'
-BULLET_WIDTH = 5
-BULLET_HEIGHT = 10
-BULLET_SPEED = 500
-BULLET_LIFETIME = 1000
-BULLET_RATE = 150
-BULLET_DMG = 20
-BARREL_OFFSET = vector(30, 10)
-KICKBACK = 200
-GUN_SPREAD = 5
-SMOKE_DURATION = 40
+WEAPONS = {}
+WEAPONS['pistol'] = {
+    'bullet_speed': 500,
+    'bullet_lifetime': 1000,
+    'rate': 150,
+    'kickback': 200,
+    'spread': 5,
+    'damage': 10,
+    'bullet_size': 'large',
+    'bullet_count': 1,
+}
+WEAPONS['shotgun'] = {
+    'bullet_speed': 400,
+    'bullet_lifetime': 500,
+    'rate': 900,
+    'kickback': 300,
+    'spread': 20,
+    'damage': 5,
+    'bullet_size': 'small',
+    'bullet_count': 12,
+}
 
-WALL_SIZE = 10
+BARREL_OFFSET = vector(30, 10)
+SMOKE_DURATION = 40
 
 INTRO_IMG = 'menu_head.png'
 INTRO_SPRITE_WIDTH = 40
@@ -146,8 +158,15 @@ ZOMBIE_PAIN_SOUNDS = [
     'monster-6.wav',
     'monster-7.wav',
 ]
-WEAPON_SOUNDS = [
-    'pistol.ogg',
-    'pistol2.ogg',
-    'pistol3.ogg'
-]
+WEAPON_SOUNDS = {
+    'pistol': [
+        'pistol.ogg',
+        'pistol2.ogg',
+        'pistol3.ogg'
+    ],
+    'shotgun': [
+        'shotgun.ogg',
+        'shotgun2.ogg',
+        'shotgun3.ogg'
+    ]
+}
