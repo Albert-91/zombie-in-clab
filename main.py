@@ -223,6 +223,8 @@ class TheGame:
         draw_player_health(self.board.surface, 20, 10, self.player.shield / PLAYER_SHIELD)
         self.board.draw_zombies_left(len(self.zombies))
         self.board.draw_adds(self.board.surface, 150, 10, self.lives_img, self.player.lives)
+        if self.player.weapon is not None:
+            self.board.draw_adds(self.board.surface, 250, 7, self.items_images[self.player.weapon])
         if self.game_paused:
             self.board.surface.blit(self.dim_screen, (0, 0))
             self.board.draw_pause()
