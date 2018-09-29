@@ -75,6 +75,7 @@ class TheGame:
         self.player_img = pg.image.load(path.join(self.img_folder, PLAYER_IMAGE_NAKED))
         self.zombie_img = pg.image.load(path.join(self.img_folder, ZOMBIE_IMAGE))
         self.bullet_images['large'] = pg.image.load(path.join(self.img_folder, BULLET_IMG))
+        self.bullet_images['long'] = pg.transform.scale(self.bullet_images['large'], (5, 15))
         self.bullet_images['large'] = pg.transform.scale(self.bullet_images['large'], (5, 10))
         self.bullet_images['small'] = pg.transform.scale(self.bullet_images['large'], (3, 7))
         self.lives_img = pg.image.load(path.join(self.img_folder, LIVES_IMG))
@@ -89,7 +90,7 @@ class TheGame:
             self.splats.append(splat_img)
         for item in ITEM_IMAGES:
             self.items_images[item] = pg.image.load(path.join(items_img_folder, ITEM_IMAGES[item]))
-            if item == 'shotgun':
+            if item == 'shotgun' or item == 'rifle':
                 self.items_images[item] = pg.transform.scale(self.items_images[item], (2 * ITEM_SIZE, ITEM_SIZE))
             else:
                 self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
@@ -165,6 +166,16 @@ class TheGame:
                 self.sound_effects['pistol_pickup'].play()
                 self.player.weapon = 'pistol'
                 self.player.all_weapons.append('pistol')
+            if hit.type == 'uzi':
+                hit.kill()
+                self.sound_effects['pistol_pickup'].play()
+                self.player.weapon = 'uzi'
+                self.player.all_weapons.append('uzi')
+            if hit.type == 'rifle':
+                hit.kill()
+                self.sound_effects['rifle_pickup'].play()
+                self.player.weapon = 'rifle'
+                self.player.all_weapons.append('rifle')
         hits = pg.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
         for hit in hits:
             self.player.shield -= ZOMBIE_DMG
@@ -209,7 +220,7 @@ class TheGame:
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == 'zombie':
                 Zombie(self, object_center.x, object_center.y)
-            if tile_object.name in ['health', 'shotgun', 'pistol']:
+            if tile_object.name in ['health', 'shotgun', 'pistol', 'uzi', 'rifle']:
                 Item(self, object_center, tile_object.name)
 
     def draw(self):

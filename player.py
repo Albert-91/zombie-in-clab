@@ -62,6 +62,14 @@ class Player(Drawable, pg.sprite.Sprite):
             if 'shotgun' in self.all_weapons and self.weapon is not 'shotgun':
                 self.game.sound_effects['shotgun_pickup'].play()
                 self.weapon = 'shotgun'
+        if keys[pg.K_4]:
+            if 'uzi' in self.all_weapons and self.weapon is not 'uzi':
+                self.game.sound_effects['uzi_pickup'].play()
+                self.weapon = 'uzi'
+        if keys[pg.K_5]:
+            if 'rifle' in self.all_weapons and self.weapon is not 'rifle':
+                self.game.sound_effects['rifle_pickup'].play()
+                self.weapon = 'rifle'
 
     def shoot(self):
         now = pg.time.get_ticks()
@@ -84,10 +92,12 @@ class Player(Drawable, pg.sprite.Sprite):
         self.get_keys()
         if self.weapon is None:
             self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_NAKED ))
-        elif self.weapon == 'shotgun':
+        elif self.weapon == 'shotgun' or self.weapon == 'rifle':
             self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_SHOTGUN))
         elif self.weapon == 'pistol':
             self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_PISTOL))
+        elif self.weapon == 'uzi':
+            self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_UZI))
         self.rotation = (self.rotation + self.rotation_speed * self.game.dt) % 360
         self.image = pg.transform.rotate(self.game.player_img, self.rotation)
         if self.damaged:

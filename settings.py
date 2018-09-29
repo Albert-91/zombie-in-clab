@@ -24,8 +24,9 @@ PLAYER_SHIELD = 1000
 PLAYER_SPEED = 400
 PLAYER_ROTATION_SPEED = 150
 PLAYER_IMAGE_NAKED = 'hitman1_hold.png'
-PLAYER_IMAGE_PISTOL = 'hitman1_silencer.png'
+PLAYER_IMAGE_PISTOL = 'hitman1_gun.png'
 PLAYER_IMAGE_SHOTGUN = 'hitman1_machine.png'
+PLAYER_IMAGE_UZI = 'hitman1_silencer.png'
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 LIVES_IMG = 'lives_icon.png'
 
@@ -47,7 +48,7 @@ WEAPONS = {}
 WEAPONS['pistol'] = {
     'bullet_speed': 500,
     'bullet_lifetime': 1000,
-    'rate': 150,
+    'rate': 300,
     'kickback': 200,
     'spread': 5,
     'damage': 10,
@@ -58,13 +59,32 @@ WEAPONS['shotgun'] = {
     'bullet_speed': 400,
     'bullet_lifetime': 500,
     'rate': 900,
-    'kickback': 300,
+    'kickback': 200,
     'spread': 20,
     'damage': 5,
     'bullet_size': 'small',
     'bullet_count': 12,
 }
-
+WEAPONS['uzi'] = {
+    'bullet_speed': 500,
+    'bullet_lifetime': 500,
+    'rate': 100,
+    'kickback': 150,
+    'spread': 10,
+    'damage': 3,
+    'bullet_size': 'small',
+    'bullet_count': 1,
+}
+WEAPONS['rifle'] = {
+    'bullet_speed': 700,
+    'bullet_lifetime': 2000,
+    'rate': 1500,
+    'kickback': 700,
+    'spread': 2,
+    'damage': 50,
+    'bullet_size': 'long',
+    'bullet_count': 1,
+}
 BARREL_OFFSET = vector(30, 10)
 SMOKE_DURATION = 40
 
@@ -103,7 +123,9 @@ ITEM_IMAGES = {
     'key': 'genericItem_color_155.png',
     'money': 'genericItem_color_158.png',
     'pistol': 'pistol.png',
-    'shotgun': 'shotgun.png'
+    'shotgun': 'shotgun.png',
+    'rifle': 'rifle.png',
+    'uzi': 'uzi.png'
 }
 GREEN_SMOKE = [
     'fart00.png',
@@ -136,6 +158,8 @@ SPLATS = [
 SOUND_EFFECTS = {
     'heal': 'healed.wav',
     'pistol_pickup': 'pistol_reload.wav',
+    'uzi_pickup': 'pistol_reload.wav',
+    'rifle_pickup': 'rifle_pickup.wav',
     'shotgun_pickup': 'shotgun_reload.wav'
 }
 PLAYER_PAIN_SOUNDS = [
@@ -178,5 +202,15 @@ WEAPON_SOUNDS = {
         'shotgun.ogg',
         'shotgun2.ogg',
         'shotgun3.ogg'
+    ],
+    'rifle': [
+        'rifle.ogg',
+        'rifle2.ogg',
+        'rifle3.ogg'
+    ],
+    'uzi': [
+        'pistol.ogg',
+        'pistol2.ogg',
+        'pistol3.ogg'
     ]
 }
