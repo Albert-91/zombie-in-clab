@@ -47,6 +47,7 @@ class TheGame:
         self.player_die_sounds = []
         self.img_folder = None
         self.dim_screen = pg.Surface(self.board.surface.get_size())
+        self.lives_img = None
         self.load_data()
         self.light_rect = self.light_mask.get_rect()
         self.map_data = self.map.make_map()
@@ -76,6 +77,8 @@ class TheGame:
         self.bullet_images['large'] = pg.image.load(path.join(self.img_folder, BULLET_IMG))
         self.bullet_images['large'] = pg.transform.scale(self.bullet_images['large'], (5, 10))
         self.bullet_images['small'] = pg.transform.scale(self.bullet_images['large'], (3, 7))
+        self.lives_img = pg.image.load(path.join(self.img_folder, LIVES_IMG))
+        self.lives_img = pg.transform.scale(self.lives_img, (20, 20))
         for smoke in FLASH_SMOKE:
             self.gun_smoke.append(pg.image.load(path.join(game_folder, 'images/smokes/Flash/{}'.format(smoke))))
         for smoke in GREEN_SMOKE:
@@ -219,6 +222,7 @@ class TheGame:
             self.render_fog()
         draw_player_health(self.board.surface, 20, 10, self.player.shield / PLAYER_SHIELD)
         self.board.draw_zombies_left(len(self.zombies))
+        self.board.draw_adds(self.board.surface, 150, 10, self.lives_img, self.player.lives)
         if self.game_paused:
             self.board.surface.blit(self.dim_screen, (0, 0))
             self.board.draw_pause()

@@ -75,6 +75,13 @@ class Board:
     def draw_zombies_left(self, left):
         self.draw_text(self.surface, "Zombies: {}".format(left), self.width - 120, 40, self.menu_font)
 
+    def draw_adds(self, surface, x, y, image, amount=1):
+        for i in range(amount):
+            img_rect = image.get_rect()
+            img_rect.x = x + 30 * i
+            img_rect.y = y
+            surface.blit(image, img_rect)
+
     @staticmethod
     def draw_text(surface, text, x, y, font):
         text = font.render(text, True, MENU_FONT_COLOR)

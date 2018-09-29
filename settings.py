@@ -27,6 +27,7 @@ PLAYER_IMAGE_NAKED = 'hitman1_hold.png'
 PLAYER_IMAGE_PISTOL = 'hitman1_silencer.png'
 PLAYER_IMAGE_SHOTGUN = 'hitman1_machine.png'
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
+LIVES_IMG = 'lives_icon.png'
 
 ZOMBIE_WIDTH = 23
 ZOMBIE_HEIGHT = 28
