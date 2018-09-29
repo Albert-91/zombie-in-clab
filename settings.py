@@ -122,6 +122,8 @@ ITEM_IMAGES = {
     'id_card': 'genericItem_color_151.png',
     'key': 'genericItem_color_155.png',
     'money': 'genericItem_color_158.png',
+    'ammo_small': 'ammo_small.png',
+    'ammo_big': 'ammo_big.png',
     'pistol': 'pistol.png',
     'shotgun': 'shotgun.png',
     'rifle': 'rifle.png',
