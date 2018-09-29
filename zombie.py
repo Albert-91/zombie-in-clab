@@ -44,7 +44,7 @@ class Zombie(pg.sprite.Sprite):
             if self.damaged:
                 try:
                     self.image.fill((255, 0, 0, next(self.damage_alpha)), special_flags=pg.BLEND_RGB_MULT)
-                except:
+                except StopIteration:
                     self.damaged = False
             self.rect = self.image.get_rect()
             self.rect.center = self.position
@@ -62,6 +62,7 @@ class Zombie(pg.sprite.Sprite):
         if self.shield <= 0:
             size = randint(70, 120)
             Smoke(self.game, self.rect.center, self.game.zombie_death_smoke, size)
+            choice(self.game.zombie_die_sounds).play()
             self.kill()
             self.game.map_img.blit(choice(self.game.splats), self.position - vector(32, 32))
 

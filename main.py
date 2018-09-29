@@ -1,4 +1,6 @@
 from os import path
+from random import choice, random
+
 from board import Board
 from item import Item
 from menu import Menu
@@ -39,15 +41,16 @@ class TheGame:
         self.sound_effects = {}
         self.weapon_sounds = {}
         self.zombie_moan_sounds = []
-        self.zombie_pain_sound = []
-        self.player_pain_sound = []
-        self.player_die_sound = []
+        self.zombie_pain_sounds = []
+        self.zombie_die_sounds = []
+        self.player_pain_sounds = []
+        self.player_die_sounds = []
         self.img_folder = None
         self.dim_screen = pg.Surface(self.board.surface.get_size())
         self.load_data()
         self.light_rect = self.light_mask.get_rect()
         self.map_data = self.map.make_map()
-        self.night = False
+        self.night = True
         self.new()
         self.camera = Camera(self.map.width, self.map.height)
         self.fps_clock = pg.time.Clock()
@@ -102,6 +105,22 @@ class TheGame:
             track = pg.mixer.Sound(path.join(sounds_folder, sound))
             track.set_volume(0.4)
             self.zombie_moan_sounds.append(track)
+        for sound in ZOMBIE_PAIN_SOUNDS:
+            track = pg.mixer.Sound(path.join(sounds_folder, sound))
+            track.set_volume(0.5)
+            self.zombie_pain_sounds.append(track)
+        for sound in ZOMBIE_DIE_SOUNDS:
+            track = pg.mixer.Sound(path.join(sounds_folder, sound))
+            track.set_volume(0.8)
+            self.zombie_die_sounds.append(track)
+        for sound in PLAYER_DEATH_SOUNDS:
+            track = pg.mixer.Sound(path.join(sounds_folder, sound))
+            track.set_volume(0.6)
+            self.player_die_sounds.append(track)
+        for sound in PLAYER_PAIN_SOUNDS:
+            track = pg.mixer.Sound(path.join(sounds_folder, sound))
+            track.set_volume(0.5)
+            self.player_pain_sounds.append(track)
 
     def run(self, difficulty):
         if difficulty == "easy":
@@ -147,7 +166,11 @@ class TheGame:
         for hit in hits:
             self.player.shield -= ZOMBIE_DMG
             hit.vel = vector(0, 0)
+            if random() < 0.5:
+                choice(self.player_pain_sounds).play()
             if self.player.shield <= 0:
+                pg.time.wait(500)
+                choice(self.player_die_sounds).play()
                 self.menu.game_over()
         if hits:
             get_hit(self.player)
@@ -157,6 +180,8 @@ class TheGame:
             hit.shield -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
             hit.vel = vector(0, 0)
             get_hit(hit)
+            if random() < 0.7:
+                choice(self.zombie_pain_sounds).play()
 
     def handle_events(self):
         self.player.update()
