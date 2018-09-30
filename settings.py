@@ -59,7 +59,7 @@ WEAPONS['shotgun'] = {
     'bullet_speed': 400,
     'bullet_lifetime': 500,
     'rate': 900,
-    'kickback': 200,
+    'kickback': 500,
     'spread': 20,
     'damage': 5,
     'bullet_size': 'small',
@@ -68,10 +68,10 @@ WEAPONS['shotgun'] = {
 WEAPONS['uzi'] = {
     'bullet_speed': 500,
     'bullet_lifetime': 500,
-    'rate': 100,
+    'rate': 70,
     'kickback': 150,
     'spread': 10,
-    'damage': 3,
+    'damage': 4,
     'bullet_size': 'small',
     'bullet_count': 1,
 }
@@ -81,7 +81,7 @@ WEAPONS['rifle'] = {
     'rate': 1500,
     'kickback': 700,
     'spread': 2,
-    'damage': 50,
+    'damage': 80,
     'bullet_size': 'long',
     'bullet_count': 1,
 }
