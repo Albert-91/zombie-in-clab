@@ -32,6 +32,10 @@ class Player(Drawable, pg.sprite.Sprite):
         self.all_weapons = []
         self.damaged = False
         self.damage_alpha = None
+        self.has_key = False
+        self.has_id = False
+        self.speed = PLAYER_SPEED
+        self.bonus = None
 
     def move(self, dx=0, dy=0):
         self.rect.x += dx
@@ -46,9 +50,9 @@ class Player(Drawable, pg.sprite.Sprite):
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
             self.rotation_speed = - PLAYER_ROTATION_SPEED
         if keys[pg.K_UP] or keys[pg.K_w]:
-            self.vel = vector(PLAYER_SPEED, 0).rotate(-self.rotation)
+            self.vel = vector(self.speed, 0).rotate(-self.rotation)
         if keys[pg.K_DOWN] or keys[pg.K_s]:
-            self.vel = vector(-PLAYER_SPEED/2, 0).rotate(-self.rotation)
+            self.vel = vector(-self.speed, 0).rotate(-self.rotation)
         if keys[pg.K_SPACE]:
             if self.weapon is not None:
                 self.shoot()
