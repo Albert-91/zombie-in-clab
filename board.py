@@ -11,6 +11,7 @@ class Board:
         self.intro_bg = pg.image.load("images/intro.jpg")
         my_font = "font/Exquisite Corpse.ttf"
         self.menu_font = pg.font.Font(my_font, 45)
+        self.bonus_font = pg.font.Font(my_font, 30)
         self.options_font = pg.font.Font(my_font, 65)
         self.title_font = pg.font.Font(my_font, 90)
         self.difficulty_font = pg.font.Font(my_font, 70)
@@ -73,7 +74,10 @@ class Board:
         self.draw_text(self.surface, "Paused", self.width / 2, self.height / 2, self.title_font)
 
     def draw_zombies_left(self, left):
-        self.draw_text(self.surface, "Zombies: {}".format(left), self.width - 120, 40, self.menu_font)
+        self.draw_text(self.surface, "Zombies: {}".format(left), self.width - 100, 25, self.bonus_font)
+
+    def draw_bonus(self, bonus):
+        self.draw_text(self.surface, bonus, self.width - 300, 25, self.bonus_font)
 
     def draw_adds(self, surface, x, y, image, amount=1):
         for i in range(amount):
