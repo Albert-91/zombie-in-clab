@@ -24,6 +24,7 @@ class TheGame:
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
         self.locked_rooms = pg.sprite.Group()
+        self.bonus_items = pg.sprite.Group()
         self.map = None
         self.map_img = None
         self.map_rect = None
@@ -183,28 +184,36 @@ class TheGame:
                 self.sound_effects['rifle_pickup'].play()
                 self.player.weapon = 'rifle'
                 self.player.all_weapons.append('rifle')
-            if hit.type == 'coffee':
-                hit.kill()
-                self.sound_effects['heal'].play()
-                self.player.speed = 200
-                self.player.bonus = "EXTRA SPEED"
-                # hits['water'].kill()
-            if hit.type == 'water':
-                if self.player.shield < PLAYER_SHIELD:
-                    hit.kill()
-                    self.player.shield = PLAYER_SHIELD
-                    self.sound_effects['heal'].play()
-            if hit.type == 'beer':
-                hit.kill()
-                self.sound_effects['heal'].play()
-                self.player.add_shield(BIG_HEALTH_PACK)
-                self.player.bonus = "EXTRA POWER"
             if hit.type == 'key':
                 hit.kill()
                 self.player.has_key = True
             if hit.type == 'id_card':
                 hit.kill()
                 self.player.has_id = True
+        hits = pg.sprite.spritecollide(self.player, self.bonus_items, False)
+        delete = False
+        for hit in hits:
+            if hit.type == 'coffee':
+                hit.kill()
+                self.sound_effects['heal'].play()
+                self.player.speed = 200
+                self.player.bonus = "EXTRA SPEED"
+                delete = True
+            if hit.type == 'water':
+                if self.player.shield < PLAYER_SHIELD:
+                    hit.kill()
+                    self.player.shield = PLAYER_SHIELD
+                    self.sound_effects['heal'].play()
+                    delete = True
+            if hit.type == 'beer':
+                hit.kill()
+                self.sound_effects['heal'].play()
+                self.player.add_shield(BIG_HEALTH_PACK)
+                self.player.bonus = "EXTRA POWER"
+                delete = True
+            if delete:
+                for i in self.bonus_items:
+                    i.kill()
         hits = pg.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
         for hit in hits:
             self.player.shield -= ZOMBIE_DMG
@@ -238,7 +247,6 @@ class TheGame:
         if hits:
             self.sound_effects['locked_door'].play()
 
-
     def handle_events(self):
         self.player.update()
         for event in pg.event.get():
@@ -270,7 +278,11 @@ class TheGame:
             # if tile_object.name == 'zombie':
             #     Zombie(self, object_center.x, object_center.y)
             if tile_object.name in ITEM_IMAGES.keys():
-                Item(self, object_center, tile_object.name)
+                if tile_object.name == 'beer' or tile_object.name == 'water' or tile_object.name == 'coffee':
+                    bonus = Item(self, object_center, tile_object.name)
+                    self.bonus_items.add(bonus)
+                else:
+                    Item(self, object_center, tile_object.name)
 
     def draw(self):
         self.board.surface.blit(self.map_img, self.camera.apply_rect(self.map_rect))
