@@ -21,7 +21,7 @@ PLAYER_WIDTH = 20
 PLAYER_HEIGHT = 20
 PLAYER_LIVES = 3
 PLAYER_SHIELD = 1000
-PLAYER_SPEED = 400
+PLAYER_SPEED = 150
 PLAYER_ROTATION_SPEED = 150
 PLAYER_IMAGE_NAKED = 'hitman1_hold.png'
 PLAYER_IMAGE_PISTOL = 'hitman1_gun.png'
@@ -111,6 +111,7 @@ SMOKE_LAYER = 5
 ITEM_BOB_RANGE = 20
 ITEM_BOB_SPEED = 0.4
 BIG_HEALTH_PACK = 300
+MINI_HEALTH_PACK = 150
 ITEM_SIZE = 30
 ITEM_IMAGES = {
     'health': 'genericItem_color_102.png',
@@ -118,7 +119,6 @@ ITEM_IMAGES = {
     'water': 'genericItem_color_118.png',
     'beer': 'genericItem_color_119.png',
     'coffee': 'genericItem_color_124.png',
-    'usb_flash': 'genericItem_color_099.png',
     'id_card': 'genericItem_color_151.png',
     'key': 'genericItem_color_155.png',
     'money': 'genericItem_color_158.png',
@@ -159,9 +159,11 @@ SPLATS = [
 ]
 SOUND_EFFECTS = {
     'heal': 'healed.wav',
+    'heal_mini': 'healed.wav',
     'pistol_pickup': 'pistol_reload.wav',
     'uzi_pickup': 'pistol_reload.wav',
     'rifle_pickup': 'rifle_pickup.wav',
+    'locked_door': 'locked_door.wav',
     'shotgun_pickup': 'shotgun_reload.wav'
 }
 PLAYER_PAIN_SOUNDS = [
