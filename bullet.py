@@ -19,6 +19,7 @@ class Bullet(pg.sprite.Sprite):
     def update(self):
         self.position += self.vel * self.game.dt
         self.rect.center = self.position
+        self.image = pg.transform.rotate(self.game.bullet_images['large'], self.game.player.rotation - 90)
         if pg.sprite.spritecollideany(self, self.game.walls):
             self.kill()
         try:
@@ -27,4 +28,3 @@ class Bullet(pg.sprite.Sprite):
         except KeyError:
             if pg.time.get_ticks() - self.spawn_time > 1000:
                 self.kill()
-
