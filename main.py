@@ -1,6 +1,5 @@
 from os import path
 from random import choice, random
-
 from board import Board
 from item import Item
 from menu import Menu
@@ -24,6 +23,7 @@ class TheGame:
         self.zombies = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
+        self.locked_rooms = pg.sprite.Group()
         self.map = None
         self.map_img = None
         self.map_rect = None
@@ -32,6 +32,8 @@ class TheGame:
         self.zombie_img = None
         self.bullet_images = {}
         self.player = None
+        self.locked_room_key = None
+        self.locked_room_card = []
         self.fog = pg.Surface(self.board.surface.get_size())
         self.light_mask = None
         self.splats = []
@@ -45,6 +47,7 @@ class TheGame:
         self.zombie_die_sounds = []
         self.player_pain_sounds = []
         self.player_die_sounds = []
+        self.locked_door_sound = None
         self.img_folder = None
         self.dim_screen = pg.Surface(self.board.surface.get_size())
         self.lives_img = None
@@ -156,6 +159,10 @@ class TheGame:
                 hit.kill()
                 self.sound_effects['heal'].play()
                 self.player.add_shield(BIG_HEALTH_PACK)
+            if hit.type == 'mini_health' and self.player.shield < PLAYER_SHIELD:
+                hit.kill()
+                self.sound_effects['heal'].play()
+                self.player.add_shield(MINI_HEALTH_PACK)
             if hit.type == 'shotgun':
                 hit.kill()
                 self.sound_effects['shotgun_pickup'].play()
@@ -176,6 +183,28 @@ class TheGame:
                 self.sound_effects['rifle_pickup'].play()
                 self.player.weapon = 'rifle'
                 self.player.all_weapons.append('rifle')
+            if hit.type == 'coffee':
+                hit.kill()
+                self.sound_effects['heal'].play()
+                self.player.speed = 200
+                self.player.bonus = "EXTRA SPEED"
+                # hits['water'].kill()
+            if hit.type == 'water':
+                if self.player.shield < PLAYER_SHIELD:
+                    hit.kill()
+                    self.player.shield = PLAYER_SHIELD
+                    self.sound_effects['heal'].play()
+            if hit.type == 'beer':
+                hit.kill()
+                self.sound_effects['heal'].play()
+                self.player.add_shield(BIG_HEALTH_PACK)
+                self.player.bonus = "EXTRA POWER"
+            if hit.type == 'key':
+                hit.kill()
+                self.player.has_key = True
+            if hit.type == 'id_card':
+                hit.kill()
+                self.player.has_id = True
         hits = pg.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
         for hit in hits:
             self.player.shield -= ZOMBIE_DMG
@@ -196,6 +225,19 @@ class TheGame:
             get_hit(hit)
             if random() < 0.7:
                 choice(self.zombie_pain_sounds).play()
+        if not self.player.has_key or not self.player.has_id:
+            self.locked_room_reaction()
+        if self.player.has_key:
+            self.locked_room_key.kill()
+        if self.player.has_id:
+            for i in self.locked_room_card:
+                i.kill()
+
+    def locked_room_reaction(self):
+        hits = pg.sprite.spritecollide(self.player, self.locked_rooms, False)
+        if hits:
+            self.sound_effects['locked_door'].play()
+
 
     def handle_events(self):
         self.player.update()
@@ -218,9 +260,16 @@ class TheGame:
                 self.player = Player(self, object_center.x, object_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
-            if tile_object.name == 'zombie':
-                Zombie(self, object_center.x, object_center.y)
-            if tile_object.name in ['health', 'shotgun', 'pistol', 'uzi', 'rifle']:
+            if tile_object.name == 'locked':
+                self.locked_room_key = Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                self.locked_rooms.add(self.locked_room_key)
+            if tile_object.name == 'locked_card':
+                door = Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                self.locked_rooms.add(door)
+                self.locked_room_card.append(door)
+            # if tile_object.name == 'zombie':
+            #     Zombie(self, object_center.x, object_center.y)
+            if tile_object.name in ITEM_IMAGES.keys():
                 Item(self, object_center, tile_object.name)
 
     def draw(self):
@@ -234,6 +283,11 @@ class TheGame:
         draw_player_health(self.board.surface, 20, 10, self.player.shield / PLAYER_SHIELD)
         self.board.draw_zombies_left(len(self.zombies))
         self.board.draw_adds(self.board.surface, 150, 10, self.lives_img, self.player.lives)
+        if self.player.has_key:
+            self.board.draw_adds(self.board.surface, 400, 10, self.items_images['key'])
+        if self.player.has_id:
+            self.board.draw_adds(self.board.surface, 450, 10, self.items_images['id_card'])
+        self.board.draw_bonus(self.player.bonus)
         if self.player.weapon is not None:
             self.board.draw_adds(self.board.surface, 250, 7, self.items_images[self.player.weapon])
         if self.game_paused:
