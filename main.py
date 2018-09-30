@@ -25,6 +25,7 @@ class TheGame:
         self.items = pg.sprite.Group()
         self.locked_rooms = pg.sprite.Group()
         self.bonus_items = pg.sprite.Group()
+        self.destroyed = False
         self.map = None
         self.map_img = None
         self.map_rect = None
@@ -34,6 +35,7 @@ class TheGame:
         self.bullet_images = {}
         self.player = None
         self.locked_room_key = None
+        self.locked_first_room = None
         self.locked_room_card = []
         self.fog = pg.Surface(self.board.surface.get_size())
         self.light_mask = None
@@ -194,19 +196,16 @@ class TheGame:
         delete = False
         for hit in hits:
             if hit.type == 'coffee':
-                hit.kill()
                 self.sound_effects['heal'].play()
-                self.player.speed = 200
+                self.player.speed = 300
                 self.player.bonus = "EXTRA SPEED"
                 delete = True
             if hit.type == 'water':
                 if self.player.shield < PLAYER_SHIELD:
-                    hit.kill()
                     self.player.shield = PLAYER_SHIELD
                     self.sound_effects['heal'].play()
                     delete = True
             if hit.type == 'beer':
-                hit.kill()
                 self.sound_effects['heal'].play()
                 self.player.add_shield(BIG_HEALTH_PACK)
                 self.player.bonus = "EXTRA POWER"
@@ -241,6 +240,11 @@ class TheGame:
         if self.player.has_id:
             for i in self.locked_room_card:
                 i.kill()
+        hits = pg.sprite.groupcollide(self.locked_rooms, self.bullets, False, False)
+        for hit in hits:
+            if not self.destroyed:
+                hit.kill()
+                self.destroyed = True
 
     def locked_room_reaction(self):
         hits = pg.sprite.spritecollide(self.player, self.locked_rooms, False)
@@ -257,8 +261,9 @@ class TheGame:
                     quit()
                 if event.key == pg.K_p:
                     self.game_paused = not self.game_paused
-                if event.key == pg.K_n:
-                    self.night = not self.night
+                if 50 < self.player.rect.x < 102 and 1735 < self.player.rect.y < 1753:
+                    if event.key == pg.K_n:
+                        self.night = not self.night
 
     def new(self):
         for tile_object in self.map.tmxdata.objects:
@@ -271,6 +276,9 @@ class TheGame:
             if tile_object.name == 'locked':
                 self.locked_room_key = Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
                 self.locked_rooms.add(self.locked_room_key)
+            if tile_object.name == 'locked_gun':
+                self.locked_first_room = Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                self.locked_rooms.add(self.locked_first_room)
             if tile_object.name == 'locked_card':
                 door = Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
                 self.locked_rooms.add(door)
