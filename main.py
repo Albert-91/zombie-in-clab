@@ -64,6 +64,7 @@ class TheGame:
         self.dt = None
         self.menu = Menu(self)
         self.game_paused = False
+        self.damage = ZOMBIE_DMG
 
     def load_data(self):
         self.dim_screen.set_alpha(80)
@@ -209,13 +210,14 @@ class TheGame:
                 self.sound_effects['heal'].play()
                 self.player.add_shield(BIG_HEALTH_PACK)
                 self.player.bonus = "EXTRA POWER"
+                self.damage = ZOMBIE_DMG / 2
                 delete = True
             if delete:
                 for i in self.bonus_items:
                     i.kill()
         hits = pg.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
         for hit in hits:
-            self.player.shield -= ZOMBIE_DMG
+            self.player.shield -= self.damage
             hit.vel = vector(0, 0)
             if random() < 0.5:
                 choice(self.player_pain_sounds).play()
@@ -283,8 +285,8 @@ class TheGame:
                 door = Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
                 self.locked_rooms.add(door)
                 self.locked_room_card.append(door)
-            # if tile_object.name == 'zombie':
-            #     Zombie(self, object_center.x, object_center.y)
+            if tile_object.name == 'zombie':
+                Zombie(self, object_center.x, object_center.y)
             if tile_object.name in ITEM_IMAGES.keys():
                 if tile_object.name == 'beer' or tile_object.name == 'water' or tile_object.name == 'coffee':
                     bonus = Item(self, object_center, tile_object.name)
