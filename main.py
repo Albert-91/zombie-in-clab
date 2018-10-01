@@ -160,33 +160,23 @@ class TheGame:
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
             if hit.type == 'health' and self.player.shield < PLAYER_SHIELD:
-                hit.kill()
-                self.sound_effects['heal'].play()
-                self.player.add_shield(BIG_HEALTH_PACK)
+                self.get_health(hit, BIG_HEALTH_PACK)
             if hit.type == 'mini_health' and self.player.shield < PLAYER_SHIELD:
-                hit.kill()
-                self.sound_effects['heal'].play()
-                self.player.add_shield(MINI_HEALTH_PACK)
+                self.get_health(hit, MINI_HEALTH_PACK)
             if hit.type == 'shotgun':
-                hit.kill()
-                self.sound_effects['shotgun_pickup'].play()
-                self.player.weapon = 'shotgun'
-                self.player.all_weapons.append('shotgun')
+                self.get_weapon(hit, 'shotgun')
             if hit.type == 'pistol':
-                hit.kill()
-                self.sound_effects['pistol_pickup'].play()
-                self.player.weapon = 'pistol'
-                self.player.all_weapons.append('pistol')
+                self.get_weapon(hit, 'pistol')
             if hit.type == 'uzi':
-                hit.kill()
-                self.sound_effects['pistol_pickup'].play()
-                self.player.weapon = 'uzi'
-                self.player.all_weapons.append('uzi')
+                self.get_weapon(hit, 'uzi')
             if hit.type == 'rifle':
-                hit.kill()
-                self.sound_effects['rifle_pickup'].play()
-                self.player.weapon = 'rifle'
-                self.player.all_weapons.append('rifle')
+                self.get_weapon(hit, 'rifle')
+            if hit.type == 'ammo_small':
+                self.get_ammo(hit, 'small')
+                print(self.player.ammo)
+            if hit.type == 'ammo_big':
+                self.get_ammo(hit, 'big')
+                print(self.player.ammo)
             if hit.type == 'key':
                 hit.kill()
                 self.player.has_key = True
@@ -249,6 +239,26 @@ class TheGame:
                 self.sound_effects['broken_door'].play()
                 self.destroyed = True
 
+    def get_ammo(self, hit, pack):
+        type_of_pack = {'small': 0.8, 'big': 1.2}
+        hit.kill()
+        self.sound_effects['pistol'].play()
+        for weapon in WEAPONS.keys():
+            if weapon in self.player.all_weapons:
+                self.player.ammo[weapon] += int(AMMO[weapon] * type_of_pack[pack])
+
+    def get_health(self, hit, pack):
+        hit.kill()
+        self.sound_effects['heal'].play()
+        self.player.add_shield(pack)
+
+    def get_weapon(self, hit, weapon):
+        hit.kill()
+        self.sound_effects[weapon].play()
+        self.player.weapon = weapon
+        self.player.all_weapons.append(weapon)
+        self.player.actual_ammo = self.player.ammo[weapon]
+
     def locked_room_reaction(self):
         hits = pg.sprite.spritecollide(self.player, self.locked_rooms, False)
         if hits:
@@ -286,8 +296,8 @@ class TheGame:
                 door = Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
                 self.locked_rooms.add(door)
                 self.locked_room_card.append(door)
-            if tile_object.name == 'zombie':
-                Zombie(self, object_center.x, object_center.y)
+            # if tile_object.name == 'zombie':
+            #     Zombie(self, object_center.x, object_center.y)
             if tile_object.name in ITEM_IMAGES.keys():
                 if tile_object.name == 'beer' or tile_object.name == 'water' or tile_object.name == 'coffee':
                     bonus = Item(self, object_center, tile_object.name)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.1" tiledversion="2018.09.12" orientation="orthogonal" renderorder="right-down" width="78" height="35" tilewidth="64" tileheight="64" infinite="0" nextlayerid="26" nextobjectid="367">
+<map version="1.1" tiledversion="2018.09.12" orientation="orthogonal" renderorder="right-down" width="78" height="35" tilewidth="64" tileheight="64" infinite="0" nextlayerid="26" nextobjectid="382">
  <tileset firstgid="1" source="spritesheet_tiles.tsx"/>
  <tileset firstgid="541" source="orange.tsx"/>
  <tileset firstgid="542" source="red.tsx"/>
@@ -457,5 +457,20 @@
   <object id="364" name="id_card" x="4364.67" y="201.667" width="46.6667" height="44.6667"/>
   <object id="365" name="locked_gun" x="1477.67" y="868.667" width="122" height="22.6667"/>
   <object id="366" name="wall" x="70.3333" y="1794.67" width="55.3333" height="58.6667"/>
+  <object id="367" name="ammo_small" x="887.5" y="1570" width="45" height="44"/>
+  <object id="368" name="ammo_big" x="2165.5" y="1680" width="45" height="44"/>
+  <object id="369" name="ammo_big" x="2931.5" y="1738" width="45" height="44"/>
+  <object id="370" name="ammo_small" x="3001.5" y="1740" width="45" height="44"/>
+  <object id="371" name="ammo_small" x="4111.5" y="1014" width="45" height="44"/>
+  <object id="372" name="ammo_small" x="4531.5" y="932" width="45" height="44"/>
+  <object id="373" name="ammo_big" x="3859.5" y="150" width="45" height="44"/>
+  <object id="374" name="ammo_big" x="4829.5" y="328" width="45" height="44"/>
+  <object id="375" name="ammo_small" x="4609.5" y="1792" width="45" height="44"/>
+  <object id="376" name="ammo_small" x="4159.5" y="2054" width="45" height="44"/>
+  <object id="377" name="ammo_small" x="127.5" y="2046" width="45" height="44"/>
+  <object id="378" name="ammo_small" x="133.5" y="182" width="45" height="44"/>
+  <object id="379" name="ammo_big" x="1043.5" y="150" width="45" height="44"/>
+  <object id="380" name="ammo_small" x="2199.5" y="182" width="45" height="44"/>
+  <object id="381" name="ammo_big" x="3317.5" y="236" width="45" height="44"/>
  </objectgroup>
 </map>

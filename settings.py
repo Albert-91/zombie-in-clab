@@ -51,7 +51,7 @@ WEAPONS['pistol'] = {
     'rate': 300,
     'kickback': 200,
     'spread': 5,
-    'damage': 10,
+    'damage': 15,
     'bullet_size': 'large',
     'bullet_count': 1,
 }
@@ -61,7 +61,7 @@ WEAPONS['shotgun'] = {
     'rate': 900,
     'kickback': 500,
     'spread': 20,
-    'damage': 5,
+    'damage': 7,
     'bullet_size': 'small',
     'bullet_count': 12,
 }
@@ -71,7 +71,7 @@ WEAPONS['uzi'] = {
     'rate': 70,
     'kickback': 150,
     'spread': 10,
-    'damage': 4,
+    'damage': 5,
     'bullet_size': 'small',
     'bullet_count': 1,
 }
@@ -84,6 +84,12 @@ WEAPONS['rifle'] = {
     'damage': 80,
     'bullet_size': 'long',
     'bullet_count': 1,
+}
+AMMO = {
+    'pistol': 60,
+    'shotgun': 288,
+    'uzi': 300,
+    'rifle': 30
 }
 BARREL_OFFSET = vector(30, 10)
 SMOKE_DURATION = 40
@@ -112,7 +118,7 @@ ITEM_BOB_RANGE = 20
 ITEM_BOB_SPEED = 0.4
 BIG_HEALTH_PACK = 300
 MINI_HEALTH_PACK = 150
-ITEM_SIZE = 30
+ITEM_SIZE = 40
 ITEM_IMAGES = {
     'health': 'genericItem_color_102.png',
     'mini_health': 'genericItem_color_100.png',
@@ -160,12 +166,12 @@ SPLATS = [
 SOUND_EFFECTS = {
     'heal': 'healed.wav',
     'heal_mini': 'healed.wav',
-    'pistol_pickup': 'pistol_reload.wav',
-    'uzi_pickup': 'pistol_reload.wav',
-    'rifle_pickup': 'rifle_pickup.wav',
+    'pistol': 'pistol_reload.wav',
+    'uzi': 'pistol_reload.wav',
+    'rifle': 'rifle_pickup.wav',
     'locked_door': 'locked_door.wav',
     'broken_door': 'broken_door.flac',
-    'shotgun_pickup': 'shotgun_reload.wav'
+    'shotgun': 'shotgun_reload.wav'
 }
 PLAYER_PAIN_SOUNDS = [
     'pain1.wav',

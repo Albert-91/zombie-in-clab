@@ -36,6 +36,8 @@ class Player(Drawable, pg.sprite.Sprite):
         self.has_id = False
         self.speed = PLAYER_SPEED
         self.bonus = None
+        self.actual_ammo = None
+        self.ammo = AMMO
 
     def move(self, dx=0, dy=0):
         self.rect.x += dx
@@ -59,19 +61,19 @@ class Player(Drawable, pg.sprite.Sprite):
         if keys[pg.K_1]:
             self.weapon = None
         if keys[pg.K_2]:
-            if 'pistol' in self.all_weapons and self.weapon is not 'pistol':
+            if 'pistol' in self.all_weapons and self.weapon is not 'pistol' and self.pistol_ammo > 0:
                 self.game.sound_effects['pistol_pickup'].play()
                 self.weapon = 'pistol'
         if keys[pg.K_3]:
-            if 'shotgun' in self.all_weapons and self.weapon is not 'shotgun':
+            if 'shotgun' in self.all_weapons and self.weapon is not 'shotgun' and self.shotgun_ammo > 0:
                 self.game.sound_effects['shotgun_pickup'].play()
                 self.weapon = 'shotgun'
         if keys[pg.K_4]:
-            if 'uzi' in self.all_weapons and self.weapon is not 'uzi':
+            if 'uzi' in self.all_weapons and self.weapon is not 'uzi' and self.uzi_ammo > 0:
                 self.game.sound_effects['uzi_pickup'].play()
                 self.weapon = 'uzi'
         if keys[pg.K_5]:
-            if 'rifle' in self.all_weapons and self.weapon is not 'rifle':
+            if 'rifle' in self.all_weapons and self.weapon is not 'rifle' and self.rifle_ammo > 0:
                 self.game.sound_effects['rifle_pickup'].play()
                 self.weapon = 'rifle'
 
