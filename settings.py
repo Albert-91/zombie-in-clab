@@ -164,6 +164,7 @@ SOUND_EFFECTS = {
     'uzi_pickup': 'pistol_reload.wav',
     'rifle_pickup': 'rifle_pickup.wav',
     'locked_door': 'locked_door.wav',
+    'broken_door': 'broken_door.flac',
     'shotgun_pickup': 'shotgun_reload.wav'
 }
 PLAYER_PAIN_SOUNDS = [

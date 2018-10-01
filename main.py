@@ -246,6 +246,7 @@ class TheGame:
         for hit in hits:
             if not self.destroyed:
                 hit.kill()
+                self.sound_effects['broken_door'].play()
                 self.destroyed = True
 
     def locked_room_reaction(self):
