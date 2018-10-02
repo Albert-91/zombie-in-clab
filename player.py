@@ -36,7 +36,6 @@ class Player(Drawable, pg.sprite.Sprite):
         self.has_id = False
         self.speed = PLAYER_SPEED
         self.bonus = None
-        self.actual_ammo = None
         self.ammo = AMMO
 
     def move(self, dx=0, dy=0):
@@ -56,25 +55,27 @@ class Player(Drawable, pg.sprite.Sprite):
         if keys[pg.K_DOWN] or keys[pg.K_s]:
             self.vel = vector(-self.speed, 0).rotate(-self.rotation)
         if keys[pg.K_SPACE]:
-            if self.weapon is not None:
+            if self.weapon is not None and self.ammo[self.weapon] > 0:
                 self.shoot()
+            else:
+                self.game.sound_effects['out_of_ammo'].play()
         if keys[pg.K_1]:
             self.weapon = None
         if keys[pg.K_2]:
-            if 'pistol' in self.all_weapons and self.weapon is not 'pistol' and self.pistol_ammo > 0:
-                self.game.sound_effects['pistol_pickup'].play()
+            if 'pistol' in self.all_weapons and self.weapon is not 'pistol':
+                self.game.sound_effects['pistol'].play()
                 self.weapon = 'pistol'
         if keys[pg.K_3]:
-            if 'shotgun' in self.all_weapons and self.weapon is not 'shotgun' and self.shotgun_ammo > 0:
-                self.game.sound_effects['shotgun_pickup'].play()
+            if 'shotgun' in self.all_weapons and self.weapon is not 'shotgun':
+                self.game.sound_effects['shotgun'].play()
                 self.weapon = 'shotgun'
         if keys[pg.K_4]:
-            if 'uzi' in self.all_weapons and self.weapon is not 'uzi' and self.uzi_ammo > 0:
-                self.game.sound_effects['uzi_pickup'].play()
+            if 'uzi' in self.all_weapons and self.weapon is not 'uzi':
+                self.game.sound_effects['uzi'].play()
                 self.weapon = 'uzi'
         if keys[pg.K_5]:
-            if 'rifle' in self.all_weapons and self.weapon is not 'rifle' and self.rifle_ammo > 0:
-                self.game.sound_effects['rifle_pickup'].play()
+            if 'rifle' in self.all_weapons and self.weapon is not 'rifle':
+                self.game.sound_effects['rifle'].play()
                 self.weapon = 'rifle'
 
     def shoot(self):
@@ -84,6 +85,7 @@ class Player(Drawable, pg.sprite.Sprite):
             direction = vector(1, 0).rotate(-self.rotation)
             position = self.position + BARREL_OFFSET.rotate(-self.rotation)
             self.vel = vector(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rotation)
+            self.ammo[self.weapon] -= WEAPONS[self.weapon]['bullet_count']
             for i in range(WEAPONS[self.weapon]['bullet_count']):
                 spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
                 Bullet(self.game, position, direction.rotate(spread))
