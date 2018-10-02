@@ -171,6 +171,7 @@ SOUND_EFFECTS = {
     'rifle': 'rifle_pickup.wav',
     'locked_door': 'locked_door.wav',
     'broken_door': 'broken_door.flac',
+    'out_of_ammo': 'outofammo.ogg',
     'shotgun': 'shotgun_reload.wav'
 }
 PLAYER_PAIN_SOUNDS = [
