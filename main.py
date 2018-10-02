@@ -12,12 +12,13 @@ from functions import quit, collide_hit_rect, draw_player_health, get_hit
 
 
 class TheGame:
-    def __init__(self, width, height):
+    def __init__(self):
         pg.mixer.pre_init(44100, 16, 1, 2048)
         pg.init()
-        self.width = width
-        self.height = height
-        self.board = Board(width, height)
+        info = pg.display.Info()
+        self.width = info.current_w
+        self.height = info.current_h
+        self.board = Board(self.width, self.height)
         self.all_sprites = pg.sprite.LayeredUpdates()
         self.walls = pg.sprite.Group()
         self.zombies = pg.sprite.Group()
@@ -59,7 +60,7 @@ class TheGame:
         self.map_data = self.map.make_map()
         self.night = True
         self.new()
-        self.camera = Camera(self.map.width, self.map.height)
+        self.camera = Camera(self, self.map.width, self.map.height)
         self.fps_clock = pg.time.Clock()
         self.dt = None
         self.menu = Menu(self)
@@ -181,6 +182,9 @@ class TheGame:
             if hit.type == 'id_card':
                 hit.kill()
                 self.player.has_id = True
+            if hit.type == 'money':
+                hit.kill()
+                self.player.money = True
         hits = pg.sprite.spritecollide(self.player, self.bonus_items, False)
         delete = False
         for hit in hits:
@@ -303,8 +307,8 @@ class TheGame:
                 door = Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
                 self.locked_rooms.add(door)
                 self.locked_room_card.append(door)
-            # if tile_object.name == 'zombie':
-            #     Zombie(self, object_center.x, object_center.y)
+            if tile_object.name == 'zombie':
+                Zombie(self, object_center.x, object_center.y)
             if tile_object.name in ITEM_IMAGES.keys():
                 if tile_object.name == 'beer' or tile_object.name == 'water' or tile_object.name == 'coffee':
                     bonus = Item(self, object_center, tile_object.name)
@@ -334,6 +338,8 @@ class TheGame:
         if self.game_paused:
             self.board.surface.blit(self.dim_screen, (0, 0))
             self.board.draw_pause()
+        if self.player.money:
+            self.board.draw_money()
 
     def render_fog(self):
         self.fog.fill(NIGHT_COLOR)
@@ -343,6 +349,6 @@ class TheGame:
 
 
 if __name__ == "__main__":
-    game = TheGame(SCREEN_WIDTH, SCREEN_HEIGHT)
+    game = TheGame()
     # game.menu.game_intro()
     game.run("easy")

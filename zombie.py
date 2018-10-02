@@ -28,12 +28,6 @@ class Zombie(pg.sprite.Sprite):
         self.damaged = False
         self.damage_alpha = None
 
-    def natural_moves(self):
-        moves_list = [0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0]
-        x = randint(0, len(moves_list) - 1)
-        y = randint(0, len(moves_list) - 1)
-        self.move(dx=moves_list[x], dy=moves_list[y])
-
     def update(self):
         target_distance = self.target.position - self.position
         if target_distance.length_squared() < DETECT_RADIUS ** 2:

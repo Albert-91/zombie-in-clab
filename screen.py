@@ -4,9 +4,10 @@ from settings import *
 
 class Camera:
 
-    def __init__(self, width, height):
+    def __init__(self, game, width, height):
         self.width = width
         self.height = height
+        self.game = game
         self.screen = pg.Rect(0, 0, self.width, self.height)
 
     def apply(self, entity):
@@ -16,12 +17,12 @@ class Camera:
         return rect.move(self.screen.topleft)
 
     def update(self, target):
-        x = -target.rect.centerx + int(SCREEN_WIDTH / 2)
-        y = -target.rect.centery + int(SCREEN_HEIGHT / 2)
+        x = -target.rect.centerx + int(self.game.width / 2)
+        y = -target.rect.centery + int(self.game.height / 2)
         x = min(0, x)
         y = min(0, y)
-        x = max(-(self.width - SCREEN_WIDTH), x)
-        y = max(-(self.height - SCREEN_HEIGHT), y)
+        x = max(-(self.width - self.game.width), x)
+        y = max(-(self.height - self.game.height), y)
         self.screen = pg.Rect(x, y, self.width, self.height)
 
 

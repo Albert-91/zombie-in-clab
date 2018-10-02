@@ -37,10 +37,7 @@ class Player(Drawable, pg.sprite.Sprite):
         self.speed = PLAYER_SPEED
         self.bonus = None
         self.ammo = AMMO
-
-    def move(self, dx=0, dy=0):
-        self.rect.x += dx
-        self.rect.y += dy
+        self.money = False
 
     def get_keys(self):
         self.vel = vector(0, 0)
@@ -86,6 +83,8 @@ class Player(Drawable, pg.sprite.Sprite):
             position = self.position + BARREL_OFFSET.rotate(-self.rotation)
             self.vel = vector(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rotation)
             self.ammo[self.weapon] -= WEAPONS[self.weapon]['bullet_count']
+            if self.ammo[self.weapon] < 0:
+                self.ammo[self.weapon] = 0
             for i in range(WEAPONS[self.weapon]['bullet_count']):
                 spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
                 Bullet(self.game, position, direction.rotate(spread))

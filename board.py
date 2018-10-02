@@ -4,7 +4,7 @@ from settings import *
 class Board:
 
     def __init__(self, width, height):
-        self.surface = pg.display.set_mode((width, height), 0, 32)
+        self.surface = pg.display.set_mode((width, height), pg.FULLSCREEN)
         pg.display.set_caption('Zombie in CLab')
         self.width = width
         self.height = height
@@ -81,6 +81,9 @@ class Board:
 
     def draw_ammo_quantity(self, ammo):
         self.draw_text(self.surface, ammo, 400, 25, self.bonus_font)
+
+    def draw_money(self):
+        self.draw_text(self.surface, "9 800 zl", self.width - 100, 60, self.bonus_font)
 
     def draw_adds(self, surface, x, y, image, amount=1):
         for i in range(amount):
