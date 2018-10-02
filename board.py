@@ -79,6 +79,9 @@ class Board:
     def draw_bonus(self, bonus):
         self.draw_text(self.surface, bonus, self.width - 300, 25, self.bonus_font)
 
+    def draw_ammo_quantity(self, ammo):
+        self.draw_text(self.surface, ammo, 400, 25, self.bonus_font)
+
     def draw_adds(self, surface, x, y, image, amount=1):
         for i in range(amount):
             img_rect = image.get_rect()
