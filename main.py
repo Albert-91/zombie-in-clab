@@ -173,10 +173,8 @@ class TheGame:
                 self.get_weapon(hit, 'rifle')
             if hit.type == 'ammo_small':
                 self.get_ammo(hit, 'small')
-                print(self.player.ammo)
             if hit.type == 'ammo_big':
                 self.get_ammo(hit, 'big')
-                print(self.player.ammo)
             if hit.type == 'key':
                 hit.kill()
                 self.player.has_key = True
@@ -187,21 +185,15 @@ class TheGame:
         delete = False
         for hit in hits:
             if hit.type == 'coffee':
-                self.sound_effects['heal'].play()
+                delete = self.get_bonus("EXTRA SPEED")
                 self.player.speed = 300
-                self.player.bonus = "EXTRA SPEED"
-                delete = True
             if hit.type == 'water':
                 if self.player.shield < PLAYER_SHIELD:
+                    delete = self.get_bonus(hit)
                     self.player.shield = PLAYER_SHIELD
-                    self.sound_effects['heal'].play()
-                    delete = True
             if hit.type == 'beer':
-                self.sound_effects['heal'].play()
-                self.player.add_shield(BIG_HEALTH_PACK)
-                self.player.bonus = "EXTRA POWER"
+                delete = self.get_bonus("EXTRA STRENGTH")
                 self.damage = ZOMBIE_DMG / 2
-                delete = True
             if delete:
                 for i in self.bonus_items:
                     i.kill()
@@ -236,11 +228,25 @@ class TheGame:
         for hit in hits:
             if not self.destroyed:
                 hit.kill()
-                self.sound_effects['broken_door'].play()
-                self.destroyed = True
+                busy = pg.mixer.get_busy()
+                if busy:
+                    pg.mixer.stop()
+                    self.sound_effects['broken_door'].play()
+                    self.destroyed = True
+
+    def get_bonus(self, bonus=None):
+        self.sound_effects['heal'].play()
+        self.player.bonus = bonus
+        return True
 
     def get_ammo(self, hit, pack):
         type_of_pack = {'small': 0.8, 'big': 1.2}
+        AMMO = {
+            'pistol': 60,
+            'shotgun': 288,
+            'uzi': 300,
+            'rifle': 30
+        }
         hit.kill()
         self.sound_effects['pistol'].play()
         for weapon in WEAPONS.keys():
@@ -260,8 +266,9 @@ class TheGame:
         self.player.actual_ammo = self.player.ammo[weapon]
 
     def locked_room_reaction(self):
+        keys = pg.key.get_pressed()
         hits = pg.sprite.spritecollide(self.player, self.locked_rooms, False)
-        if hits:
+        if not keys[pg.K_SPACE] and hits:
             self.sound_effects['locked_door'].play()
 
     def handle_events(self):
@@ -317,12 +324,13 @@ class TheGame:
         self.board.draw_zombies_left(len(self.zombies))
         self.board.draw_adds(self.board.surface, 150, 10, self.lives_img, self.player.lives)
         if self.player.has_key:
-            self.board.draw_adds(self.board.surface, 400, 10, self.items_images['key'])
+            self.board.draw_adds(self.board.surface, 80, 50, self.items_images['key'])
         if self.player.has_id:
-            self.board.draw_adds(self.board.surface, 450, 10, self.items_images['id_card'])
+            self.board.draw_adds(self.board.surface, 30, 50, self.items_images['id_card'])
         self.board.draw_bonus(self.player.bonus)
         if self.player.weapon is not None:
             self.board.draw_adds(self.board.surface, 250, 7, self.items_images[self.player.weapon])
+            self.board.draw_ammo_quantity('Ammo: {}'.format(self.player.ammo[self.player.weapon]))
         if self.game_paused:
             self.board.surface.blit(self.dim_screen, (0, 0))
             self.board.draw_pause()
