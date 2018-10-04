@@ -12,12 +12,12 @@ from functions import quit, collide_hit_rect, draw_player_health, get_hit
 
 
 class TheGame:
+
     def __init__(self):
         pg.mixer.pre_init(44100, 16, 1, 2048)
         pg.init()
-        info = pg.display.Info()
-        self.width = info.current_w
-        self.height = info.current_h
+        self.width = SCREEN_WIDTH
+        self.height = SCREEN_HEIGHT
         self.board = Board(self.width, self.height)
         self.all_sprites = pg.sprite.LayeredUpdates()
         self.walls = pg.sprite.Group()
@@ -55,6 +55,8 @@ class TheGame:
         self.img_folder = None
         self.dim_screen = pg.Surface(self.board.surface.get_size())
         self.lives_img = None
+        self.game_folder = None
+        self.sounds_folder = None
         self.load_data()
         self.light_rect = self.light_mask.get_rect()
         self.map_data = self.map.make_map()
@@ -63,18 +65,18 @@ class TheGame:
         self.camera = Camera(self, self.map.width, self.map.height)
         self.fps_clock = pg.time.Clock()
         self.dt = None
-        self.menu = Menu(self)
         self.game_paused = False
         self.damage = ZOMBIE_DMG
+        self.menu = Menu(self)
 
     def load_data(self):
         self.dim_screen.set_alpha(80)
         self.dim_screen.fill((0, 0, 0))
-        game_folder = path.dirname(__file__)
-        self.img_folder = path.join(game_folder, 'images')
+        self.game_folder = path.dirname(__file__)
+        self.img_folder = path.join(self.game_folder, 'images')
+        self.sounds_folder = path.join(self.game_folder, 'sounds')
         items_img_folder = path.join(self.img_folder, 'items')
-        map_folder = path.join(game_folder, 'maps')
-        sounds_folder = path.join(game_folder, 'sounds')
+        map_folder = path.join(self.game_folder, 'maps')
         splats_folder = path.join(self.img_folder, 'splat')
         self.map = TiledMap(path.join(map_folder, 'clab_map.tmx'))
         self.map_img = self.map.make_map()
@@ -89,9 +91,9 @@ class TheGame:
         self.lives_img = pg.image.load(path.join(self.img_folder, LIVES_IMG))
         self.lives_img = pg.transform.scale(self.lives_img, (20, 20))
         for smoke in FLASH_SMOKE:
-            self.gun_smoke.append(pg.image.load(path.join(game_folder, 'images/smokes/Flash/{}'.format(smoke))))
+            self.gun_smoke.append(pg.image.load(path.join(self.game_folder, 'images/smokes/Flash/{}'.format(smoke))))
         for smoke in GREEN_SMOKE:
-            self.zombie_death_smoke.append(pg.image.load(path.join(game_folder, 'images/smokes/Green smoke/{}'.format(smoke))))
+            self.zombie_death_smoke.append(pg.image.load(path.join(self.game_folder, 'images/smokes/Green smoke/{}'.format(smoke))))
         for splat in SPLATS:
             splat_img = pg.image.load(path.join(splats_folder, splat))
             splat_img = pg.transform.scale(splat_img, (64, 64))
@@ -106,33 +108,21 @@ class TheGame:
         self.light_mask = pg.image.load(path.join(self.img_folder, LIGHT_MASK))
         self.light_mask = pg.transform.scale(self.light_mask, LIGHT_RADIUS)
         for sound in SOUND_EFFECTS:
-            self.sound_effects[sound] = pg.mixer.Sound(path.join(sounds_folder, SOUND_EFFECTS[sound]))
+            self.sound_effects[sound] = pg.mixer.Sound(path.join(self.sounds_folder, SOUND_EFFECTS[sound]))
         for weapon in WEAPON_SOUNDS:
             self.weapon_sounds[weapon] = []
-            for sound in WEAPON_SOUNDS[weapon]:
-                track = pg.mixer.Sound(path.join(sounds_folder, sound))
-                track.set_volume(0.3)
-                self.weapon_sounds[weapon].append(track)
-        for sound in ZOMBIE_MOAN_SOUNDS:
-            track = pg.mixer.Sound(path.join(sounds_folder, sound))
-            track.set_volume(0.4)
-            self.zombie_moan_sounds.append(track)
-        for sound in ZOMBIE_PAIN_SOUNDS:
-            track = pg.mixer.Sound(path.join(sounds_folder, sound))
-            track.set_volume(0.5)
-            self.zombie_pain_sounds.append(track)
-        for sound in ZOMBIE_DIE_SOUNDS:
-            track = pg.mixer.Sound(path.join(sounds_folder, sound))
-            track.set_volume(0.8)
-            self.zombie_die_sounds.append(track)
-        for sound in PLAYER_DEATH_SOUNDS:
-            track = pg.mixer.Sound(path.join(sounds_folder, sound))
-            track.set_volume(0.6)
-            self.player_die_sounds.append(track)
-        for sound in PLAYER_PAIN_SOUNDS:
-            track = pg.mixer.Sound(path.join(sounds_folder, sound))
-            track.set_volume(0.5)
-            self.player_pain_sounds.append(track)
+            self.add_sounds(WEAPON_SOUNDS[weapon], self.weapon_sounds[weapon], 0.3)
+        self.add_sounds(ZOMBIE_MOAN_SOUNDS, self.zombie_moan_sounds, 0.4)
+        self.add_sounds(ZOMBIE_PAIN_SOUNDS, self.zombie_pain_sounds, 0.5)
+        self.add_sounds(ZOMBIE_DIE_SOUNDS, self.zombie_die_sounds, 0.8)
+        self.add_sounds(PLAYER_DEATH_SOUNDS, self.player_die_sounds, 0.6)
+        self.add_sounds(PLAYER_PAIN_SOUNDS, self.player_pain_sounds, 0.5)
+
+    def add_sounds(self, source, sound_list, volume):
+        for sound in source:
+            track = pg.mixer.Sound(path.join(self.sounds_folder, sound))
+            track.set_volume(volume)
+            sound_list.append(track)
 
     def run(self, difficulty):
         if difficulty == "easy":
@@ -350,5 +340,5 @@ class TheGame:
 
 if __name__ == "__main__":
     game = TheGame()
-    # game.menu.game_intro()
-    game.run("easy")
+    # difficulty = game.menu.game_intro()
+    game.run('easy')
