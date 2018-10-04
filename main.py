@@ -81,7 +81,6 @@ class TheGame:
         self.map = TiledMap(path.join(map_folder, 'clab_map.tmx'))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
-        self.intro_img = pg.image.load(path.join(self.img_folder, INTRO_IMG))
         self.player_img = pg.image.load(path.join(self.img_folder, PLAYER_IMAGE_NAKED))
         self.zombie_img = pg.image.load(path.join(self.img_folder, ZOMBIE_IMAGE))
         self.bullet_images['large'] = pg.image.load(path.join(self.img_folder, BULLET_IMG))
@@ -183,7 +182,7 @@ class TheGame:
                 self.player.speed = 300
             if hit.type == 'water':
                 if self.player.shield < PLAYER_SHIELD:
-                    delete = self.get_bonus(hit)
+                    delete = self.get_bonus()
                     self.player.shield = PLAYER_SHIELD
             if hit.type == 'beer':
                 delete = self.get_bonus("EXTRA STRENGTH")
@@ -276,7 +275,7 @@ class TheGame:
                 if event.key == pg.K_p:
                     self.game_paused = not self.game_paused
                 if 50 < self.player.rect.x < 102 and 1735 < self.player.rect.y < 1753:
-                    if event.key == pg.K_n:
+                    if event.key == pg.K_SPACE:
                         self.night = not self.night
 
     def new(self):
@@ -340,5 +339,5 @@ class TheGame:
 
 if __name__ == "__main__":
     game = TheGame()
-    # difficulty = game.menu.game_intro()
-    game.run('easy')
+    game.menu.game_intro()
+    # game.run('easy')
