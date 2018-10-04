@@ -52,28 +52,29 @@ class Player(Drawable, pg.sprite.Sprite):
         if keys[pg.K_DOWN] or keys[pg.K_s]:
             self.vel = vector(-self.speed, 0).rotate(-self.rotation)
         if keys[pg.K_SPACE]:
-            if self.weapon is not None and self.ammo[self.weapon] > 0:
-                self.shoot()
-            else:
-                self.game.sound_effects['out_of_ammo'].play()
+            if self.weapon is not None:
+                if self.ammo[self.weapon] > 0:
+                    self.shoot()
+                else:
+                    self.game.sound_effects['out_of_ammo'].play()
         if keys[pg.K_1]:
             self.weapon = None
         if keys[pg.K_2]:
             if 'pistol' in self.all_weapons and self.weapon is not 'pistol':
-                self.game.sound_effects['pistol'].play()
-                self.weapon = 'pistol'
+                self.select_weapon('pistol')
         if keys[pg.K_3]:
             if 'shotgun' in self.all_weapons and self.weapon is not 'shotgun':
-                self.game.sound_effects['shotgun'].play()
-                self.weapon = 'shotgun'
+                self.select_weapon('shotgun')
         if keys[pg.K_4]:
             if 'uzi' in self.all_weapons and self.weapon is not 'uzi':
-                self.game.sound_effects['uzi'].play()
-                self.weapon = 'uzi'
+                self.select_weapon('uzi')
         if keys[pg.K_5]:
             if 'rifle' in self.all_weapons and self.weapon is not 'rifle':
-                self.game.sound_effects['rifle'].play()
-                self.weapon = 'rifle'
+                self.select_weapon('rifle')
+
+    def select_weapon(self, weapon):
+        self.game.sound_effects[weapon].play()
+        self.weapon = weapon
 
     def shoot(self):
         now = pg.time.get_ticks()
