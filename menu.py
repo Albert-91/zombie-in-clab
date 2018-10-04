@@ -1,7 +1,24 @@
+from os import path
 from drawable import Drawable
-from player import Player
 from settings import *
 from functions import quit
+
+
+class MenuMob(Drawable, pg.sprite.Sprite):
+
+    def __init__(self, game, x, y, width=20, height=20):
+        super(MenuMob, self).__init__(width, height, x, y)
+        pg.sprite.Sprite.__init__(self)
+        self.image = self.surface
+        self.game = game
+        self.width = width
+        self.height = height
+        self.pic = None
+
+    def animate(self, destination, area):
+        self.pic = pg.image.load(path.join(self.game.img_folder, INTRO_IMG))
+        self.pic = pg.transform.scale(self.pic, (self.width, self.height))
+        self.surface.blit(self.pic, destination, area)
 
 
 class Menu(Drawable):
@@ -9,14 +26,14 @@ class Menu(Drawable):
     def __init__(self, game):
         self.game = game
         self.name = ""
-        self.intro_img = game.intro_img
 
     def game_intro(self):
         i = 0.56
         while True:
             mark_pos_y = self.game.height * i
             mark_pos_x = self.game.width * INTRO_SPRITE_POS_X
-            intro_object = Player(self.game, mark_pos_x, mark_pos_y)
+            intro_object = MenuMob(self.game, mark_pos_x, mark_pos_y, 40, 40)
+            intro_object.animate((0, 0), (0, 0, mark_pos_x, mark_pos_y))
             self.game.board.draw_menu(intro_object)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -43,7 +60,8 @@ class Menu(Drawable):
         while True:
             mark_pos_y = self.game.height * i
             mark_pos_x = self.game.width * OPTIONS_SPRITE_POS_X
-            intro_object = Player(self.game, mark_pos_x, mark_pos_y)
+            intro_object = MenuMob(self.game, mark_pos_x, mark_pos_y, 50, 50)
+            intro_object.animate((0, 0), (0, 0, mark_pos_x, mark_pos_y))
             self.game.board.draw_options(intro_object)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -70,7 +88,8 @@ class Menu(Drawable):
         while True:
             mark_pos_y = self.game.height * i
             mark_pos_x = self.game.width * DIFFICULT_SPRITE_POS_X
-            intro_object = Player(self.game, mark_pos_x, mark_pos_y)
+            intro_object = MenuMob(self.game, mark_pos_x, mark_pos_y, 50, 50)
+            intro_object.animate((0, 0), (0, 0, mark_pos_x, mark_pos_y))
             self.game.board.draw_choosing_difficulty(intro_object)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -93,7 +112,6 @@ class Menu(Drawable):
                             difficulty = "hard"
                         else:
                             difficulty = "hell"
-
                         self.game_input(difficulty)
 
     def game_input(self, difficult):
@@ -113,7 +131,7 @@ class Menu(Drawable):
                     if event.key == pg.K_RETURN:
                         if len(word) > 0:
                             self.name = word
-                            return self.game.run(difficult)
+                            self.game.run(difficult)
                 self.game.board.draw_input(word, self.game.width / 2, self.game.height / 2)
 
     def game_over(self):
