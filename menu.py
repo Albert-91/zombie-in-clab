@@ -25,7 +25,6 @@ class Menu(Drawable):
 
     def __init__(self, game):
         self.game = game
-        self.name = ""
 
     def game_intro(self):
         i = 0.56
@@ -105,14 +104,14 @@ class Menu(Drawable):
                             i += 0.2
                     if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
                         if 95 < mark_pos_y < 97:
-                            difficulty = "easy"
+                            difficult = "easy"
                         elif 215 < mark_pos_y < 217:
-                            difficulty = "normal"
+                            difficult = "normal"
                         elif 335 < mark_pos_y < 337:
-                            difficulty = "hard"
+                            difficult = "hard"
                         else:
-                            difficulty = "hell"
-                        self.game_input(difficulty)
+                            difficult = "hell"
+                        self.game_input(difficult)
 
     def game_input(self, difficult):
         word = ""
@@ -130,13 +129,12 @@ class Menu(Drawable):
                         word = word[:-1]
                     if event.key == pg.K_RETURN:
                         if len(word) > 0:
-                            self.name = word
-                            self.game.run(difficult)
+                            self.game.run(difficult, word)
                 self.game.board.draw_input(word, self.game.width / 2, self.game.height / 2)
 
-    def game_over(self):
+    def game_over(self, word):
         while True:
-            self.game.board.draw_game_over(self.name)
+            self.game.board.draw_game_over(word)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     quit()

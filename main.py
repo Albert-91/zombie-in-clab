@@ -26,6 +26,7 @@ class TheGame:
         self.items = pg.sprite.Group()
         self.locked_rooms = pg.sprite.Group()
         self.bonus_items = pg.sprite.Group()
+        self.playing = True
         self.destroyed = False
         self.map = None
         self.map_img = None
@@ -34,7 +35,9 @@ class TheGame:
         self.intro_img = None
         self.zombie_img = None
         self.bullet_images = {}
+        self.player_name = None
         self.player = None
+        self.player_start_pos = None
         self.locked_room_key = None
         self.locked_first_room = None
         self.locked_room_card = []
@@ -46,6 +49,7 @@ class TheGame:
         self.items_images = {}
         self.sound_effects = {}
         self.weapon_sounds = {}
+        self.zombie_speeds = ZOMBIE_SPEEDS
         self.zombie_moan_sounds = []
         self.zombie_pain_sounds = []
         self.zombie_die_sounds = []
@@ -57,16 +61,16 @@ class TheGame:
         self.lives_img = None
         self.game_folder = None
         self.sounds_folder = None
+        self.map_folder = None
         self.load_data()
         self.light_rect = self.light_mask.get_rect()
-        self.map_data = self.map.make_map()
         self.night = True
         self.new()
         self.camera = Camera(self, self.map.width, self.map.height)
         self.fps_clock = pg.time.Clock()
         self.dt = None
         self.game_paused = False
-        self.damage = ZOMBIE_DMG
+        self.damage = None
         self.menu = Menu(self)
 
     def load_data(self):
@@ -76,11 +80,8 @@ class TheGame:
         self.img_folder = path.join(self.game_folder, 'images')
         self.sounds_folder = path.join(self.game_folder, 'sounds')
         items_img_folder = path.join(self.img_folder, 'items')
-        map_folder = path.join(self.game_folder, 'maps')
+        self.map_folder = path.join(self.game_folder, 'maps')
         splats_folder = path.join(self.img_folder, 'splat')
-        self.map = TiledMap(path.join(map_folder, 'clab_map.tmx'))
-        self.map_img = self.map.make_map()
-        self.map_rect = self.map_img.get_rect()
         self.player_img = pg.image.load(path.join(self.img_folder, PLAYER_IMAGE_NAKED))
         self.zombie_img = pg.image.load(path.join(self.img_folder, ZOMBIE_IMAGE))
         self.bullet_images['large'] = pg.image.load(path.join(self.img_folder, BULLET_IMG))
@@ -117,26 +118,28 @@ class TheGame:
         self.add_sounds(PLAYER_DEATH_SOUNDS, self.player_die_sounds, 0.6)
         self.add_sounds(PLAYER_PAIN_SOUNDS, self.player_pain_sounds, 0.5)
 
-    def add_sounds(self, source, sound_list, volume):
+    def add_sounds(self, source, sound_list, volume=1.0):
         for sound in source:
             track = pg.mixer.Sound(path.join(self.sounds_folder, sound))
             track.set_volume(volume)
             sound_list.append(track)
 
-    def run(self, difficulty):
-        if difficulty == "easy":
-            zombie_speed = 1
-            zombie_attack = 1
-        elif difficulty == "normal":
-            zombie_speed = 1.2
-            zombie_attack = 2
-        elif difficulty == "hard":
-            zombie_speed = 1.5
-            zombie_attack = 3
+    def run(self, difficult, name):
+        self.player_name = name
+        self.playing = True
+        if difficult == "easy":
+            self.zombie_speeds = ZOMBIE_SPEEDS
+            self.damage = ZOMBIE_DMG
+        elif difficult == "normal":
+            self.zombie_speeds = [i * ZOMBIE_NORMAL_RATIO for i in ZOMBIE_SPEEDS]
+            self.damage = ZOMBIE_DMG * ZOMBIE_NORMAL_RATIO
+        elif difficult == "hard":
+            self.zombie_speeds = [i * ZOMBIE_HARD_RATIO for i in ZOMBIE_SPEEDS]
+            self.damage = ZOMBIE_DMG * ZOMBIE_HARD_RATIO
         else:
-            zombie_speed = 1.7
-            zombie_attack = 5
-        while True:
+            self.zombie_speeds = [i * ZOMBIE_HELL_RATIO for i in ZOMBIE_SPEEDS]
+            self.damage = ZOMBIE_DMG * ZOMBIE_HELL_RATIO
+        while self.playing:
             self.dt = self.fps_clock.tick(FPS) / 1000
             self.handle_events()
             if not self.game_paused:
@@ -186,7 +189,7 @@ class TheGame:
                     self.player.shield = PLAYER_SHIELD
             if hit.type == 'beer':
                 delete = self.get_bonus("EXTRA STRENGTH")
-                self.damage = ZOMBIE_DMG / 2
+                self.damage /= 2
             if delete:
                 for i in self.bonus_items:
                     i.kill()
@@ -199,7 +202,14 @@ class TheGame:
             if self.player.shield <= 0:
                 pg.time.wait(500)
                 choice(self.player_die_sounds).play()
-                self.menu.game_over()
+                if self.player.lives > 0:
+                    self.player.lives -= 1
+                    self.player.vel = vector(0, 0)
+                    self.player.position = vector(self.player_start_pos[0], self.player_start_pos[1])
+                    self.player.shield = PLAYER_SHIELD
+                else:
+                    self.playing = False
+                    self.menu.game_over(self.player_name)
         if hits:
             get_hit(self.player)
             self.player.position += vector(KICKBACK, 0).rotate(-hits[0].rotation)
@@ -279,11 +289,15 @@ class TheGame:
                         self.night = not self.night
 
     def new(self):
+        self.map = TiledMap(path.join(self.map_folder, 'clab_map.tmx'))
+        self.map_img = self.map.make_map()
+        self.map_rect = self.map_img.get_rect()
         for tile_object in self.map.tmxdata.objects:
             object_center = vector(tile_object.x + tile_object.width / 2,
                                    tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
                 self.player = Player(self, object_center.x, object_center.y)
+                self.player_start_pos = (object_center.x, object_center.y)
             if tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == 'locked':
@@ -340,4 +354,3 @@ class TheGame:
 if __name__ == "__main__":
     game = TheGame()
     game.menu.game_intro()
-    # game.run('easy')

@@ -23,7 +23,7 @@ class Zombie(pg.sprite.Sprite):
         self.rotation = 0
         self.shield = ZOMBIE_SHIELD
         self.shield_bar = None
-        self.speed = choice(ZOMBIE_SPEEDS_EASY)
+        self.speed = choice(game.zombie_speeds)
         self.target = game.player
         self.damaged = False
         self.damage_alpha = None
