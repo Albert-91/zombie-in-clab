@@ -1,7 +1,8 @@
 - rate of accuracy 
 - timer na bonusy
-- mini map
+- mini map with enemies
 - hints
 - light effect (more advanced)
-- bugs
+- other characters to choose before start the game
+- fix bugs
 
