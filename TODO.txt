@@ -1,0 +1,7 @@
+- rate of accuracy 
+- timer na bonusy
+- mini map
+- hints
+- light effect (more advanced)
+- bugs
+
