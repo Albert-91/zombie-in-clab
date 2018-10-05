@@ -6,6 +6,7 @@ RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 WHITE = (255, 255, 255)
 
+SCOREBOARD = 'scoreboard.txt'
 FPS = 80
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600
