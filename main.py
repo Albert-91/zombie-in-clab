@@ -254,7 +254,10 @@ class TheGame:
         self.sound_effects['pistol'].play()
         for weapon in WEAPONS.keys():
             if weapon in self.player.all_weapons:
-                self.player.ammo[weapon] += int(AMMO[weapon] * type_of_pack[pack])
+                if self.player.ammo[weapon] < WEAPONS[weapon]['ammo_limit']:
+                    self.player.ammo[weapon] += int(AMMO[weapon] * type_of_pack[pack])
+                    if self.player.ammo[weapon] > WEAPONS[weapon]['ammo_limit']:
+                        self.player.ammo[weapon] = WEAPONS[weapon]['ammo_limit']
 
     def get_health(self, hit, pack):
         hit.kill()

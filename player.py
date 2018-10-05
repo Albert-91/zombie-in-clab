@@ -1,13 +1,12 @@
 from os import path
 from random import randint, choice, uniform
 from bullet import Bullet
-from drawable import Drawable
 from functions import collide_with_object
 from settings import *
 from smoke import Smoke
 
 
-class Player(Drawable, pg.sprite.Sprite):
+class Player(pg.sprite.Sprite):
 
     def __init__(self, game, x, y):
         self._layer = PLAYER_LAYER
