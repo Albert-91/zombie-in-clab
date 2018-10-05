@@ -62,6 +62,7 @@ class TheGame:
         self.game_folder = None
         self.sounds_folder = None
         self.map_folder = None
+        self.score_list = []
         self.load_data()
         self.light_rect = self.light_mask.get_rect()
         self.night = True
@@ -72,11 +73,15 @@ class TheGame:
         self.game_paused = False
         self.damage = None
         self.menu = Menu(self)
+        self.bonus = True
 
     def load_data(self):
         self.dim_screen.set_alpha(80)
         self.dim_screen.fill((0, 0, 0))
         self.game_folder = path.dirname(__file__)
+        with open(path.join(self.game_folder, SCOREBOARD), 'r') as f:
+            self.score_list = [line.rstrip('\n') for line in f]
+        print(self.score_list)
         self.img_folder = path.join(self.game_folder, 'images')
         self.sounds_folder = path.join(self.game_folder, 'sounds')
         items_img_folder = path.join(self.img_folder, 'items')
@@ -337,7 +342,14 @@ class TheGame:
             self.board.draw_adds(self.board.surface, 80, 50, self.items_images['key'])
         if self.player.has_id:
             self.board.draw_adds(self.board.surface, 30, 50, self.items_images['id_card'])
-        self.board.draw_bonus(self.player.bonus)
+        if self.bonus:
+            self.board.draw_bonus(self.player.bonus)
+            timer_start = pg.time.get_ticks()
+            timer_stop = pg.time.get_ticks() + 90
+            if timer_stop - timer_start > 90:
+                self.bonus = False
+                self.player.speed = PLAYER_SPEED
+                self.damage = ZOMBIE_DMG
         if self.player.weapon is not None:
             self.board.draw_adds(self.board.surface, 250, 7, self.items_images[self.player.weapon])
             self.board.draw_ammo_quantity('Ammo: {}'.format(self.player.ammo[self.player.weapon]))
