@@ -92,7 +92,8 @@ class Board:
 
     @staticmethod
     def draw_text(surface, text, x, y, font):
-        text = font.render(text, True, MENU_FONT_COLOR)
-        rect = text.get_rect()
-        rect.center = x, y
-        surface.blit(text, rect)
+        if text is not None:
+            text = font.render(text, True, MENU_FONT_COLOR)
+            rect = text.get_rect()
+            rect.center = x, y
+            surface.blit(text, rect)
