@@ -229,7 +229,7 @@ class TheGame:
                 i.kill()
         hits = pg.sprite.groupcollide(self.locked_rooms, self.bullets, False, False)
         for hit in hits:
-            if not self.destroyed:
+            if not self.destroyed and self.player.rect.centery < 1500:
                 hit.kill()
                 busy = pg.mixer.get_busy()
                 if busy:
@@ -246,9 +246,9 @@ class TheGame:
         type_of_pack = {'small': 0.8, 'big': 1.2}
         AMMO = {
             'pistol': 60,
-            'shotgun': 288,
-            'uzi': 300,
-            'rifle': 30
+            'shotgun': 228,
+            'uzi': 200,
+            'rifle': 10
         }
         hit.kill()
         self.sound_effects['pistol'].play()
