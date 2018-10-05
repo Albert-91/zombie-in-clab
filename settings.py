@@ -54,7 +54,7 @@ WEAPONS['pistol'] = {
     'damage': 15,
     'bullet_size': 'large',
     'bullet_count': 1,
-    'ammo_limit': 120,
+    'ammo_limit': 90,
 }
 WEAPONS['shotgun'] = {
     'bullet_speed': 400,
@@ -64,7 +64,7 @@ WEAPONS['shotgun'] = {
     'spread': 20,
     'damage': 7,
     'bullet_size': 'small',
-    'ammo_limit': 650,
+    'ammo_limit': 400,
     'bullet_count': 12,
 }
 WEAPONS['uzi'] = {
@@ -76,7 +76,7 @@ WEAPONS['uzi'] = {
     'damage': 5,
     'bullet_size': 'small',
     'bullet_count': 1,
-    'ammo_limit': 500,
+    'ammo_limit': 300,
 }
 WEAPONS['rifle'] = {
     'bullet_speed': 700,
@@ -91,8 +91,8 @@ WEAPONS['rifle'] = {
 }
 AMMO = {
     'pistol': 60,
-    'shotgun': 288,
-    'uzi': 300,
+    'shotgun': 228,
+    'uzi': 200,
     'rifle': 10
 }
 BARREL_OFFSET = vector(30, 10)
