@@ -132,7 +132,7 @@ class Menu(Drawable):
                             self.game.run(difficult, word)
                 self.game.board.draw_input(word, self.game.width / 2, self.game.height / 2)
 
-    def game_over(self, word):
+    def game_over(self, word, scoreboard):
         while True:
             self.game.board.draw_game_over(word)
             for event in pg.event.get():

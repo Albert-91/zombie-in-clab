@@ -80,8 +80,10 @@ class TheGame:
         self.dim_screen.fill((0, 0, 0))
         self.game_folder = path.dirname(__file__)
         with open(path.join(self.game_folder, SCOREBOARD), 'r') as f:
-            self.score_list = [line.rstrip('\n') for line in f]
-        print(self.score_list)
+            temp_list = [line.rstrip('\n') for line in f]
+            for i in temp_list:
+                word = i.split()
+                self.score_list.append((word[0], word[1]))
         self.img_folder = path.join(self.game_folder, 'images')
         self.sounds_folder = path.join(self.game_folder, 'sounds')
         items_img_folder = path.join(self.img_folder, 'items')
@@ -214,13 +216,15 @@ class TheGame:
                     self.player.shield = PLAYER_SHIELD
                 else:
                     self.playing = False
-                    self.menu.game_over(self.player_name)
+                    self.update_scoreboard(self.player.total_accuracy)
+                    self.menu.game_over(self.player_name, self.score_list)
         if hits:
             get_hit(self.player)
             self.player.position += vector(KICKBACK, 0).rotate(-hits[0].rotation)
         hits = pg.sprite.groupcollide(self.zombies, self.bullets, False, True)
         for hit in hits:
             hit.shield -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
+            self.player.accurate_shot += len(hits[hit])
             hit.vel = vector(0, 0)
             get_hit(hit)
             if random() < 0.7:
@@ -364,6 +368,19 @@ class TheGame:
         self.light_rect.center = self.camera.apply(self.player).center
         self.fog.blit(self.light_mask, self.light_rect)
         self.board.surface.blit(self.fog, (0, 0), special_flags=pg.BLEND_MULT)
+
+    def update_scoreboard(self, player_score):
+        self.score_list.append((self.player_name, str(player_score)))
+        self.score_list = sorted(self.score_list, key=lambda x: float(x[1]), reverse=True)
+        self.score_list.remove(self.score_list[5])
+        temp_list = []
+        for i in self.score_list:
+            temp_list.append(' '.join(i))
+        with open(path.join(self.game_folder, SCOREBOARD), 'w') as f:
+            for score in temp_list:
+                f.write(score + '\n')
+
+
 
 
 if __name__ == "__main__":

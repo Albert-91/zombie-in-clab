@@ -37,6 +37,9 @@ class Player(pg.sprite.Sprite):
         self.bonus = None
         self.ammo = AMMO
         self.money = False
+        self.total_bullets = 0
+        self.accurate_shot = 1
+        self.total_accuracy = 0
 
     def get_keys(self):
         self.vel = vector(0, 0)
@@ -88,6 +91,9 @@ class Player(pg.sprite.Sprite):
             for i in range(WEAPONS[self.weapon]['bullet_count']):
                 spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
                 Bullet(self.game, position, direction.rotate(spread))
+                self.total_bullets += 1
+                self.total_accuracy = round((self.accurate_shot / self.total_bullets) * 100, 2)
+                print(self.total_accuracy)
                 sound = choice(self.game.weapon_sounds[self.weapon])
                 if sound.get_num_channels() > 2:
                     sound.stop()

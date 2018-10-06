@@ -1,5 +1,3 @@
-- rate of accuracy 
-- timer na bonusy
 - mini map with enemies
 - hints
 - light effect (more advanced)
