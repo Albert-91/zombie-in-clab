@@ -38,7 +38,7 @@ class Player(pg.sprite.Sprite):
         self.ammo = AMMO
         self.money = False
         self.total_bullets = 0
-        self.accurate_shot = 1
+        self.accurate_shot = 2
         self.total_accuracy = 0
 
     def get_keys(self):
@@ -93,7 +93,6 @@ class Player(pg.sprite.Sprite):
                 Bullet(self.game, position, direction.rotate(spread))
                 self.total_bullets += 1
                 self.total_accuracy = round((self.accurate_shot / self.total_bullets) * 100, 2)
-                print(self.total_accuracy)
                 sound = choice(self.game.weapon_sounds[self.weapon])
                 if sound.get_num_channels() > 2:
                     sound.stop()

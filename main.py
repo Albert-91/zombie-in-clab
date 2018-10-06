@@ -68,6 +68,7 @@ class TheGame:
         self.light_rect = self.light_mask.get_rect()
         self.night = True
         self.new()
+        self.mini_map = pg.Surface([self.map_rect.width / 15, self.map_rect.height / 15], pg.SRCALPHA, 32)
         self.camera = Camera(self, self.map.width, self.map.height)
         self.fps_clock = pg.time.Clock()
         self.dt = None
@@ -158,6 +159,7 @@ class TheGame:
     def update(self):
         self.all_sprites.update()
         self.camera.update(self.player)
+        self.update_mini_map()
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         if len(self.zombies) <= 0:
             self.update_scoreboard(self.player.total_accuracy)
@@ -345,6 +347,7 @@ class TheGame:
         draw_player_health(self.board.surface, 20, 10, self.player.shield / PLAYER_SHIELD)
         self.board.draw_zombies_left(len(self.zombies))
         self.board.draw_adds(self.board.surface, 150, 10, self.lives_img, self.player.lives)
+        self.board.draw_adds(self.board.surface, self.width-340, self.height-160, self.mini_map)
         if self.player.has_key:
             self.board.draw_adds(self.board.surface, 80, 50, self.items_images['key'])
         if self.player.has_id:
@@ -382,6 +385,16 @@ class TheGame:
         with open(path.join(self.game_folder, SCOREBOARD), 'w') as f:
             for score in temp_list:
                 f.write(score + '\n')
+
+    def update_mini_map(self):
+        self.mini_map.fill(BLACK)
+        player = pg.Surface([5, 5], pg.SRCALPHA, 32)
+        player.fill(GREEN)
+        self.mini_map.blit(player, (self.player.rect.x / 15, self.player.rect.y / 15))
+        for zombie in self.zombies:
+            each_zombie = pg.Surface([5, 5], pg.SRCALPHA, 32)
+            each_zombie.fill(RED)
+            self.mini_map.blit(each_zombie, (zombie.rect.x / 15, zombie.rect.y / 15))
 
 
 if __name__ == "__main__":
