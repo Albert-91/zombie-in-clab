@@ -1,6 +1,4 @@
 - mini map with enemies
 - hints
 - light effect (more advanced)
-- other characters to choose before start the game
 - fix bugs
-
