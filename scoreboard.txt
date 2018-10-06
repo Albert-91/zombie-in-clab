@@ -1,5 +1,5 @@
-Spiderman 97.43
-DrStrange 96.12
-Venom 93.14
-Wolverine 91.01
-Magneto 88.91
+Spiderman 95.43
+DrStrange 93.12
+Wolverine 91.14
+Thanos 89.04
+Thanos 86.01
