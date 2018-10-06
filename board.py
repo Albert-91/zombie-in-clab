@@ -15,7 +15,7 @@ class Board:
         self.options_font = pg.font.Font(my_font, 65)
         self.title_font = pg.font.Font(my_font, 90)
         self.difficulty_font = pg.font.Font(my_font, 70)
-        self.game_over_font = pg.font.Font(my_font, 150)
+        self.game_over_font = pg.font.Font(my_font, 120)
 
     def draw_menu(self, *args):
         self.intro_bg = pg.transform.scale(self.intro_bg, (self.width, self.height))
@@ -38,11 +38,16 @@ class Board:
             drawable.draw_on(self.surface)
         pg.display.update()
 
-    def draw_game_over(self, name, *args):
+    def draw_game_over(self, scoreboard, message, *args):
         background = (0, 0, 0)
         self.surface.fill(background)
-        self.draw_text(self.surface, "Game over", self.width / 2, self.height * 0.4,
-                       self.game_over_font)
+        self.draw_text(self.surface, message, self.width / 2, self.height * 0.2, self.game_over_font)
+        self.draw_text(self.surface, "Players with the best accuracy:", self.width / 2, self.height * 0.4, self.menu_font)
+        pos = 0.5
+        for player in scoreboard:
+            self.draw_text(self.surface, player[0], self.width / 3, self.height * pos, self.bonus_font)
+            self.draw_text(self.surface, player[1], self.width * 2 / 3, self.height * pos, self.bonus_font)
+            pos += 0.08
         for drawable in args:
             drawable.draw_on(self.surface)
         pg.display.update()

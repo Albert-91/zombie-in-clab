@@ -158,6 +158,9 @@ class TheGame:
         self.all_sprites.update()
         self.camera.update(self.player)
         hits = pg.sprite.spritecollide(self.player, self.items, False)
+        if len(self.zombies) <= 0:
+            self.update_scoreboard(self.player.total_accuracy)
+            self.menu.game_over(self.score_list, 'Congratulations')
         for hit in hits:
             if hit.type == 'health' and self.player.shield < PLAYER_SHIELD:
                 self.get_health(hit, BIG_HEALTH_PACK)
@@ -216,8 +219,7 @@ class TheGame:
                     self.player.shield = PLAYER_SHIELD
                 else:
                     self.playing = False
-                    self.update_scoreboard(self.player.total_accuracy)
-                    self.menu.game_over(self.player_name, self.score_list)
+                    self.menu.game_over(self.score_list, 'GAME OVER')
         if hits:
             get_hit(self.player)
             self.player.position += vector(KICKBACK, 0).rotate(-hits[0].rotation)
@@ -379,8 +381,6 @@ class TheGame:
         with open(path.join(self.game_folder, SCOREBOARD), 'w') as f:
             for score in temp_list:
                 f.write(score + '\n')
-
-
 
 
 if __name__ == "__main__":
