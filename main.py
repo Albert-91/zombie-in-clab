@@ -63,6 +63,7 @@ class TheGame:
         self.sounds_folder = None
         self.map_folder = None
         self.score_list = []
+        self.character_type = 'hitman1_'
         self.load_data()
         self.light_rect = self.light_mask.get_rect()
         self.night = True
@@ -89,7 +90,7 @@ class TheGame:
         items_img_folder = path.join(self.img_folder, 'items')
         self.map_folder = path.join(self.game_folder, 'maps')
         splats_folder = path.join(self.img_folder, 'splat')
-        self.player_img = pg.image.load(path.join(self.img_folder, PLAYER_IMAGE_NAKED))
+        self.player_img = pg.image.load(path.join(self.img_folder, self.character_type + PLAYER_IMAGE_NAKED))
         self.zombie_img = pg.image.load(path.join(self.img_folder, ZOMBIE_IMAGE))
         self.bullet_images['large'] = pg.image.load(path.join(self.img_folder, BULLET_IMG))
         self.bullet_images['long'] = pg.transform.scale(self.bullet_images['large'], (5, 15))

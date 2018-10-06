@@ -38,6 +38,17 @@ class Board:
             drawable.draw_on(self.surface)
         pg.display.update()
 
+    def draw_choose_character(self, *args):
+        self.intro_bg = pg.transform.scale(self.intro_bg, (self.width, self.height))
+        self.surface.blit(self.intro_bg, (0, 0), (0, 0, self.width, self.height))
+        self.draw_text(self.surface, "Choose your character:", self.width / 2, self.height * 0.2, self.difficulty_font)
+        self.draw_text(self.surface, "Hitman", self.width / 2, self.height * 0.5, self.options_font)
+        self.draw_text(self.surface, "Girl", self.width / 2, self.height * 0.65, self.options_font)
+        self.draw_text(self.surface, "Soldier", self.width / 2, self.height * 0.8, self.options_font)
+        for drawable in args:
+            drawable.draw_on(self.surface)
+        pg.display.update()
+
     def draw_game_over(self, scoreboard, message, *args):
         background = (0, 0, 0)
         self.surface.fill(background)

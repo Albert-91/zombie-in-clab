@@ -48,7 +48,7 @@ class Menu(Drawable):
                             i += 0.1
                     if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
                         if 335 < mark_pos_y < 337:
-                            self.game_choosing_difficulty()
+                            self.game_choose_character()
                         elif 385 < mark_pos_y < 397:
                             self.game_options()
                         else:
@@ -82,6 +82,37 @@ class Menu(Drawable):
                         else:
                             self.game_intro()
 
+    def game_choose_character(self):
+        i = 0.45
+        while True:
+            mark_pos_y = self.game.height * i
+            mark_pos_x = self.game.width * OPTIONS_SPRITE_POS_X
+            intro_object = MenuMob(self.game, mark_pos_x, mark_pos_y, 50, 50)
+            intro_object.animate((0, 0), (0, 0, mark_pos_x, mark_pos_y))
+            self.game.board.draw_choose_character(intro_object)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    quit()
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE or event.key == pg.K_BACKSPACE:
+                        self.game_intro()
+                    if event.key == pg.K_UP or event.key == pg.K_w:
+                        if mark_pos_y > 275:
+                            i -= 0.15
+                    if event.key == pg.K_DOWN or event.key == pg.K_s:
+                        if mark_pos_y < 445:
+                            i += 0.15
+                    if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
+                        if 265 < mark_pos_y < 275:
+                            self.game.character_type = 'hitman1_'
+                            self.game_choosing_difficulty()
+                        elif 355 < mark_pos_y < 365:
+                            self.game.character_type = 'womanGreen_'
+                            self.game_choosing_difficulty()
+                        else:
+                            self.game.character_type = 'soldier1_'
+                            self.game_choosing_difficulty()
+
     def game_choosing_difficulty(self):
         i = 0.16
         while True:
@@ -95,7 +126,7 @@ class Menu(Drawable):
                     quit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE or event.key == pg.K_BACKSPACE:
-                        self.game_intro()
+                        self.game_choose_character()
                     if event.key == pg.K_UP or event.key == pg.K_w:
                         if mark_pos_y > 97:
                             i -= 0.2

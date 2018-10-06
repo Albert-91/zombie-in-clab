@@ -104,13 +104,17 @@ class Player(pg.sprite.Sprite):
     def update(self):
         self.get_keys()
         if self.weapon is None:
-            self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_NAKED ))
+            self.game.player_img = pg.image.load(path.join(self.game.img_folder,
+                                                           self.game.character_type + PLAYER_IMAGE_NAKED))
         elif self.weapon == 'shotgun' or self.weapon == 'rifle':
-            self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_SHOTGUN))
+            self.game.player_img = pg.image.load(path.join(self.game.img_folder,
+                                                           self.game.character_type + PLAYER_IMAGE_SHOTGUN))
         elif self.weapon == 'pistol':
-            self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_PISTOL))
+            self.game.player_img = pg.image.load(path.join(self.game.img_folder,
+                                                           self.game.character_type + PLAYER_IMAGE_PISTOL))
         elif self.weapon == 'uzi':
-            self.game.player_img = pg.image.load(path.join(self.game.img_folder, PLAYER_IMAGE_UZI))
+            self.game.player_img = pg.image.load(path.join(self.game.img_folder,
+                                                           self.game.character_type + PLAYER_IMAGE_UZI))
         self.rotation = (self.rotation + self.rotation_speed * self.game.dt) % 360
         self.image = pg.transform.rotate(self.game.player_img, self.rotation)
         if self.damaged:
