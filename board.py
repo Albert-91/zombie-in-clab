@@ -22,8 +22,9 @@ class Board:
         self.surface.blit(self.intro_bg, (0, 0), (0, 0, self.width, self.height))
         self.draw_text(self.surface, "Zombie in CLab", self.width / 2, self.height * 0.3, self.title_font)
         self.draw_text(self.surface, "Play", self.width / 2, self.height * 0.6, self.menu_font)
-        self.draw_text(self.surface, "Options", self.width / 2, self.height * 0.7, self.menu_font)
-        self.draw_text(self.surface, "Quit", self.width / 2, self.height * 0.8, self.menu_font)
+        self.draw_text(self.surface, "Ranking", self.width / 2, self.height * 0.7, self.menu_font)
+        self.draw_text(self.surface, "Options", self.width / 2, self.height * 0.8, self.menu_font)
+        self.draw_text(self.surface, "Quit", self.width / 2, self.height * 0.9, self.menu_font)
         for drawable in args:
             drawable.draw_on(self.surface)
         pg.display.update()
