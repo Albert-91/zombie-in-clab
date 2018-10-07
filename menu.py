@@ -25,124 +25,57 @@ class Menu(Drawable):
 
     def __init__(self, game):
         self.game = game
+        self.pos_x = 0
+        self.pos_y = 0
+        self.i = 0
 
     def game_intro(self):
-        i = 0.56
-        while True:
-            mark_pos_y = self.game.height * i
-            mark_pos_x = self.game.width * INTRO_SPRITE_POS_X
-            intro_object = MenuMob(self.game, mark_pos_x, mark_pos_y, 40, 40)
-            intro_object.animate((0, 0), (0, 0, mark_pos_x, mark_pos_y))
-            self.game.board.draw_menu(intro_object)
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    quit()
-                elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_ESCAPE:
-                        quit()
-                    if event.key == pg.K_UP or event.key == pg.K_w:
-                        if mark_pos_y > 337:
-                            i -= 0.1
-                    if event.key == pg.K_DOWN or event.key == pg.K_s:
-                        if mark_pos_y < 455:
-                            i += 0.1
-                    if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
-                        if 335 < mark_pos_y < 337:
-                            self.game_choose_character()
-                        elif 385 < mark_pos_y < 397:
-                            self.game_options()
-                        else:
-                            quit()
+        self.i = 0.56
+        self.set_mob_limit(0.1, 337, 480, INTRO_SPRITE_POS_X, self.game.board.draw_menu, self.game_options, 40)
+        if 335 < self.pos_y < 337:
+            self.game_choose_character()
+        elif 385 < self.pos_y < 397:
+            self.game_options()
+        elif 455 < self.pos_y < 457:
+            self.game_options()
+        else:
+            quit()
 
     def game_options(self):
-        i = 0.31
-        while True:
-            mark_pos_y = self.game.height * i
-            mark_pos_x = self.game.width * OPTIONS_SPRITE_POS_X
-            intro_object = MenuMob(self.game, mark_pos_x, mark_pos_y, 50, 50)
-            intro_object.animate((0, 0), (0, 0, mark_pos_x, mark_pos_y))
-            self.game.board.draw_options(intro_object)
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    quit()
-                elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_ESCAPE or event.key == pg.K_BACKSPACE:
-                        self.game_intro()
-                    if event.key == pg.K_UP or event.key == pg.K_w:
-                        if mark_pos_y > 196:
-                            i -= 0.15
-                    if event.key == pg.K_DOWN or event.key == pg.K_s:
-                        if mark_pos_y < 366:
-                            i += 0.15
-                    if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
-                        if 185 < mark_pos_y < 187:
-                            """controls"""
-                        elif 275 < mark_pos_y < 277:
-                            """audio"""
-                        else:
-                            self.game_intro()
+        self.i = 0.31
+        self.set_mob_limit(0.15, 196, 366, OPTIONS_SPRITE_POS_X, self.game.board.draw_options, self.game_intro)
+        if 185 < self.pos_y < 187:
+            """controls"""
+        elif 275 < self.pos_y < 277:
+            """audio"""
+        else:
+            self.game_intro()
 
     def game_choose_character(self):
-        i = 0.45
-        while True:
-            mark_pos_y = self.game.height * i
-            mark_pos_x = self.game.width * OPTIONS_SPRITE_POS_X
-            intro_object = MenuMob(self.game, mark_pos_x, mark_pos_y, 50, 50)
-            intro_object.animate((0, 0), (0, 0, mark_pos_x, mark_pos_y))
-            self.game.board.draw_choose_character(intro_object)
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    quit()
-                elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_ESCAPE or event.key == pg.K_BACKSPACE:
-                        self.game_intro()
-                    if event.key == pg.K_UP or event.key == pg.K_w:
-                        if mark_pos_y > 275:
-                            i -= 0.15
-                    if event.key == pg.K_DOWN or event.key == pg.K_s:
-                        if mark_pos_y < 445:
-                            i += 0.15
-                    if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
-                        if 265 < mark_pos_y < 275:
-                            self.game.character_type = 'hitman1_'
-                            self.game_choosing_difficulty()
-                        elif 355 < mark_pos_y < 365:
-                            self.game.character_type = 'womanGreen_'
-                            self.game_choosing_difficulty()
-                        else:
-                            self.game.character_type = 'soldier1_'
-                            self.game_choosing_difficulty()
+        self.i = 0.45
+        self.set_mob_limit(0.15, 275, 445, OPTIONS_SPRITE_POS_X, self.game.board.draw_choose_character, self.game_intro)
+        if 265 < self.pos_y < 275:
+            self.game.character_type = 'hitman1_'
+            self.game_choosing_difficulty()
+        elif 355 < self.pos_y < 365:
+            self.game.character_type = 'womanGreen_'
+            self.game_choosing_difficulty()
+        else:
+            self.game.character_type = 'soldier1_'
+            self.game_choosing_difficulty()
 
     def game_choosing_difficulty(self):
-        i = 0.16
-        while True:
-            mark_pos_y = self.game.height * i
-            mark_pos_x = self.game.width * DIFFICULT_SPRITE_POS_X
-            intro_object = MenuMob(self.game, mark_pos_x, mark_pos_y, 50, 50)
-            intro_object.animate((0, 0), (0, 0, mark_pos_x, mark_pos_y))
-            self.game.board.draw_choosing_difficulty(intro_object)
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    quit()
-                elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_ESCAPE or event.key == pg.K_BACKSPACE:
-                        self.game_choose_character()
-                    if event.key == pg.K_UP or event.key == pg.K_w:
-                        if mark_pos_y > 97:
-                            i -= 0.2
-                    if event.key == pg.K_DOWN or event.key == pg.K_s:
-                        if mark_pos_y < 455:
-                            i += 0.2
-                    if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
-                        if 95 < mark_pos_y < 97:
-                            difficult = "easy"
-                        elif 215 < mark_pos_y < 217:
-                            difficult = "normal"
-                        elif 335 < mark_pos_y < 337:
-                            difficult = "hard"
-                        else:
-                            difficult = "hell"
-                        self.game_input(difficult)
+        self.i = 0.16
+        self.set_mob_limit(0.2, 97, 455, OPTIONS_SPRITE_POS_X, self.game.board.draw_choosing_difficulty, self.game_choose_character)
+        if 95 < self.pos_y < 97:
+            difficult = "easy"
+        elif 215 < self.pos_y < 217:
+            difficult = "normal"
+        elif 335 < self.pos_y < 337:
+            difficult = "hard"
+        else:
+            difficult = "hell"
+        self.game_input(difficult)
 
     def game_input(self, difficult):
         word = ""
@@ -172,3 +105,34 @@ class Menu(Drawable):
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
                         self.game_intro()
+
+    def set_mob_limit(self, i_value, top, bottom, pos, draw, previous, size=50):
+        while True:
+            self.set_position(pos)
+            draw(self.set_the_mob(size))
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    quit()
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        quit()
+                    if event.key == pg.K_ESCAPE or event.key == pg.K_BACKSPACE:
+                        previous()
+                    if event.key == pg.K_UP or event.key == pg.K_w:
+                        if self.pos_y > top:
+                            self.i -= i_value
+                    if event.key == pg.K_DOWN or event.key == pg.K_s:
+                        if self.pos_y < bottom:
+                            self.i += i_value
+                    if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
+                        return False
+
+    def set_position(self, x):
+        self.pos_y = self.game.height * self.i
+        self.pos_x = self.game.width * x
+
+    def set_the_mob(self, size=50):
+        intro_object = MenuMob(self.game, self.pos_x, self.pos_y, size, size)
+        intro_object.animate((0, 0), (0, 0, self.pos_x, self.pos_y))
+        return intro_object
+
