@@ -22,7 +22,7 @@ class MenuMob(Drawable, pg.sprite.Sprite):
         self.surface.blit(self.pic, destination, area)
 
 
-class Menu(Drawable):
+class Menu:
 
     def __init__(self, game):
         self.game = game
@@ -46,9 +46,11 @@ class Menu(Drawable):
         self.i = 0.31
         self.set_mob_limit(0.15, 196, 366, OPTIONS_SPRITE_POS_X, self.game.board.draw_options, self.game_intro)
         if 185 < self.pos_y < 187:
-            """controls"""
+            # controls
+            pass
         elif 275 < self.pos_y < 277:
-            """audio"""
+            pass
+            # audio
         else:
             self.game_intro()
 
