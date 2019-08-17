@@ -3,7 +3,7 @@ from settings import *
 
 class Board:
 
-    def __init__(self, width, height):
+    def __init__(self, width: int, height: int):
         self.surface = pg.display.set_mode((width, height), 0, 32)
         pg.display.set_caption('Zombie in CLab')
         self.width = width
@@ -50,7 +50,7 @@ class Board:
             drawable.draw_on(self.surface)
         pg.display.update()
 
-    def draw_game_over(self, scoreboard, message, *args):
+    def draw_game_over(self, scoreboard: list, message: str, *args):
         background = (0, 0, 0)
         self.surface.fill(background)
         self.draw_text(self.surface, message, self.width / 2, self.height * 0.2, self.game_over_font)
@@ -76,7 +76,7 @@ class Board:
 
         pg.display.update()
 
-    def draw_input(self, word, x, y):
+    def draw_input(self, word: str, x: int, y: int):
         self.surface.fill((0, 0, 0))
         self.draw_text(self.surface, "Please enter your name:", self.width / 2, self.height / 3, self.menu_font)
         text = self.menu_font.render("{}".format(word), True, MENU_FONT_COLOR)
@@ -88,19 +88,20 @@ class Board:
     def draw_pause(self):
         self.draw_text(self.surface, "Paused", self.width / 2, self.height / 2, self.title_font)
 
-    def draw_zombies_left(self, left):
+    def draw_zombies_left(self, left: int):
         self.draw_text(self.surface, "Zombies: {}".format(left), self.width - 100, 25, self.bonus_font)
 
-    def draw_bonus(self, bonus):
+    def draw_bonus(self, bonus: str):
         self.draw_text(self.surface, bonus, self.width - 300, 25, self.bonus_font)
 
-    def draw_ammo_quantity(self, ammo):
+    def draw_ammo_quantity(self, ammo: str):
         self.draw_text(self.surface, ammo, 400, 25, self.bonus_font)
 
     def draw_money(self):
         self.draw_text(self.surface, "9 800 zl", self.width - 100, 60, self.bonus_font)
 
-    def draw_adds(self, surface, x, y, image, amount=1):
+    @staticmethod
+    def draw_adds(surface, x, y, image, amount=1):
         for i in range(amount):
             img_rect = image.get_rect()
             img_rect.x = x + 30 * i
