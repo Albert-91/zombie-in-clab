@@ -1,3 +1,0 @@
-- hints
-- light effect (more advanced)
-- fix bugs
