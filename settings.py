@@ -1,4 +1,5 @@
 import pygame as pg
+
 from functions import vector
 
 GREEN = (0, 255, 0)

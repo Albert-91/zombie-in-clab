@@ -1,7 +1,8 @@
 from os import path
+
 from drawable import Drawable
-from settings import *
 from functions import quit
+from settings import *
 
 
 class MenuMob(Drawable, pg.sprite.Sprite):

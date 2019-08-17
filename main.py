@@ -1,14 +1,15 @@
 from os import path
 from random import choice, random
+
 from board import Board
+from functions import quit, collide_hit_rect, draw_player_health, get_hit
 from item import Item
 from menu import Menu
 from player import Player
 from screen import Camera, TiledMap
+from settings import *
 from walls import Obstacle
 from zombie import Zombie
-from settings import *
-from functions import quit, collide_hit_rect, draw_player_health, get_hit
 
 
 class TheGame:

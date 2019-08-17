@@ -1,4 +1,5 @@
 from random import randint, choice, random
+
 from functions import collide_with_object
 from settings import *
 from smoke import Smoke

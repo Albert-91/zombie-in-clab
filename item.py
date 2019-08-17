@@ -1,5 +1,6 @@
-from settings import *
 import pytweening as tween
+
+from settings import *
 
 
 class Item(pg.sprite.Sprite):

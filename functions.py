@@ -1,5 +1,6 @@
 import sys
 from itertools import chain
+
 from settings import *
 
 vector = pg.math.Vector2

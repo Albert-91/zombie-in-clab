@@ -1,5 +1,6 @@
 from os import path
 from random import randint, choice, uniform
+
 from bullet import Bullet
 from functions import collide_with_object
 from settings import *

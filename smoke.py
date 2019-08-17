@@ -1,4 +1,5 @@
-from random import randint, choice
+from random import choice
+
 from settings import *
 
 
