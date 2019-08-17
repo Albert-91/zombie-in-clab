@@ -18,13 +18,17 @@ class Camera:
         return rect.move(self.screen.topleft)
 
     def update(self, target):
+        x, y = self._get_target_coordinates(target)
+        self.screen = pg.Rect(x, y, self.width, self.height)
+
+    def _get_target_coordinates(self, target):
         x = -target.rect.centerx + int(self.game.width / 2)
         y = -target.rect.centery + int(self.game.height / 2)
         x = min(0, x)
         y = min(0, y)
         x = max(-(self.width - self.game.width), x)
         y = max(-(self.height - self.game.height), y)
-        self.screen = pg.Rect(x, y, self.width, self.height)
+        return x, y
 
 
 class TiledMap:
