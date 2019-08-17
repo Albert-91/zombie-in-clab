@@ -42,6 +42,11 @@ class Player(pg.sprite.Sprite):
         self.accurate_shot = 2
         self.total_accuracy = 0
 
+    def add_shield(self, amount):
+        self.shield += amount
+        if self.shield > PLAYER_SHIELD:
+            self.shield = PLAYER_SHIELD
+
     def get_keys(self):
         self.vel = vector(0, 0)
         self.rotation_speed = 0
@@ -83,45 +88,75 @@ class Player(pg.sprite.Sprite):
         now = pg.time.get_ticks()
         if now - self.last_shot > WEAPONS[self.weapon]['rate']:
             self.last_shot = now
-            direction = vector(1, 0).rotate(-self.rotation)
             position = self.position + BARREL_OFFSET.rotate(-self.rotation)
-            self.vel = vector(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rotation)
-            self.ammo[self.weapon] -= WEAPONS[self.weapon]['bullet_count']
-            if self.ammo[self.weapon] < 0:
-                self.ammo[self.weapon] = 0
-            for i in range(WEAPONS[self.weapon]['bullet_count']):
-                spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
-                Bullet(self.game, position, direction.rotate(spread))
-                self.total_bullets += 1
-                self.total_accuracy = round((self.accurate_shot / self.total_bullets) * 100, 2)
-                sound = choice(self.game.weapon_sounds[self.weapon])
-                if sound.get_num_channels() > 2:
-                    sound.stop()
-                sound.play()
-            size = randint(20, 50)
-            Smoke(self.game, position, self.game.gun_smoke, size)
+            self._run_kickback()
+            self._subtract_ammo()
+            self._check_ammo_less_than_zero()
+            self._create_bullets(position)
+            self._create_smoke(position)
 
     def update(self):
         self.get_keys()
-        if self.weapon is None:
-            self.game.player_img = pg.image.load(path.join(self.game.img_folder,
-                                                           self.game.character_type + PLAYER_IMAGE_NAKED))
-        elif self.weapon == 'shotgun' or self.weapon == 'rifle':
-            self.game.player_img = pg.image.load(path.join(self.game.img_folder,
-                                                           self.game.character_type + PLAYER_IMAGE_SHOTGUN))
-        elif self.weapon == 'pistol':
-            self.game.player_img = pg.image.load(path.join(self.game.img_folder,
-                                                           self.game.character_type + PLAYER_IMAGE_PISTOL))
-        elif self.weapon == 'uzi':
-            self.game.player_img = pg.image.load(path.join(self.game.img_folder,
-                                                           self.game.character_type + PLAYER_IMAGE_UZI))
+        self._update_rotation()
+        self._update_weapon()
+        self._update_damage()
+        self._update_player()
+
+    def _run_kickback(self):
+        self.vel = vector(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rotation)
+
+    def _subtract_ammo(self):
+        self.ammo[self.weapon] -= WEAPONS[self.weapon]['bullet_count']
+
+    def _check_ammo_less_than_zero(self):
+        if self.ammo[self.weapon] < 0:
+            self.ammo[self.weapon] = 0
+
+    def _create_bullets(self, position):
+        direction = vector(1, 0).rotate(-self.rotation)
+        for i in range(WEAPONS[self.weapon]['bullet_count']):
+            spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
+            Bullet(self.game, position, direction.rotate(spread))
+            self.total_bullets += 1
+            self.total_accuracy = round((self.accurate_shot / self.total_bullets) * 100, 2)
+            self._run_weapon_sound()
+
+    def _run_weapon_sound(self):
+        sound = choice(self.game.weapon_sounds[self.weapon])
+        if sound.get_num_channels() > 2:
+            sound.stop()
+        sound.play()
+
+    def _create_smoke(self, position):
+        size = randint(20, 50)
+        Smoke(self.game, position, self.game.gun_smoke, size)
+
+    def _update_rotation(self):
         self.rotation = (self.rotation + self.rotation_speed * self.game.dt) % 360
         self.image = pg.transform.rotate(self.game.player_img, self.rotation)
+
+    def _update_weapon(self):
+        if self.weapon is None:
+            self.game.player_img = pg.image.load(
+                path.join(self.game.img_folder, self.game.character_type + PLAYER_IMAGE_NAKED))
+        elif self.weapon == 'shotgun' or self.weapon == 'rifle':
+            self.game.player_img = pg.image.load(
+                path.join(self.game.img_folder, self.game.character_type + PLAYER_IMAGE_SHOTGUN))
+        elif self.weapon == 'pistol':
+            self.game.player_img = pg.image.load(
+                path.join(self.game.img_folder, self.game.character_type + PLAYER_IMAGE_PISTOL))
+        elif self.weapon == 'uzi':
+            self.game.player_img = pg.image.load(
+                path.join(self.game.img_folder, self.game.character_type + PLAYER_IMAGE_UZI))
+
+    def _update_damage(self):
         if self.damaged:
             try:
                 self.image.fill((255, 0, 0, next(self.damage_alpha)), special_flags=pg.BLEND_RGB_MULT)
             except StopIteration:
                 self.damaged = False
+
+    def _update_player(self):
         self.rect = self.image.get_rect()
         self.rect.center = self.position
         self.position += self.vel * self.game.dt
@@ -130,8 +165,3 @@ class Player(pg.sprite.Sprite):
         self.hit_rect.centery = self.position.y
         collide_with_object(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
-
-    def add_shield(self, amount):
-        self.shield += amount
-        if self.shield > PLAYER_SHIELD:
-            self.shield = PLAYER_SHIELD
