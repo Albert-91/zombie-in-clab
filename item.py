@@ -10,11 +10,11 @@ class Item(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.items
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = game.items_images[type]
-        self.game = game
         self.rect = self.image.get_rect()
+        self.rect.center = position
+        self.game = game
         self.type = type
         self.position = position
-        self.rect.center = position
         self.tween = tween.easeInOutSine
         self.step = 0
         self.direction = 1
