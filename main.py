@@ -56,12 +56,12 @@ class TheGame:
         self.player_pain_sounds = []
         self.player_die_sounds = []
         self.locked_door_sound = None
-        self.img_folder = None
         self.dim_screen = pg.Surface(self.board.surface.get_size())
         self.lives_img = None
-        self.game_folder = None
-        self.sounds_folder = None
-        self.map_folder = None
+        self.game_folder = path.dirname(__file__)
+        self.img_folder = path.join(self.game_folder, 'images')
+        self.sounds_folder = path.join(self.game_folder, 'sounds')
+        self.map_folder = path.join(self.game_folder, 'maps')
         self.score_list = []
         self.character_type = 'hitman1_'
         self.mini_map_img = None
@@ -83,35 +83,18 @@ class TheGame:
     def load_data(self):
         self.dim_screen.set_alpha(80)
         self.dim_screen.fill((0, 0, 0))
-        self.game_folder = path.dirname(__file__)
         self.load_scoreboard(SCOREBOARD)
-        self.img_folder = path.join(self.game_folder, 'images')
-        self.sounds_folder = path.join(self.game_folder, 'sounds')
-        items_img_folder = path.join(self.img_folder, 'items')
-        self.map_folder = path.join(self.game_folder, 'maps')
-        splats_folder = path.join(self.img_folder, 'splat')
         self.player_img = pg.image.load(path.join(self.img_folder, self.character_type + PLAYER_IMAGE_NAKED))
         self.zombie_img = pg.image.load(path.join(self.img_folder, ZOMBIE_IMAGE))
-        self.bullet_images['large'] = pg.image.load(path.join(self.img_folder, BULLET_IMG))
-        self.bullet_images['long'] = pg.transform.scale(self.bullet_images['large'], (5, 15))
-        self.bullet_images['large'] = pg.transform.scale(self.bullet_images['large'], (5, 10))
-        self.bullet_images['small'] = pg.transform.scale(self.bullet_images['large'], (3, 7))
+        self.load_bullets()
         self.lives_img = pg.image.load(path.join(self.img_folder, LIVES_IMG))
         self.lives_img = pg.transform.scale(self.lives_img, (20, 20))
         for smoke in FLASH_SMOKE:
             self.gun_smoke.append(pg.image.load(path.join(self.game_folder, 'images/smokes/Flash/{}'.format(smoke))))
         for smoke in GREEN_SMOKE:
             self.zombie_death_smoke.append(pg.image.load(path.join(self.game_folder, 'images/smokes/Green smoke/{}'.format(smoke))))
-        for splat in SPLATS:
-            splat_img = pg.image.load(path.join(splats_folder, splat))
-            splat_img = pg.transform.scale(splat_img, (64, 64))
-            self.splats.append(splat_img)
-        for item in ITEM_IMAGES:
-            self.items_images[item] = pg.image.load(path.join(items_img_folder, ITEM_IMAGES[item]))
-            if item == 'shotgun' or item == 'rifle':
-                self.items_images[item] = pg.transform.scale(self.items_images[item], (2 * ITEM_SIZE, ITEM_SIZE))
-            else:
-                self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
+        self.load_splats()
+        self.load_items()
         self.fog.fill(NIGHT_COLOR)
         self.light_mask = pg.image.load(path.join(self.img_folder, LIGHT_MASK))
         self.light_mask = pg.transform.scale(self.light_mask, LIGHT_RADIUS)
@@ -125,6 +108,28 @@ class TheGame:
         self.add_sounds(ZOMBIE_DIE_SOUNDS, self.zombie_die_sounds, 0.8)
         self.add_sounds(PLAYER_DEATH_SOUNDS, self.player_die_sounds, 0.6)
         self.add_sounds(PLAYER_PAIN_SOUNDS, self.player_pain_sounds, 0.5)
+
+    def load_items(self):
+        items_img_folder = path.join(self.img_folder, 'items')
+        for item in ITEM_IMAGES:
+            self.items_images[item] = pg.image.load(path.join(items_img_folder, ITEM_IMAGES[item]))
+            if item == 'shotgun' or item == 'rifle':
+                self.items_images[item] = pg.transform.scale(self.items_images[item], (2 * ITEM_SIZE, ITEM_SIZE))
+            else:
+                self.items_images[item] = pg.transform.scale(self.items_images[item], (ITEM_SIZE, ITEM_SIZE))
+
+    def load_splats(self):
+            splats_folder = path.join(self.img_folder, 'splat')
+            for splat in SPLATS:
+                splat_img = pg.image.load(path.join(splats_folder, splat))
+                splat_img = pg.transform.scale(splat_img, (64, 64))
+                self.splats.append(splat_img)
+
+    def load_bullets(self):
+        self.bullet_images['large'] = pg.image.load(path.join(self.img_folder, BULLET_IMG))
+        self.bullet_images['long'] = pg.transform.scale(self.bullet_images['large'], (5, 15))
+        self.bullet_images['large'] = pg.transform.scale(self.bullet_images['large'], (5, 10))
+        self.bullet_images['small'] = pg.transform.scale(self.bullet_images['large'], (3, 7))
 
     def load_scoreboard(self, scoreboard):
         with open(path.join(self.game_folder, scoreboard), 'r') as f:
