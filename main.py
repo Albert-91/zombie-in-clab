@@ -12,7 +12,7 @@ from walls import Obstacle
 from zombie import Zombie
 
 
-class TheGame:
+class Game:
 
     def __init__(self):
         pg.mixer.pre_init(44100, 16, 1, 2048)
@@ -90,25 +90,38 @@ class TheGame:
         self.load_bullets()
         self.lives_img = pg.image.load(path.join(self.img_folder, LIVES_IMG))
         self.lives_img = pg.transform.scale(self.lives_img, (20, 20))
-        for smoke in FLASH_SMOKE:
-            self.gun_smoke.append(pg.image.load(path.join(self.game_folder, 'images/smokes/Flash/{}'.format(smoke))))
-        for smoke in GREEN_SMOKE:
-            self.zombie_death_smoke.append(pg.image.load(path.join(self.game_folder, 'images/smokes/Green smoke/{}'.format(smoke))))
+        self.load_flash_smoke()
+        self.load_green_smoke()
         self.load_splats()
         self.load_items()
         self.fog.fill(NIGHT_COLOR)
+        self.load_light_mask()
+        self.load_sounds()
+
+    def load_flash_smoke(self):
+        for smoke in FLASH_SMOKE:
+            self.gun_smoke.append(pg.image.load(path.join(self.game_folder, 'images/smokes/Flash/{}'.format(smoke))))
+
+    def load_green_smoke(self):
+        for smoke in GREEN_SMOKE:
+            self.zombie_death_smoke.append(
+                pg.image.load(path.join(self.game_folder, 'images/smokes/Green smoke/{}'.format(smoke))))
+
+    def load_light_mask(self):
         self.light_mask = pg.image.load(path.join(self.img_folder, LIGHT_MASK))
         self.light_mask = pg.transform.scale(self.light_mask, LIGHT_RADIUS)
+
+    def load_sounds(self):
         for sound in SOUND_EFFECTS:
             self.sound_effects[sound] = pg.mixer.Sound(path.join(self.sounds_folder, SOUND_EFFECTS[sound]))
         for weapon in WEAPON_SOUNDS:
             self.weapon_sounds[weapon] = []
-            self.add_sounds(WEAPON_SOUNDS[weapon], self.weapon_sounds[weapon], 0.3)
-        self.add_sounds(ZOMBIE_MOAN_SOUNDS, self.zombie_moan_sounds, 0.4)
-        self.add_sounds(ZOMBIE_PAIN_SOUNDS, self.zombie_pain_sounds, 0.5)
-        self.add_sounds(ZOMBIE_DIE_SOUNDS, self.zombie_die_sounds, 0.8)
-        self.add_sounds(PLAYER_DEATH_SOUNDS, self.player_die_sounds, 0.6)
-        self.add_sounds(PLAYER_PAIN_SOUNDS, self.player_pain_sounds, 0.5)
+            self._add_sounds(WEAPON_SOUNDS[weapon], self.weapon_sounds[weapon], 0.3)
+        self._add_sounds(ZOMBIE_MOAN_SOUNDS, self.zombie_moan_sounds, 0.4)
+        self._add_sounds(ZOMBIE_PAIN_SOUNDS, self.zombie_pain_sounds, 0.5)
+        self._add_sounds(ZOMBIE_DIE_SOUNDS, self.zombie_die_sounds, 0.8)
+        self._add_sounds(PLAYER_DEATH_SOUNDS, self.player_die_sounds, 0.6)
+        self._add_sounds(PLAYER_PAIN_SOUNDS, self.player_pain_sounds, 0.5)
 
     def load_items(self):
         items_img_folder = path.join(self.img_folder, 'items')
@@ -139,7 +152,7 @@ class TheGame:
                 word = i.split()
                 self.score_list.append((word[0], word[1]))
 
-    def add_sounds(self, source, sound_list, volume=1.0):
+    def _add_sounds(self, source, sound_list, volume=1.0):
         for sound in source:
             track = pg.mixer.Sound(path.join(self.sounds_folder, sound))
             track.set_volume(volume)
@@ -148,6 +161,16 @@ class TheGame:
     def run(self, difficult, name):
         self.player_name = name
         self.playing = True
+        self.set_params_to_difficult(difficult)
+        while self.playing:
+            self.dt = self.fps_clock.tick(FPS) / 1000
+            self.handle_events()
+            if not self.game_paused:
+                self.update()
+            self.draw()
+            pg.display.flip()
+
+    def set_params_to_difficult(self, difficult):
         if difficult == "easy":
             self.zombie_speeds = ZOMBIE_SPEEDS
             self.damage = ZOMBIE_DMG
@@ -160,22 +183,93 @@ class TheGame:
         else:
             self.zombie_speeds = [i * ZOMBIE_HELL_RATIO for i in ZOMBIE_SPEEDS]
             self.damage = ZOMBIE_DMG * ZOMBIE_HELL_RATIO
-        while self.playing:
-            self.dt = self.fps_clock.tick(FPS) / 1000
-            self.handle_events()
-            if not self.game_paused:
-                self.update()
-            self.draw()
-            pg.display.flip()
 
     def update(self):
         self.all_sprites.update()
         self.camera.update(self.player)
         self.update_mini_map()
-        hits = pg.sprite.spritecollide(self.player, self.items, False)
+        self._collide_player_with_items()
+        self._collide_player_with_bonus()
+        self._collide_player_with_zombie()
+        self._collide_bullet_with_zombie()
+        self._collide_bullet_with_door()
+        if not self.player.has_key or not self.player.has_id:
+            self.locked_room_reaction()
+        if self.player.has_key:
+            self.locked_room_key.kill()
+        if self.player.has_id:
+            self._destroy_locked_door()
         if len(self.zombies) <= 0:
             self.update_scoreboard(self.player.total_accuracy)
             self.menu.game_over(self.score_list, 'Congratulations')
+
+    def _collide_player_with_bonus(self):
+        hits = pg.sprite.spritecollide(self.player, self.bonus_items, False)
+        delete = False
+        for hit in hits:
+            if hit.type == 'coffee':
+                delete = self.get_bonus("EXTRA SPEED")
+                self.player.speed = 300
+            if hit.type == 'water':
+                if self.player.shield < PLAYER_SHIELD:
+                    delete = self.get_bonus()
+                    self.player.shield = PLAYER_SHIELD
+            if hit.type == 'beer':
+                delete = self.get_bonus("EXTRA STRENGTH")
+                self.damage /= 2
+            if delete:
+                for i in self.bonus_items:
+                    i.kill()
+
+    def _collide_player_with_zombie(self):
+        hits = pg.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
+        for hit in hits:
+            self.player.shield -= self.damage
+            hit.vel = vector(0, 0)
+            if random() < 0.5:
+                choice(self.player_pain_sounds).play()
+            if self.player.shield <= 0:
+                pg.time.wait(500)
+                choice(self.player_die_sounds).play()
+                if self.player.lives > 0:
+                    self.player.lives -= 1
+                    self.player.vel = vector(0, 0)
+                    self.player.position = vector(self.player_start_pos[0], self.player_start_pos[1])
+                    self.player.shield = PLAYER_SHIELD
+                else:
+                    self.playing = False
+                    self.menu.game_over(self.score_list, 'GAME OVER')
+        if hits:
+            get_hit(self.player)
+            self.player.position += vector(KICKBACK, 0).rotate(-hits[0].rotation)
+
+    def _collide_bullet_with_zombie(self):
+        hits = pg.sprite.groupcollide(self.zombies, self.bullets, False, True)
+        for hit in hits:
+            hit.shield -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
+            self.player.accurate_shot += len(hits[hit])
+            hit.vel = vector(0, 0)
+            get_hit(hit)
+            if random() < 0.7:
+                choice(self.zombie_pain_sounds).play()
+
+    def _destroy_locked_door(self):
+        for i in self.locked_room_card:
+            i.kill()
+
+    def _collide_bullet_with_door(self):
+        hits = pg.sprite.groupcollide(self.locked_rooms, self.bullets, False, False)
+        for hit in hits:
+            if not self.destroyed and self.player.rect.centery < 1500:
+                hit.kill()
+                busy = pg.mixer.get_busy()
+                if busy:
+                    pg.mixer.stop()
+                    self.sound_effects['broken_door'].play()
+                    self.destroyed = True
+
+    def _collide_player_with_items(self):
+        hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
             if hit.type == 'health' and self.player.shield < PLAYER_SHIELD:
                 self.get_health(hit, BIG_HEALTH_PACK)
@@ -202,66 +296,6 @@ class TheGame:
             if hit.type == 'money':
                 hit.kill()
                 self.player.money = True
-        hits = pg.sprite.spritecollide(self.player, self.bonus_items, False)
-        delete = False
-        for hit in hits:
-            if hit.type == 'coffee':
-                delete = self.get_bonus("EXTRA SPEED")
-                self.player.speed = 300
-            if hit.type == 'water':
-                if self.player.shield < PLAYER_SHIELD:
-                    delete = self.get_bonus()
-                    self.player.shield = PLAYER_SHIELD
-            if hit.type == 'beer':
-                delete = self.get_bonus("EXTRA STRENGTH")
-                self.damage /= 2
-            if delete:
-                for i in self.bonus_items:
-                    i.kill()
-        hits = pg.sprite.spritecollide(self.player, self.zombies, False, collide_hit_rect)
-        for hit in hits:
-            self.player.shield -= self.damage
-            hit.vel = vector(0, 0)
-            if random() < 0.5:
-                choice(self.player_pain_sounds).play()
-            if self.player.shield <= 0:
-                pg.time.wait(500)
-                choice(self.player_die_sounds).play()
-                if self.player.lives > 0:
-                    self.player.lives -= 1
-                    self.player.vel = vector(0, 0)
-                    self.player.position = vector(self.player_start_pos[0], self.player_start_pos[1])
-                    self.player.shield = PLAYER_SHIELD
-                else:
-                    self.playing = False
-                    self.menu.game_over(self.score_list, 'GAME OVER')
-        if hits:
-            get_hit(self.player)
-            self.player.position += vector(KICKBACK, 0).rotate(-hits[0].rotation)
-        hits = pg.sprite.groupcollide(self.zombies, self.bullets, False, True)
-        for hit in hits:
-            hit.shield -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
-            self.player.accurate_shot += len(hits[hit])
-            hit.vel = vector(0, 0)
-            get_hit(hit)
-            if random() < 0.7:
-                choice(self.zombie_pain_sounds).play()
-        if not self.player.has_key or not self.player.has_id:
-            self.locked_room_reaction()
-        if self.player.has_key:
-            self.locked_room_key.kill()
-        if self.player.has_id:
-            for i in self.locked_room_card:
-                i.kill()
-        hits = pg.sprite.groupcollide(self.locked_rooms, self.bullets, False, False)
-        for hit in hits:
-            if not self.destroyed and self.player.rect.centery < 1500:
-                hit.kill()
-                busy = pg.mixer.get_busy()
-                if busy:
-                    pg.mixer.stop()
-                    self.sound_effects['broken_door'].play()
-                    self.destroyed = True
 
     def get_bonus(self, bonus=None):
         self.sound_effects['heal'].play()
@@ -269,6 +303,13 @@ class TheGame:
         return True
 
     def get_ammo(self, hit, pack):
+        hit.kill()
+        self.sound_effects['pistol'].play()
+        for weapon in WEAPONS.keys():
+            if weapon in self.player.all_weapons:
+                self.check_ammo_limit(weapon, pack)
+
+    def check_ammo_limit(self, weapon, pack):
         type_of_pack = {'small': 0.8, 'big': 1.2}
         AMMO = {
             'pistol': 60,
@@ -276,14 +317,10 @@ class TheGame:
             'uzi': 200,
             'rifle': 10
         }
-        hit.kill()
-        self.sound_effects['pistol'].play()
-        for weapon in WEAPONS.keys():
-            if weapon in self.player.all_weapons:
-                if self.player.ammo[weapon] < WEAPONS[weapon]['ammo_limit']:
-                    self.player.ammo[weapon] += int(AMMO[weapon] * type_of_pack[pack])
-                    if self.player.ammo[weapon] > WEAPONS[weapon]['ammo_limit']:
-                        self.player.ammo[weapon] = WEAPONS[weapon]['ammo_limit']
+        if self.player.ammo[weapon] < WEAPONS[weapon]['ammo_limit']:
+            self.player.ammo[weapon] += int(AMMO[weapon] * type_of_pack[pack])
+        if self.player.ammo[weapon] > WEAPONS[weapon]['ammo_limit']:
+            self.player.ammo[weapon] = WEAPONS[weapon]['ammo_limit']
 
     def get_health(self, hit, pack):
         hit.kill()
@@ -322,8 +359,7 @@ class TheGame:
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         for tile_object in self.map.tmxdata.objects:
-            object_center = vector(tile_object.x + tile_object.width / 2,
-                                   tile_object.y + tile_object.height / 2)
+            object_center = vector(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
                 self.player = Player(self, object_center.x, object_center.y)
                 self.player_start_pos = (object_center.x, object_center.y)
@@ -350,10 +386,7 @@ class TheGame:
 
     def draw(self):
         self.board.surface.blit(self.map_img, self.camera.apply_rect(self.map_rect))
-        for sprite in self.all_sprites:
-            if isinstance(sprite, Zombie):
-                sprite.draw_shield()
-            self.board.surface.blit(sprite.image, self.camera.apply(sprite))
+        self._draw_all_shields()
         if self.night:
             self.render_fog()
         draw_player_health(self.board.surface, 20, 10, self.player.shield / PLAYER_SHIELD)
@@ -366,12 +399,7 @@ class TheGame:
             self.board.draw_adds(self.board.surface, 30, 50, self.items_images['id_card'])
         if self.bonus:
             self.board.draw_bonus(self.player.bonus)
-            timer_start = pg.time.get_ticks()
-            timer_stop = pg.time.get_ticks() + 90
-            if timer_stop - timer_start > 90:
-                self.bonus = False
-                self.player.speed = PLAYER_SPEED
-                self.damage = ZOMBIE_DMG
+            self._set_params_after_bonus()
         if self.player.weapon is not None:
             self.board.draw_adds(self.board.surface, 250, 7, self.items_images[self.player.weapon])
             self.board.draw_ammo_quantity('Ammo: {}'.format(self.player.ammo[self.player.weapon]))
@@ -398,7 +426,6 @@ class TheGame:
             for score in temp_list:
                 f.write(score + '\n')
 
-
     def update_mini_map(self):
         self.mini_map.blit(self.mini_map_img, (0, 0))
         player_map_square = pg.Surface([5, 5], pg.SRCALPHA, 32)
@@ -409,7 +436,21 @@ class TheGame:
             zombie_map_square.fill(RED)
             self.mini_map.blit(zombie_map_square, (zombie.rect.x / 15, zombie.rect.y / 15))
 
+    def _set_params_after_bonus(self):
+        timer_start = pg.time.get_ticks()
+        timer_stop = pg.time.get_ticks() + 90
+        if timer_stop - timer_start > 90:
+            self.bonus = False
+            self.player.speed = PLAYER_SPEED
+            self.damage = ZOMBIE_DMG
+
+    def _draw_all_shields(self):
+        for sprite in self.all_sprites:
+            if isinstance(sprite, Zombie):
+                sprite.draw_shield()
+            self.board.surface.blit(sprite.image, self.camera.apply(sprite))
+
 
 if __name__ == "__main__":
-    game = TheGame()
+    game = Game()
     game.menu.game_intro()
