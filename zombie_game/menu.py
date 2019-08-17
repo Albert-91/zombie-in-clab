@@ -1,8 +1,8 @@
 from os import path
 
-from drawable import Drawable
-from functions import quit_game
-from settings import *
+from zombie_game.drawable import Drawable
+from zombie_game.functions import quit_game
+from zombie_game.settings import *
 
 
 class MenuMob(Drawable, pg.sprite.Sprite):

@@ -1,10 +1,10 @@
 from os import path
 from random import randint, choice, uniform
 
-from bullet import Bullet
-from functions import collide_with_object
-from settings import *
-from smoke import Smoke
+from zombie_game.bullet import Bullet
+from zombie_game.functions import collide_with_object
+from zombie_game.settings import *
+from zombie_game.smoke import Smoke
 
 
 class Player(pg.sprite.Sprite):

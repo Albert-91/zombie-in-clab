@@ -1,8 +1,8 @@
 from random import randint, choice, random
 
-from functions import collide_with_object
-from settings import *
-from smoke import Smoke
+from zombie_game.functions import collide_with_object
+from zombie_game.settings import *
+from zombie_game.smoke import Smoke
 
 
 class Zombie(pg.sprite.Sprite):

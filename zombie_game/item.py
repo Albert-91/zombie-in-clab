@@ -1,6 +1,6 @@
 import pytweening as tween
 
-from settings import *
+from zombie_game.settings import *
 
 
 class Item(pg.sprite.Sprite):

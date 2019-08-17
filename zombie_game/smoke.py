@@ -1,6 +1,6 @@
 from random import choice
 
-from settings import *
+from zombie_game.settings import *
 
 
 class Smoke(pg.sprite.Sprite):

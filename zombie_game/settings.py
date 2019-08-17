@@ -1,6 +1,6 @@
 import pygame as pg
 
-from functions import vector
+from zombie_game.functions import vector
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -9,7 +9,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BLUE = (0, 0, 255)
 
-SCOREBOARD = 'scoreboard.txt'
+SCOREBOARD = './zombie_game/scoreboard.txt'
 FPS = 80
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600

@@ -1,6 +1,6 @@
 import pytmx
 
-from settings import *
+from zombie_game.settings import *
 
 
 class Camera:

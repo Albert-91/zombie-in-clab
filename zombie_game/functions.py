@@ -1,7 +1,7 @@
 import sys
 from itertools import chain
 
-from settings import *
+from zombie_game.settings import *
 
 vector = pg.math.Vector2
 

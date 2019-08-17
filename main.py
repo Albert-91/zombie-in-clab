@@ -1,15 +1,15 @@
 from os import path
 from random import choice, random
 
-from board import Board
-from functions import quit_game, collide_hit_rect, draw_player_health, get_hit
-from item import Item
-from menu import Menu
-from player import Player
-from screen import Camera, TiledMap
-from settings import *
-from walls import Obstacle
-from zombie import Zombie
+from zombie_game.board import Board
+from zombie_game.functions import quit_game, collide_hit_rect, draw_player_health, get_hit
+from zombie_game.item import Item
+from zombie_game.menu import Menu
+from zombie_game.player import Player
+from zombie_game.screen import Camera, TiledMap
+from zombie_game.settings import *
+from zombie_game.walls import Obstacle
+from zombie_game.zombie import Zombie
 
 
 class Game:
