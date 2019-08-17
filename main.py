@@ -395,9 +395,9 @@ class TheGame:
         player.fill(BLUE)
         self.mini_map.blit(player, (self.player.rect.x / 15, self.player.rect.y / 15))
         for zombie in self.zombies:
-            each_zombie = pg.Surface([5, 5], pg.SRCALPHA, 32)
-            each_zombie.fill(RED)
-            self.mini_map.blit(each_zombie, (zombie.rect.x / 15, zombie.rect.y / 15))
+            zombie_map_square = pg.Surface([5, 5], pg.SRCALPHA, 32)
+            zombie_map_square.fill(RED)
+            self.mini_map.blit(zombie_map_square, (zombie.rect.x / 15, zombie.rect.y / 15))
 
 
 if __name__ == "__main__":
