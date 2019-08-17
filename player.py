@@ -41,6 +41,7 @@ class Player(pg.sprite.Sprite):
         self.total_bullets = 0
         self.accurate_shot = 2
         self.total_accuracy = 0
+        self.name = None
 
     def add_shield(self, amount):
         self.shield += amount

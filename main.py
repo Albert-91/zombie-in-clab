@@ -32,13 +32,14 @@ class Game:
         self.map = None
         self.map_img = None
         self.map_rect = None
-        self.player_img = None
         self.intro_img = None
         self.zombie_img = None
         self.bullet_images = {}
-        self.player_name = None
+        self.player_img = None
         self.player = None
         self.player_start_pos = None
+        self.player_pain_sounds = []
+        self.player_die_sounds = []
         self.locked_room_key = None
         self.locked_first_room = None
         self.locked_room_card = []
@@ -54,8 +55,6 @@ class Game:
         self.zombie_moan_sounds = []
         self.zombie_pain_sounds = []
         self.zombie_die_sounds = []
-        self.player_pain_sounds = []
-        self.player_die_sounds = []
         self.locked_door_sound = None
         self.dim_screen = pg.Surface(self.board.surface.get_size())
         self.lives_img = None
@@ -159,7 +158,7 @@ class Game:
             sound_list.append(track)
 
     def run(self, difficult, name):
-        self.player_name = name
+        self.player.name = name
         self.playing = True
         self.set_params_to_difficult(difficult)
         while self.playing:
@@ -416,7 +415,7 @@ class Game:
         self.board.surface.blit(self.fog, (0, 0), special_flags=pg.BLEND_MULT)
 
     def update_scoreboard(self, player_score):
-        self.score_list.append((self.player_name, str(player_score)))
+        self.score_list.append((self.player.name, str(player_score)))
         self.score_list = sorted(self.score_list, key=lambda x: float(x[1]), reverse=True)
         self.score_list.remove(self.score_list[5])
         temp_list = []
