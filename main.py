@@ -84,11 +84,7 @@ class TheGame:
         self.dim_screen.set_alpha(80)
         self.dim_screen.fill((0, 0, 0))
         self.game_folder = path.dirname(__file__)
-        with open(path.join(self.game_folder, SCOREBOARD), 'r') as f:
-            temp_list = [line.rstrip('\n') for line in f]
-            for i in temp_list:
-                word = i.split()
-                self.score_list.append((word[0], word[1]))
+        self.load_scoreboard(SCOREBOARD)
         self.img_folder = path.join(self.game_folder, 'images')
         self.sounds_folder = path.join(self.game_folder, 'sounds')
         items_img_folder = path.join(self.img_folder, 'items')
@@ -129,6 +125,13 @@ class TheGame:
         self.add_sounds(ZOMBIE_DIE_SOUNDS, self.zombie_die_sounds, 0.8)
         self.add_sounds(PLAYER_DEATH_SOUNDS, self.player_die_sounds, 0.6)
         self.add_sounds(PLAYER_PAIN_SOUNDS, self.player_pain_sounds, 0.5)
+
+    def load_scoreboard(self, scoreboard):
+        with open(path.join(self.game_folder, scoreboard), 'r') as f:
+            temp_list = [line.rstrip('\n') for line in f]
+            for i in temp_list:
+                word = i.split()
+                self.score_list.append((word[0], word[1]))
 
     def add_sounds(self, source, sound_list, volume=1.0):
         for sound in source:
@@ -388,6 +391,7 @@ class TheGame:
         with open(path.join(self.game_folder, SCOREBOARD), 'w') as f:
             for score in temp_list:
                 f.write(score + '\n')
+
 
     def update_mini_map(self):
         self.mini_map.blit(self.mini_map_img, (0, 0))
