@@ -2,6 +2,7 @@ from settings import *
 
 
 class Obstacle(pg.sprite.Sprite):
+
     def __init__(self, game, x, y, width, height):
         self.groups = game.walls
         pg.sprite.Sprite.__init__(self, self.groups)
