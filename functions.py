@@ -6,13 +6,13 @@ from settings import *
 vector = pg.math.Vector2
 
 
-def get_hit(object):
+def get_hit(character):
     alphas = [i for i in range(0, 255, 25)]
-    object.damaged = True
-    object.damage_alpha = chain(alphas * 2)
+    character.damaged = True
+    character.damage_alpha = chain(alphas * 2)
 
 
-def quit():
+def quit_game():
     pg.quit()
     sys.exit()
 

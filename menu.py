@@ -1,7 +1,7 @@
 from os import path
 
 from drawable import Drawable
-from functions import quit
+from functions import quit_game
 from settings import *
 
 
@@ -40,7 +40,7 @@ class Menu:
         elif 455 < self.pos_y < 457:
             self.game_options()
         else:
-            quit()
+            quit_game()
 
     def game_options(self):
         self.i = 0.31
@@ -86,7 +86,7 @@ class Menu:
             pg.display.flip()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    quit()
+                    quit_game()
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
                         self.game_choosing_difficulty()
@@ -104,7 +104,7 @@ class Menu:
             self.game.board.draw_game_over(scoreboard, message)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    quit()
+                    quit_game()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_SPACE or event.key == pg.K_RETURN:
                         self.game_intro()
@@ -115,10 +115,10 @@ class Menu:
             draw(self.set_the_mob(size))
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    quit()
+                    quit_game()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        quit()
+                        quit_game()
                     if event.key == pg.K_ESCAPE or event.key == pg.K_BACKSPACE:
                         previous()
                     if event.key == pg.K_UP or event.key == pg.K_w:

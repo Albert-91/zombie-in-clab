@@ -2,7 +2,7 @@ from os import path
 from random import choice, random
 
 from board import Board
-from functions import quit, collide_hit_rect, draw_player_health, get_hit
+from functions import quit_game, collide_hit_rect, draw_player_health, get_hit
 from item import Item
 from menu import Menu
 from player import Player
@@ -307,10 +307,10 @@ class TheGame:
         self.player.update()
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                quit()
+                quit_game()
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
-                    quit()
+                    quit_game()
                 if event.key == pg.K_p:
                     self.game_paused = not self.game_paused
                 if 50 < self.player.rect.x < 102 and 1735 < self.player.rect.y < 1753:
