@@ -23,22 +23,20 @@ def collide_hit_rect(one, two):
 
 def collide_with_object(sprite, group, direction):
     hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
-    if direction == 'x':
-        if hits:
-            if hits[0].rect.centerx > sprite.hit_rect.centerx:
-                sprite.position.x = hits[0].rect.left - sprite.hit_rect.width / 2
-            if hits[0].rect.centerx < sprite.hit_rect.centerx:
-                sprite.position.x = hits[0].rect.right + sprite.hit_rect.width / 2
-            sprite.vel.x = 0
-            sprite.hit_rect.centerx = sprite.position.x
-    if direction == 'y':
-        if hits:
-            if hits[0].rect.centery > sprite.hit_rect.centery:
-                sprite.position.y = hits[0].rect.top - sprite.hit_rect.height / 2
-            if hits[0].rect.centery < sprite.hit_rect.centery:
-                sprite.position.y = hits[0].rect.bottom + sprite.hit_rect.height / 2
-            sprite.vel.y = 0
-            sprite.hit_rect.centery = sprite.position.y
+    if direction == 'x' and hits:
+        if hits[0].rect.centerx > sprite.hit_rect.centerx:
+            sprite.position.x = hits[0].rect.left - sprite.hit_rect.width / 2
+        if hits[0].rect.centerx < sprite.hit_rect.centerx:
+            sprite.position.x = hits[0].rect.right + sprite.hit_rect.width / 2
+        sprite.vel.x = 0
+        sprite.hit_rect.centerx = sprite.position.x
+    if direction == 'y' and hits:
+        if hits[0].rect.centery > sprite.hit_rect.centery:
+            sprite.position.y = hits[0].rect.top - sprite.hit_rect.height / 2
+        if hits[0].rect.centery < sprite.hit_rect.centery:
+            sprite.position.y = hits[0].rect.bottom + sprite.hit_rect.height / 2
+        sprite.vel.y = 0
+        sprite.hit_rect.centery = sprite.position.y
 
 
 def draw_player_health(surface, x, y, picture):
